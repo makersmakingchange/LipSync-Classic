@@ -13,7 +13,7 @@
 */
 
 //AUTHOR: Ivan Gourlay 22 June 2016
-
+//VERSION: 2.4 (28 Jan 2017)
 /*
    REVISION HISTORY:
    27 Jun 2016
