@@ -13,7 +13,7 @@
 */
 
 //AUTHOR: Ivan Gourlay 22 June 2016
-//VERSION: 2.5 (24 Feb 2017)
+//VERSION: 2.5 (27 Feb 2017)
 /*
    REVISION HISTORY:
    27 Jun 2016
@@ -67,6 +67,8 @@
    21 Feb 2017
    23 Feb 2017
    24 Feb 2017
+   25 Feb 2017
+   27 Feb 2017
 */
 
 #include <EEPROM.h>
@@ -248,7 +250,7 @@ void loop() {
   if (single == 0) {
     Serial.println(" ");
     Serial.println(" --- ");
-    Serial.println("This is the 24 February - FSR Experimental Radial Threshold Boundary - MASTER");
+    Serial.println("This is the 27 February - FSR Experimental Radial Threshold Boundary - MASTER");
     Serial.println(" ");
     Serial.println("Enhanced functions:");
     Serial.println("Tap and drag");
@@ -318,10 +320,10 @@ void loop() {
     }
   */
   ///*
-  xh_yh = sqrt(sq(((xh - x_right) > 0) ? (xh - x_right) : 0.0) + sq(((yh - y_up) > 0) ? (yh - y_up) : 0.0));     // sq() function raises input to power of 2, returning the same data type int->int ...
-  xh_yl = sqrt(sq(((xh - x_right) > 0) ? (xh - x_right) : 0.0) + sq(((yl - y_down) > 0) ? (yl - y_down) : 0.0));   // the sqrt() function raises input to power 1/2, returning a float type
-  xl_yh = sqrt(sq(((xl - x_left) > 0) ? (xl - x_left) : 0.0) + sq(((yh - y_up) > 0) ? (yh - y_up) : 0.0));      // These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-  xl_yl = sqrt(sq(((xl - x_left) > 0) ? (xl - x_left) : 0.0) + sq(((yl - y_down) > 0) ? (yl - y_down) : 0.0));    // a larger digital value with a positive application force, a large negative difference
+  xh_yh = sqrt(sq(((xh - x_right) > 0) ? (float)(xh - x_right) : 0.0) + sq(((yh - y_up) > 0) ? (float)(yh - y_up) : 0.0));     // sq() function raises input to power of 2, returning the same data type int->int ...
+  xh_yl = sqrt(sq(((xh - x_right) > 0) ? (float)(xh - x_right) : 0.0) + sq(((yl - y_down) > 0) ? (float)(yl - y_down) : 0.0));   // the sqrt() function raises input to power 1/2, returning a float type
+  xl_yh = sqrt(sq(((xl - x_left) > 0) ? (float)(xl - x_left) : 0.0) + sq(((yh - y_up) > 0) ? (float)(yh - y_up) : 0.0));      // These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
+  xl_yl = sqrt(sq(((xl - x_left) > 0) ? (float)(xl - x_left) : 0.0) + sq(((yl - y_down) > 0) ? (float)(yl - y_down) : 0.0));    // a larger digital value with a positive application force, a large negative difference
   //*/                                                    // can also be calculated as a large positive number
 
   if (isnan(xh_yh)) xh_yh = 0.0;
@@ -329,33 +331,33 @@ void loop() {
   if (isnan(xl_yh)) xl_yh = 0.0;
   if (isnan(xl_yl)) xl_yl = 0.0;
   /*
-    Serial.print("xh - x_right: ");
-    Serial.print(xh - x_right);
-    Serial.print(" :: ");
-    Serial.print("xl - x_left: ");
-    Serial.print(xl - x_left);
-    Serial.print(" :: ");
-    Serial.print("yh - y_up: ");
-    Serial.print(yh - y_up);
-    Serial.print(" :: ");
-    Serial.print("yl - y_down: ");
-    Serial.print(yl - y_down);
+  Serial.print("xh - x_right: ");
+  Serial.print(xh - x_right);
+  Serial.print(" :: ");
+  Serial.print("xl - x_left: ");
+  Serial.print(xl - x_left);
+  Serial.print(" :: ");
+  Serial.print("yh - y_up: ");
+  Serial.print(yh - y_up);
+  Serial.print(" :: ");
+  Serial.print("yl - y_down: ");
+  Serial.print(yl - y_down);
 
-    Serial.print(" :: ");
-    Serial.print(xh_yh);
-    Serial.print(" :: ");
-    Serial.print(xh_yl);
-    Serial.print(" :: ");
-    Serial.print(xl_yh);
-    Serial.print(" :: ");
-    Serial.println(xl_yl);
-  */
+  Serial.print(" :: ");
+  Serial.print(xh_yh);
+  Serial.print(" :: ");
+  Serial.print(xh_yl);
+  Serial.print(" :: ");
+  Serial.print(xl_yh);
+  Serial.print(" :: ");
+  Serial.println(xl_yl);
+  //*/
 
   if (xh_yh > xh_yh_radius || xh_yl > xh_yl_radius || xl_yl > xl_yl_radius || xl_yh > xl_yh_radius) {
 
     //poll_counter++;
 
-    delay(5);    // originally 15 ms
+    delay(15);    // originally 15 ms
 
     //if (poll_counter >= 3) {
 
@@ -366,47 +368,56 @@ void loop() {
         Mouse.move(x_cursor_high(xh), y_cursor_high(yh), 0);
         delay(cursor_delay);
         poll_counter = 0;
+        calibration_counter = 0;
       } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
         //Serial.println("quad4");
         Mouse.move(x_cursor_high(xh), y_cursor_low(yl), 0);
         delay(cursor_delay);
         poll_counter = 0;
+        calibration_counter = 0;
       } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
         //Serial.println("quad3");
         Mouse.move(x_cursor_low(xl), y_cursor_low(yl), 0);
         delay(cursor_delay);
         poll_counter = 0;
+        calibration_counter = 0;
       } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
         //Serial.println("quad2");
         Mouse.move(x_cursor_low(xl), y_cursor_high(yh), 0);
         delay(cursor_delay);
         poll_counter = 0;
-      } else {
+        calibration_counter = 0;
+      }
+    } else {
 
-        if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
-          //Serial.println("quad1");
-          mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_high(yh), 0);
-          delay(cursor_delay);
-          poll_counter = 0;
-        } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
-          //Serial.println("quad4");
-          mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_low(yl), 0);
-          delay(cursor_delay);
-          poll_counter = 0;
-        } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
-          //Serial.println("quad3");
-          mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_low(yl), 0);
-          delay(cursor_delay);
-          poll_counter = 0;
-        } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
-          //Serial.println("quad2");
-          mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_high(yh), 0);
-          delay(cursor_delay);
-          poll_counter = 0;
-        }
+      if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
+        //Serial.println("quad1");
+        mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_high(yh), 0);
+        delay(cursor_delay);
+        poll_counter = 0;
+        calibration_counter = 0;
+      } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
+        //Serial.println("quad4");
+        mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_low(yl), 0);
+        delay(cursor_delay);
+        poll_counter = 0;
+        calibration_counter = 0;
+      } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
+        //Serial.println("quad3");
+        mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_low(yl), 0);
+        delay(cursor_delay);
+        poll_counter = 0;
+        calibration_counter = 0;
+      } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
+        //Serial.println("quad2");
+        mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_high(yh), 0);
+        delay(cursor_delay);
+        poll_counter = 0;
+        calibration_counter = 0;
       }
     }
   }
+
 
   //cursor speed control push button functions below
 
@@ -417,6 +428,7 @@ void loop() {
     } else {
       increase_cursor_speed();      // increase cursor speed with push button up
     }
+    calibration_counter = 0;
   }
 
   if (digitalRead(PUSH_BUTTON_DOWN) == LOW) {
@@ -427,13 +439,7 @@ void loop() {
       decrease_cursor_speed();      // decrease cursor speed with push button down
       //delay(10);                   // software debounce
     }
-  }
-
-  //calibration_counter++; //comment back in to experiment with auto_calibration
-
-  if (calibration_counter > 100) {
-    //Home_Position_Reset(); 
-    // ^^ THIS IS AN UN-TESTED IMPLEMENTATION OF THIS FUNCTION WHICH MAY HELP WITH GRADUALLY ACCUMULATED HOME POSITION SHIFT
+    calibration_counter = 0;
   }
 
   //pressure sensor sip and puff functions below
@@ -465,7 +471,7 @@ void loop() {
         }
       } else if (puff_count > 750) {
         blink(4, 350, 3);   // visual prompt for user to release joystick for automatic calibration of home position
-        Home_Position_Reset();
+        Manual_Joystick_Home_Calibration();
       } else {
         /*
             --> RE-EVALUATE THIS FUNCTION
@@ -488,7 +494,7 @@ void loop() {
         }
       } else if (puff_count > 750) {
         blink(4, 350, 3);     // visual prompt for user to release joystick for automatic calibration of home position
-        Home_Position_Reset();
+        Manual_Joystick_Home_Calibration();
       } else {
 
         /*
@@ -501,6 +507,7 @@ void loop() {
     }
 
     puff_count = 0;
+    calibration_counter = 0;
   }
 
   if (cursor_click > sip_threshold) {
@@ -515,10 +522,14 @@ void loop() {
       if (sip_count < 150) {
         Mouse.click(MOUSE_RIGHT);
         delay(25);
-      } else if (sip_count > 150) {
+      } else if (sip_count > 150 && sip_count < 750) {
         mouseScroll();
         delay(25);
       } else {
+
+        Mouse.click(MOUSE_MIDDLE);
+        delay(25);
+        
         /*
             --> RE-EVALUATE THIS FUNCTION
            Mouse.press(MOUSE_RIGHT)
@@ -536,6 +547,12 @@ void loop() {
         mouseScroll();
         delay(25);
       } else {
+        cursor_click_status = 3;
+        mouseCommand(cursor_click_status, 0, 0, 0);
+        mouseClear();
+        cursor_click_status = 0;
+        delay(25);
+        
         /*
             --> RE-EVALUATE THIS FUNCTION
            cursor_click_status = 2;
@@ -546,7 +563,18 @@ void loop() {
     }
 
     sip_count = 0;
+    calibration_counter = 0;
   }
+
+  //calibration_counter++; //comment back in to experiment with auto_calibration
+
+  if (calibration_counter > 1000) {
+    Auto_Joystick_Home_Calibration();
+    
+    // ^^ THIS IS AN UN-TESTED IMPLEMENTATION OF THIS FUNCTION WHICH MAY HELP WITH GRADUALLY ACCUMULATED HOME POSITION SHIFT
+  }
+
+
 }
 
 //***END OF INFINITE LOOP***//
@@ -656,7 +684,7 @@ int y_cursor_high(int j) {
 
   if (j > y_up) {
 
-    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - pow(2.718, (cursor_factor * (yh_comp * (((float)(j - y_up)) / y_up)))))));
+    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yh_comp * (((float)(j - y_up)) / y_up))))));
 
     //if (k != 0) { // originally (k < 0 || k > 0)
 
@@ -677,7 +705,8 @@ int y_cursor_low(int j) {
 
   if (j > y_down) {
 
-    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - pow(2.718, (cursor_factor * (yl_comp * (((float)(j - y_down)) / y_down)))))));
+    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yl_comp * (((float)(j - y_down)) / y_down))))));
+
     /*
       Serial.print("yl:");
       Serial.print(j);
@@ -695,7 +724,8 @@ int x_cursor_high(int j) {
 
   if (j > x_right) {
 
-    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - pow(2.718, (cursor_factor * (xh_comp * (((float)(j - x_right)) / x_right)))))));
+    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xh_comp * (((float)(j - x_right)) / x_right))))));
+
     /*
       Serial.print("xh:");
       Serial.print(j);
@@ -713,7 +743,8 @@ int x_cursor_low(int j) {
 
   if (j > x_left) {
 
-    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - pow(2.718, (cursor_factor * (xl_comp * (((float)(j - x_left)) / x_left)))))));
+    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xl_comp * (((float)(j - x_left)) / x_left))))));
+
     /*
       Serial.print("xl:");
       Serial.print(j);
@@ -871,18 +902,9 @@ void Joystick_Initialization(void) {
   EEPROM.get(18, xl_comp);
   delay(10);
 
-  //10 works for box_delta
-  /*
-    box_delta = 15;
-
-    x_box_right = x_right + box_delta;
-    x_box_left = x_left + box_delta;
-    y_box_up = y_up + box_delta;
-    y_box_down = y_down + box_delta;
-  */
   //40.0 works well for a constant radius
 
-  constant_radius = 20.0;
+  constant_radius = 30.0;
 
   xh_yh_radius = constant_radius;
   xh_yl_radius = constant_radius;
@@ -1041,7 +1063,7 @@ void BT_configAOK(void) {                    // diagnostic feedback from Bluetoo
   Serial.println("Configuration complete.");
 }
 
-//***MANUAL JOYSTICK CALIBRATION***//
+//***JOYSTICK SPEED CALIBRATION***//
 
 void Joystick_Calibration(void) {
 
@@ -1100,12 +1122,29 @@ void Joystick_Calibration(void) {
   blink(5, 250, 3);
 
   Serial.println(" ");
-  Serial.println("Joystick calibration procedure is complete.");
+  Serial.println("Joystick speed calibration procedure is complete.");
 }
 
-//***AUTOMATIC HOME POSITION CALIBRATION***//
+//***AUTOMATIC JOYSTICK POSITION CALIBRATION***//
+void Auto_Joystick_Home_Calibration(void) {
 
-void Home_Position_Reset(void) {
+  xh = analogRead(X_DIR_HIGH);
+  xl = analogRead(X_DIR_LOW);
+  yh = analogRead(Y_DIR_HIGH);
+  yl = analogRead(Y_DIR_LOW);
+
+  x_right = xh;
+  x_left = xl;
+  y_up = yh;
+  y_down = yl;
+
+  blink(1,50,1);
+
+  calibration_counter = 0;
+}
+
+//***MANUAL JOYSTICK POSITION CALIBRATION***///
+void Manual_Joystick_Home_Calibration(void) {
 
   xh = analogRead(X_DIR_HIGH);            // Initial neutral x-high value of joystick
   delay(10);
@@ -1128,13 +1167,6 @@ void Home_Position_Reset(void) {
   x_left = xl;
   y_up = yh;
   y_down = yl;
-
-  box_delta = 15;
-
-  x_box_right = x_right + box_delta;
-  x_box_left = x_left + box_delta;
-  y_box_up = y_up + box_delta;
-  y_box_down = y_down + box_delta;
 
   calibration_counter = 0;
 
