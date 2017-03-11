@@ -5,7 +5,7 @@ The "LipSync" is an assistive technology device which is being developed to allo
 This GitHub repository will serve as a database for all files and documentation associated with the LipSync project.
 
 ## Updates 
-For latest updates regarding the project we encourage you to visit our <a href="https://makersmakingchange.github.io/blog/">blog</a>.
+For latest updates regarding the project we encourage you to visit our <a href="https://makersmakingchange.github.io/blog/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
 
 
 ## Contact Us
