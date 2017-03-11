@@ -13,7 +13,7 @@
 */
 
 //AUTHOR: Ivan Gourlay 22 June 2016
-//VERSION: 2.5 (27 Feb 2017)
+//VERSION: 2.5 (2 Mar 2017)
 /*
    REVISION HISTORY:
    27 Jun 2016
@@ -69,6 +69,10 @@
    24 Feb 2017
    25 Feb 2017
    27 Feb 2017
+   28 Feb 2017
+
+   01 Mar 2017
+   02 Mar 2017
 */
 
 #include <EEPROM.h>
@@ -96,6 +100,12 @@
 
 int xh, yh, xl, yl;                               // xh: x-high, yh: y-high, xl: x-low, yl: y-low
 int x_right, x_left, y_up, y_down;                // individual neutral starting positions for each FSR
+
+int xh_max = 800;                                 // may just declare these variables but not initialize them because
+int xl_max = 800;                                 // these values will be pulled from the EEPROM
+int yh_max = 800;
+int yl_max = 800;
+
 int x_box_right, x_box_left, y_box_up, y_box_down;
 float constant_radius = 30.0;                     // constant radius is initialized to 30.0 but may be changed in joystick initialization
 float xh_yh_radius, xh_yl_radius, xl_yl_radius, xl_yh_radius;
@@ -113,8 +123,8 @@ int poll_counter = 0;                             // cursor poll counter
 int init_counter = 0;                             // serial port initialization counter
 int calibration_counter = 0;                      // automatic calibration counter [self-correcting]
 
-int default_cursor_speed = 100;
-int delta_cursor_speed = 15;
+int default_cursor_speed = 30;
+int delta_cursor_speed = 5;
 
 int cursor_delay;
 float cursor_factor;
@@ -126,7 +136,7 @@ float xh_comp = 1.0;
 float xl_comp = 1.0;
 
 float yh_check, yl_check, xh_check, xl_check;
-
+int xhm_check, xlm_check, yhm_check, ylm_check;
 float sip_threshold, puff_threshold, cursor_click, cursor_back;
 
 typedef struct {
@@ -237,6 +247,18 @@ void setup() {
   Serial.print("xl_comp factor: ");
   Serial.println(EEPROM.get(18, xl_check));
   delay(5);
+  Serial.print("xh_max: ");
+  Serial.println(EEPROM.get(22, xhm_check));
+  delay(5);
+  Serial.print("xl_max: ");
+  Serial.println(EEPROM.get(24, xlm_check));
+  delay(5);
+  Serial.print("yh_max: ");
+  Serial.println(EEPROM.get(26, yhm_check));
+  delay(5);
+  Serial.print("yl_max: ");
+  Serial.println(EEPROM.get(28, ylm_check));
+  delay(5);
 
 }
 
@@ -250,7 +272,7 @@ void loop() {
   if (single == 0) {
     Serial.println(" ");
     Serial.println(" --- ");
-    Serial.println("This is the 27 February - FSR Experimental Radial Threshold Boundary - MASTER");
+    Serial.println("This is the 01 March - FSR Experimental Exponential Cursor Algorithm WIP");
     Serial.println(" ");
     Serial.println("Enhanced functions:");
     Serial.println("Tap and drag");
@@ -331,89 +353,90 @@ void loop() {
   if (isnan(xl_yh)) xl_yh = 0.0;
   if (isnan(xl_yl)) xl_yl = 0.0;
   /*
-  Serial.print("xh - x_right: ");
-  Serial.print(xh - x_right);
-  Serial.print(" :: ");
-  Serial.print("xl - x_left: ");
-  Serial.print(xl - x_left);
-  Serial.print(" :: ");
-  Serial.print("yh - y_up: ");
-  Serial.print(yh - y_up);
-  Serial.print(" :: ");
-  Serial.print("yl - y_down: ");
-  Serial.print(yl - y_down);
+    Serial.print("xh - x_right: ");
+    Serial.print(xh - x_right);
+    Serial.print(" :: ");
+    Serial.print("xl - x_left: ");
+    Serial.print(xl - x_left);
+    Serial.print(" :: ");
+    Serial.print("yh - y_up: ");
+    Serial.print(yh - y_up);
+    Serial.print(" :: ");
+    Serial.print("yl - y_down: ");
+    Serial.print(yl - y_down);
 
-  Serial.print(" :: ");
-  Serial.print(xh_yh);
-  Serial.print(" :: ");
-  Serial.print(xh_yl);
-  Serial.print(" :: ");
-  Serial.print(xl_yh);
-  Serial.print(" :: ");
-  Serial.println(xl_yl);
-  //*/
+    Serial.print(" :: ");
+    Serial.print(xh_yh);
+    Serial.print(" :: ");
+    Serial.print(xh_yl);
+    Serial.print(" :: ");
+    Serial.print(xl_yh);
+    Serial.print(" :: ");
+    Serial.println(xl_yl);
+    //*/
 
   if (xh_yh > xh_yh_radius || xh_yl > xh_yl_radius || xl_yl > xl_yl_radius || xl_yh > xl_yh_radius) {
 
-    //poll_counter++;
+    poll_counter++;
 
     delay(15);    // originally 15 ms
 
-    //if (poll_counter >= 3) {
+    if (poll_counter >= 3) {
 
-    if (comm_mode == 0) {
+      if (comm_mode == 0) {
 
-      if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
-        //Serial.println("quad1");
-        Mouse.move(x_cursor_high(xh), y_cursor_high(yh), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
-        //Serial.println("quad4");
-        Mouse.move(x_cursor_high(xh), y_cursor_low(yl), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
-        //Serial.println("quad3");
-        Mouse.move(x_cursor_low(xl), y_cursor_low(yl), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
-        //Serial.println("quad2");
-        Mouse.move(x_cursor_low(xl), y_cursor_high(yh), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      }
-    } else {
+        if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
+          //Serial.println("quad1");
+          Mouse.move(x_cursor_high(xh), y_cursor_high(yh), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
+          //Serial.println("quad4");
+          Mouse.move(x_cursor_high(xh), y_cursor_low(yl), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
+          //Serial.println("quad3");
+          Mouse.move(x_cursor_low(xl), y_cursor_low(yl), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
+          //Serial.println("quad2");
+          Mouse.move(x_cursor_low(xl), y_cursor_high(yh), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        }
+      } else {
 
-      if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
-        //Serial.println("quad1");
-        mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_high(yh), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
-        //Serial.println("quad4");
-        mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_low(yl), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
-        //Serial.println("quad3");
-        mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_low(yl), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
-      } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
-        //Serial.println("quad2");
-        mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_high(yh), 0);
-        delay(cursor_delay);
-        poll_counter = 0;
-        calibration_counter = 0;
+        if ((xh_yh >= xh_yl) && (xh_yh >= xl_yh) && (xh_yh >= xl_yl)) {
+          //Serial.println("quad1");
+          mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_high(yh), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xh_yl > xh_yh) && (xh_yl > xl_yl) && (xh_yl > xl_yh)) {
+          //Serial.println("quad4");
+          mouseCommand(cursor_click_status, x_cursor_high(xh), y_cursor_low(yl), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xl_yl >= xh_yh) && (xl_yl >= xh_yl) && (xl_yl >= xl_yh)) {
+          //Serial.println("quad3");
+          mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_low(yl), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        } else if ((xl_yh > xh_yh) && (xl_yh >= xh_yl) && (xl_yh >= xl_yl)) {
+          //Serial.println("quad2");
+          mouseCommand(cursor_click_status, x_cursor_low(xl), y_cursor_high(yh), 0);
+          delay(cursor_delay);
+          poll_counter = 0;
+          calibration_counter = 0;
+        }
       }
     }
   }
@@ -529,7 +552,7 @@ void loop() {
 
         Mouse.click(MOUSE_MIDDLE);
         delay(25);
-        
+
         /*
             --> RE-EVALUATE THIS FUNCTION
            Mouse.press(MOUSE_RIGHT)
@@ -552,7 +575,7 @@ void loop() {
         mouseClear();
         cursor_click_status = 0;
         delay(25);
-        
+
         /*
             --> RE-EVALUATE THIS FUNCTION
            cursor_click_status = 2;
@@ -569,8 +592,8 @@ void loop() {
   //calibration_counter++; //comment back in to experiment with auto_calibration
 
   if (calibration_counter > 1000) {
-    Auto_Joystick_Home_Calibration();
-    
+    //Auto_Joystick_Home_Calibration();
+
     // ^^ THIS IS AN UN-TESTED IMPLEMENTATION OF THIS FUNCTION WHICH MAY HELP WITH GRADUALLY ACCUMULATED HOME POSITION SHIFT
   }
 
@@ -684,18 +707,49 @@ int y_cursor_high(int j) {
 
   if (j > y_up) {
 
-    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yh_comp * (((float)(j - y_up)) / y_up))))));
+    //int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yh_comp * (((float)(j - y_up)) / y_up))))));
 
-    //if (k != 0) { // originally (k < 0 || k > 0)
+    float y_up_factor = 1.25 * (yh_comp * (((float)(j - y_up)) / (yh_max - y_up)));
 
-    /*
-      Serial.print("yh::");
+    int k = (int)(round(-1.0 * pow(cursor_max_speed, y_up_factor)) - 1.0);
+
+    if (k <= (-1 * cursor_max_speed) ) { // originally (k < 0 || k > 0)
+
+      k = -1 * cursor_max_speed;
+
+      /*
+      Serial.print("yh:");
       Serial.print(j);
       Serial.print(", ");
       Serial.print("k:");
       Serial.println(k);
       //*/
-    return k;
+
+      return k;
+    } else if ( (k < 0) && (k > (-1 * cursor_max_speed))) {
+
+      /*
+      Serial.print("yh:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    } else {
+      k = 0;
+
+      /*
+      Serial.print("yh:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    }
   } else {
     return 0;
   }
@@ -705,16 +759,50 @@ int y_cursor_low(int j) {
 
   if (j > y_down) {
 
-    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yl_comp * (((float)(j - y_down)) / y_down))))));
+    //int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (yl_comp * (((float)(j - y_down)) / y_down))))));
 
-    /*
+    float y_down_factor = 1.25 * (yl_comp * (((float)(j - y_down)) / (yl_max - y_down)));
+
+    int k = (int)(round(1.0 * pow(cursor_max_speed, y_down_factor)) - 1.0);
+
+    if (k >= cursor_max_speed) {
+
+      k = cursor_max_speed;
+
+      /*
       Serial.print("yl:");
       Serial.print(j);
       Serial.print(", ");
       Serial.print("k:");
       Serial.println(k);
       //*/
-    return k;
+
+      return k;
+    } else if ((k > 0) && (k < cursor_max_speed)) {
+
+      /*
+      Serial.print("yl:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    } else {
+
+      k = 0;
+
+      /*
+      Serial.print("yl:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    }
   } else {
     return 0;
   }
@@ -724,16 +812,49 @@ int x_cursor_high(int j) {
 
   if (j > x_right) {
 
-    int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xh_comp * (((float)(j - x_right)) / x_right))))));
+    //int k = (int)(round(1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xh_comp * (((float)(j - x_right)) / x_right))))));
 
-    /*
+    float x_right_factor = 1.25 * (xh_comp * (((float)(j - x_right)) / (xh_max - x_right)));
+
+    int k = (int)(round(1.0 * pow(cursor_max_speed, x_right_factor)) - 1.0);
+
+    if (k >= cursor_max_speed) {
+
+      k = cursor_max_speed;
+
+      /*
       Serial.print("xh:");
       Serial.print(j);
       Serial.print(", ");
       Serial.print("k:");
       Serial.println(k);
       //*/
-    return k;
+
+      return k;
+    } else if ((k > 0) && (k < cursor_max_speed)) {
+
+      /*
+      Serial.print("xh:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    } else {
+      k = 0;
+
+      /*
+      Serial.print("xh:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    }
   } else {
     return 0;
   }
@@ -743,16 +864,48 @@ int x_cursor_low(int j) {
 
   if (j > x_left) {
 
-    int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xl_comp * (((float)(j - x_left)) / x_left))))));
+    //int k = (int)(round(-1.0 * cursor_max_speed * (1.0 - exp(cursor_factor * (xl_comp * (((float)(j - x_left)) / x_left))))));
 
-    /*
+    float x_left_factor = 1.25 * (xl_comp * (((float)(j - x_left)) / (xl_max - x_left)));
+
+    int k = (int)(round(-1.0 * pow(cursor_max_speed, x_left_factor)) - 1.0);
+
+    if ( k <= (-1 * cursor_max_speed) ) {
+      k = -1 * cursor_max_speed;
+
+      /*
       Serial.print("xl:");
       Serial.print(j);
       Serial.print(", ");
       Serial.print("k:");
       Serial.println(k);
       //*/
-    return k;
+
+      return k;
+    } else if ( (k < 0) && (k > -1 * cursor_max_speed)) {
+
+      /*
+      Serial.print("xl:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    } else {
+      k = 0;
+
+      /*
+      Serial.print("xl:");
+      Serial.print(j);
+      Serial.print(", ");
+      Serial.print("k:");
+      Serial.println(k);
+      //*/
+
+      return k;
+    }
   } else {
     return 0;
   }
@@ -794,7 +947,7 @@ void mouseClear(void) {
   Serial1.flush();
   delay(40);
 }
-
+//police department is closed for the holiday
 //***MOUSE SCROLLING FUNCTION***//
 
 void mouseScroll(void) {
@@ -901,6 +1054,14 @@ void Joystick_Initialization(void) {
   delay(10);
   EEPROM.get(18, xl_comp);
   delay(10);
+  EEPROM.get(22, xh_max);
+  delay(10);
+  EEPROM.get(24, xl_max);
+  delay(10);
+  EEPROM.get(26, yh_max);
+  delay(10);
+  EEPROM.get(28, yl_max);
+  delay(10);
 
   //40.0 works well for a constant radius
 
@@ -910,6 +1071,14 @@ void Joystick_Initialization(void) {
   xh_yl_radius = constant_radius;
   xl_yl_radius = constant_radius;
   xl_yh_radius = constant_radius;
+
+/*
+  xh_max = 800;
+  xl_max = 800;
+  yh_max = 800;
+  yl_max = 800;
+*/
+
 }
 
 //***PRESSURE SENSOR INITIALIZATION FUNCTION***//
@@ -1073,25 +1242,25 @@ void Joystick_Calibration(void) {
 
   Serial.println("Move mouthpiece to the furthest vertical up position and hold it there until the LED turns SOLID RED, then release the mouthpiece.");
   blink(6, 500, 1);
-  int yh_max = analogRead(Y_DIR_HIGH);
+  yh_max = analogRead(Y_DIR_HIGH);
   blink(1, 1000, 2);
   Serial.println(yh_max);
 
   Serial.println("Move mouthpiece to the furthest horizontal right position and hold it there until the LED turns SOLID RED, then release the mouthpiece.");
   blink(6, 500, 1);
-  int xh_max = analogRead(X_DIR_HIGH);
+  xh_max = analogRead(X_DIR_HIGH);
   blink(1, 1000, 2);
   Serial.println(xh_max);
 
   Serial.println("Move mouthpiece to the furthest vertical down position and hold it there until the LED turns SOLID RED, then release the mouthpiece.");
   blink(6, 500, 1);
-  int yl_max = analogRead(Y_DIR_LOW);
+  yl_max = analogRead(Y_DIR_LOW);
   blink(1, 1000, 2);
   Serial.println(yl_max);
 
   Serial.println("Move mouthpiece to the furthest horizontal left position and hold it there until the LED turns SOLID RED, then release the mouthpiece.");
   blink(6, 500, 1);
-  int xl_max = analogRead(X_DIR_LOW);
+  xl_max = analogRead(X_DIR_LOW);
   blink(1, 1000, 2);
   Serial.println(xl_max);
 
@@ -1118,6 +1287,14 @@ void Joystick_Calibration(void) {
   delay(10);
   EEPROM.put(18, xl_comp);
   delay(10);
+  EEPROM.put(22, xh_max);
+  delay(10);
+  EEPROM.put(24, xl_max);
+  delay(10);
+  EEPROM.put(26, yh_max);
+  delay(10);
+  EEPROM.put(28, yl_max);
+  delay(10);
 
   blink(5, 250, 3);
 
@@ -1138,7 +1315,7 @@ void Auto_Joystick_Home_Calibration(void) {
   y_up = yh;
   y_down = yl;
 
-  blink(1,50,1);
+  blink(1, 50, 1);
 
   calibration_counter = 0;
 }
@@ -1162,11 +1339,34 @@ void Manual_Joystick_Home_Calibration(void) {
   delay(10);
   Serial.println(yl);                     // Recommend keeping in for diagnostic purposes
 
-
   x_right = xh;
   x_left = xl;
   y_up = yh;
   y_down = yl;
+
+  int delta_max_total = (yh_max - y_up) + (yl_max - y_down) + (xh_max - x_right) + (xl_max - x_left);
+
+  //Serial.print("delta_max_total: ");
+  //Serial.println(delta_max_total);
+
+  float avg_delta_max = ((float)(delta_max_total)) / 4;
+
+  //Serial.print("avg_delta_max: ");
+  //Serial.println(avg_delta_max);
+
+  yh_comp = avg_delta_max / (yh_max - y_up);
+  yl_comp = avg_delta_max / (yl_max - y_down);
+  xh_comp = avg_delta_max / (xh_max - x_right);
+  xl_comp = avg_delta_max / (xl_max - x_left);
+
+  EEPROM.put(6, yh_comp);
+  delay(10);
+  EEPROM.put(10, yl_comp);
+  delay(10);
+  EEPROM.put(14, xh_comp);
+  delay(10);
+  EEPROM.put(18, xl_comp);
+  delay(10);
 
   calibration_counter = 0;
 
