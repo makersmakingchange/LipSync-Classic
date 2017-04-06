@@ -1,11 +1,11 @@
-﻿Qty,,Line Item,Manufacturer,MPN,SKU,SKU,SKU,SKU,SKU,SKU,SKU,SKU,URL
+﻿Qty,"Component name (March 21,2017)",Line Item,Manufacturer,MPN,SKU,SKU,SKU,SKU,SKU,SKU,SKU,SKU,URL
 ,,,,,Digi-Key,Mouser,Qosina,Cole-Parmer,Lee Spring,U.S. Plastic Corp.,B&H Photo,Amazon,
 1,Arduino Micro / Genuino Micro ,A000053,Arduino,A000053,1050-1066-ND,,,,,,,,https://www.digikey.ca/product-detail/en/arduino/A000053/1050-1066-ND
 1,SparkFun Bluetooth Silver Mate ,WRL-12576,SparkFun,WRL-12576,1568-1265-ND,,,,,,,,http://www.digikey.ca/product-detail/en/sparkfun-electronics/WRL-12576/1568-1265-ND
 1,Pressure Transducer ,MPXV7002DPT1,NXP Semiconductors,MPXV7002DPT1,MPXV7002DPT1CT-ND,MPXV7002DPT1,,,,,,,http://www.digikey.ca/product-detail/en/nxp-usa-inc/MPXV7002DPT1/MPXV7002DPT1CT-ND
 2,Right Angle Push Button ,"""431256058736""",Würth Elektronik ,"""431256058736""",431256058736-ND,,,,,,,,http://www.digikey.ca/product-detail/en/wurth-electronics-inc/431256058736/431256058736-ND
 2,300 Ohm 1/4W Axial Through-Hole Resistor ,CF14JT300R,Stackpole Electronics,CF14JT300R,CF14JT300RCT-ND,,,,,,,,https://www.digikey.ca/product-detail/en/stackpole-electronics-inc/CF14JT300R/CF14JT300RCT-ND
-4,10k Ohm 1/4W Axial Through-Hole Resistor ,CF14JT10K0,Stackpole Electronics,CF14JT10K0,CF14JT10K0CT-ND,,,,,,,,http://www.digikey.com/product-detail/en/stackpole-electronics-inc/CF14JT10K0/CF14JT10K0CT-ND
+4,10k Ohm 1/4W Mini Axial Through-Hole Resistor,CFM14JT10K0,Stackpole Electronics,CFM14JT10K0,S10KQCT-ND,,,,,,,,https://www.digikey.ca/product-detail/en/stackpole-electronics-inc/CFM14JT10K0/S10KQCT-ND/
 1,470 pF Ceramic Through-Hole Radial Capacitor ,C315C471K5R5TA,KEMET,C315C471K5R5TA,399-9740-ND,C315C471K5R5TA,,,,,,,http://www.digikey.ca/product-detail/en/kemet/C315C471K5R5TA/399-9740-ND
 1, 0.01 uF Ceramic Through-Hole Radial Capacitor  ,C315C103K5R5TA7303 ,KEMET,C315C103K5R5TA7303 ,399-9858-1-ND ,80-C315C103K5R-TR,,,,,,,http://www.digikey.ca/product-detail/en/kemet/C315C103K5R5TA7303/399-9858-1-ND
 1,1.0 uF Ceramic Through-Hole Radial Capacitor ,C315C105K3R5TA,KEMET,C315C105K3R5TA,399-9714-ND,C315C105K3R5TA,,,,,,,http://www.digikey.ca/product-detail/en/kemet/C315C105K3R5TA/399-9714-ND
@@ -16,7 +16,7 @@
 2,17-Position Straight Female Through-Hole Headers ,PPPC171LFBN-RC,Sullins,PPPC171LFBN-RC,S7050-ND,,,,,,,,http://www.digikey.ca/product-detail/en/sullins-connector-solutions/PPPC171LFBN-RC/S7050-ND
 1,6-Position Straight Female Through-Hole Header ,PPPC061LFBN-RC ,Sullins ,PPPC061LFBN-RC ,S7039-ND ,,,,,,,,https://www.digikey.ca/product-detail/en/sullins-connector-solutions/PPPC061LFBN-RC/S7039-ND
 1,40-Position Breakaway Straight Male Through-Hole Headers ,PRPC040SAAN-RC,Sullins,PRPC040SAAN-RC,S1011EC-40-ND,,,,,,,,http://www.digikey.ca/product-detail/en/sullins-connector-solutions/PRPC040SAAN-RC/S1011EC-40-ND
-1,Bi-Color Through-Hole LED ,MV5437,Everlight,MV5437,1080-1109-ND,,,,,,,,http://www.digikey.ca/product-detail/en/everlight-electronics-co-ltd/MV5437/1080-1109-ND
+1,3mm Bi-Color Through-Hole LED,SSL-LX3059IGW,Lumex,SSL-LX3059IGW,67-1327-ND,,,,,,,,https://www.digikey.ca/product-detail/en/lumex-opto-components-inc/SSL-LX3059IGW/67-1327-ND/
 1,Jumper Shunt Connector ,SPC02SYAN,Sullins,SPC02SYAN,S9001-ND,,,,,,,,http://www.digikey.ca/product-detail/en/sullins-connector-solutions/SPC02SYAN/S9001-ND
 1,Sip and Puff Mouthpiece ,"""11648""",Qosina,"""11648""",,,"""11648""",,,,,,http://www.qosina.com/male-luer-lock-stepped-connector-11648
 1,"Filter PTFE Hydrophobic 17 mm, 0.2 Micron ","""28213 """,Qosina,"""28213""",,,"""28213""",,,,,,http://www.qosina.com/hydrophobic-filter-with-female-luer-lock-inlet-male-luer-lock-outlet-28213
