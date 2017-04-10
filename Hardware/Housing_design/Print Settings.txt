@@ -1,0 +1,23 @@
+Print settings:
+
+----------------------------
+LipSync_Front_Housing
+LipSync_Rear_Housing
+LipSync_Button
+
+20% Infill
+0.2mm Layer Height
+No Support Material
+No Raft
+----------------------------
+
+----------------------------
+LipSync_Joystick_Front_Plate
+LipSync_Joystick_Rocker
+LipSync_Joystick_Base
+
+50% Infill
+0.2mm Layer Height
+Support Material
+No Raft
+----------------------------
