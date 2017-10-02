@@ -65,6 +65,17 @@ This GitHub repository will serve as a database for all files and documentation 
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
     <td>SCH</td>
   </tr>
+    <tr>
+    <td>Housing_design</td>
+    <td>2.2d</td>
+    <td>
+    <tr>
+     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/LipSync_Button.STL">LipSync_Button.STL</a><td>
+     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Front_Housing.STL">LipSync_Front_Housing.STL</a><td>
+     <tr>
+    </td>
+    <td>STL</td>
+  </tr>
 </table> 
 
 ## Updates 
