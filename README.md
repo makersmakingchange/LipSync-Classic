@@ -47,11 +47,23 @@ This GitHub repository will serve as a database for all files and documentation 
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
     <td>CSV</td>
   </tr>
-    <tr>
+  <tr>
     <td>LipSync Firmware</td>
     <td>2.67</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
     <td>INO</td>
+  </tr>
+  <tr>
+    <td>LipSync Interface Board Layout</td>
+    <td>2.5</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.brd">LipSync_Interface_Board.brd</a></td>
+    <td>BRD</td>
+  </tr>
+  <tr>
+    <td>LipSync Interface Board Schematic</td>
+    <td>2.5</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
+    <td>SCH</td>
   </tr>
 </table> 
 
