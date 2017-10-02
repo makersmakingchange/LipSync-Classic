@@ -8,6 +8,29 @@ The "LipSync" is an assistive technology device which is being developed to allo
 
 This GitHub repository will serve as a database for all files and documentation associated with the LipSync project.
 
+## Download
+
+ <table style="width:100%">
+  <tr>
+    <th>Resource</th>
+    <th>Version</th>
+    <th>Link</th>
+    <th>Format</th>
+  </tr>
+  <tr>
+    <td>LipSync Manual</td>
+    <td>1.4.2</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Manual.pdf">LipSync_Manual.pdf</a></td>
+    <td>PDF</td>
+  </tr>
+  <tr>
+    <td>LipSync Startup Guidef</td>
+    <td>1.23</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a>f</td>
+    <td>PDF</td>
+  </tr>
+</table> 
+
 ## Updates 
 For latest updates regarding the project we encourage you to visit our <a href="https://makersmakingchange.github.io/blog/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
 
