@@ -66,14 +66,35 @@ This GitHub repository will serve as a database for all files and documentation 
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
   </tr>
     <tr>
-    <td rowspan="2">Housing_design</td>
-    <td rowspan="2">2.2d</td>
-    <td rowspan="2">STL</td>
+    <td rowspan="9">Housing_design</td>
+    <td rowspan="9">2.2d</td>
+    <td rowspan="9">STL</td>
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/LipSync_Button.STL">LipSync_Button.STL</a></td>
   </tr>
   <tr>
   <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Front_Housing.STL">LipSync_Front_Housing.STL</a></td>
   </tr>
+  <tr>
+	<td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Joystick_Base.STL">LipSync_Joystick_Base.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Joystick_Front.STL">LipSync_Joystick_Front.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Joystick_Front_Plate.STL">LipSync_Joystick_Front_Plate.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Joystick_Rocker.STL">LipSync_Joystick_Rocker.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Joystick_Stand.STL">LipSync_Joystick_Stand.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Rear_Housing.stl">LipSync_Rear_Housing.STL</a></td>
+</tr>
+<tr>
+  <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/Print_Settings.txt">Print_Settings.txt</a></td>
+</tr>
 </table> 
 
 ## Updates 
