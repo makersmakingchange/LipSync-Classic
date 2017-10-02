@@ -44,7 +44,7 @@ This GitHub repository will serve as a database for all files and documentation 
   <tr>
     <td>LipSync BOM (CSV)</td>
     <td>March 21,2017</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download>LipSync_BOM.csv</a></td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
     <td>CSV</td>
   </tr>
 </table> 
