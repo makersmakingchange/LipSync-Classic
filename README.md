@@ -26,13 +26,13 @@ This GitHub repository will serve as a database for all files and documentation 
   <tr>
     <td>LipSync Startup Guide</td>
     <td>1.23</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a>f</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
     <td>PDF</td>
   </tr>
   <tr>
      <td>Mounting Document</td>
      <td>1.0</td>
-     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">Mounting_Document.pdf</a>f</td>
+     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">Mounting_Document.pdf</a></td>
      <td>PDF</td>
   </tr>
   <tr>
