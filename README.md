@@ -14,66 +14,65 @@ This GitHub repository will serve as a database for all files and documentation 
   <tr>
     <th>Resource</th>
     <th>Version</th>
-    <th>Link</th>
     <th>Format</th>
+    <th>Link</th>
   </tr>
   <tr>
     <td>LipSync Manual</td>
     <td>1.4.2</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Manual.pdf">LipSync_Manual.pdf</a></td>
     <td>PDF</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Manual.pdf">LipSync_Manual.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
     <td>1.23</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
     <td>PDF</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
   </tr>
   <tr>
      <td>Mounting Document</td>
      <td>1.0</td>
-     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">Mounting_Document.pdf</a></td>
      <td>PDF</td>
+     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">Mounting_Document.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (XLSX)</td>
     <td>March 21,2017</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
     <td>XLSX</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (CSV)</td>
     <td>March 21,2017</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
     <td>CSV</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
   </tr>
   <tr>
     <td>LipSync Firmware</td>
     <td>2.67</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
     <td>INO</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
   </tr>
   <tr>
     <td>LipSync Interface Board Layout</td>
     <td>2.5</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.brd">LipSync_Interface_Board.brd</a></td>
     <td>BRD</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.brd">LipSync_Interface_Board.brd</a></td>
   </tr>
   <tr>
     <td>LipSync Interface Board Schematic</td>
     <td>2.5</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
     <td>SCH</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
   </tr>
     <tr>
     <td rowspan="2">Housing_design</td>
     <td rowspan="2">2.2d</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/LipSync_Button.STL">LipSync_Button.STL</a><td>
     <td>STL</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/LipSync_Button.STL">LipSync_Button.STL</a><td>
   </tr>
   <tr>
   <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Front_Housing.STL">LipSync_Front_Housing.STL</a><td>
-  <td>STL</td>
   </tr>
 </table> 
 
