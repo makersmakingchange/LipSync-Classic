@@ -17,6 +17,12 @@ This GitHub repository will serve as a database for all files and documentation 
     <th>Format</th>
     <th>Link</th>
   </tr>
+    <tr>
+    <td>LipSync All</td>
+    <td>2.0</td>
+    <td>ZIP</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/archive/master.zip">LipSync.zip</a></td>
+  </tr>
   <tr>
     <td>LipSync Manual</td>
     <td>1.4.2</td>
