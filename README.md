@@ -68,7 +68,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <tr>
     <td rowspan="2">Housing_design</td>
     <td rowspan="2">2.2d</td>
-    <td>STL</td>
+    <td rowspan="2">STL</td>
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/LipSync_Button.STL">LipSync_Button.STL</a><td>
   </tr>
   <tr>
