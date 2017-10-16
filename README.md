@@ -39,7 +39,7 @@ This GitHub repository will serve as a database for all files and documentation 
      <td>Mounting Document</td>
      <td>1.0</td>
      <td>PDF</td>
-     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Startup_Guide.pdf">Mounting_Document.pdf</a></td>
+     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Mounting_Document.pdf">Mounting_Document.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (XLSX)</td>
