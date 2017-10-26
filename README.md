@@ -43,13 +43,13 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync BOM (XLSX)</td>
-    <td>March 21,2017</td>
+    <td>October 25,2017</td>
     <td>XLSX</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (CSV)</td>
-    <td>March 21,2017</td>
+    <td>October 25,2017</td>
     <td>CSV</td>
     <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
   </tr>
