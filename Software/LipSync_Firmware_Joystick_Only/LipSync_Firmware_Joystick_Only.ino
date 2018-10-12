@@ -56,8 +56,8 @@ void loop() {
   int yy_tmp = y_h - y_l;
   int xx = (xx_tmp >= 0)? sq(xx_tmp):-sq(xx_tmp);
   int yy = (yy_tmp >= 0)? sq(yy_tmp):-sq(yy_tmp);
-  xx += (xx_tmp >= 0)? int(sqrt(yy_tmp)):-int(sqrt(-yy_tmp));
-  yy += (yy_tmp >= 0)? int(sqrt(xx_tmp)):-int(sqrt(-xx_tmp));
+  xx -= (xx_tmp >= 0)? int(sqrt(yy_tmp)):-int(sqrt(-yy_tmp));
+  yy -= (yy_tmp >= 0)? int(sqrt(xx_tmp)):-int(sqrt(-xx_tmp));
 
   xx = constrain(xx, -128, 128);
   yy = constrain(yy, -128, 128);
