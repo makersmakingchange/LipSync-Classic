@@ -32,7 +32,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>Android</td>
     <td>4,5,6,7,8,9</td>
     <td>Released 2013</td>
-    <td>Compatible with Android and newer versions (Requires USB On-The-Go)</td>
+    <td>Compatible with Android 4 and newer versions (Requires USB On-The-Go)</td>
   </tr>
   <tr>
     <td>MacOS</td>
