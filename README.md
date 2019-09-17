@@ -8,6 +8,40 @@ The "LipSync" is an assistive technology device which is being developed to allo
 
 This GitHub repository will serve as a database for all files and documentation associated with the LipSync project.
 
+## Compatibility 
+
+ <table style="width:100%">
+  <tr>
+    <th>Operating Systems</th>
+    <th>Version</th>
+    <th>Release</th>
+    <th>Additional Information</th>
+  <tr>
+    <td>iOS</td>
+    <td>13.1</td>
+    <td>September 19,2019</td>
+    <td>Compatible with iphone 7 and newer versions</td>
+  </tr>
+  <tr>
+    <td>Windows</td>
+    <td>XP,7,10</td>
+    <td>2001</td>
+    <td>Compatible with Windows XP and newer versions</td>
+  </tr>
+  <tr>
+    <td>Android</td>
+    <td>4,5,6,7,8,9</td>
+    <td>Released 2013</td>
+    <td>Compatible with Android and newer versions (Requires USB On-The-Go)</td>
+  </tr>
+  <tr>
+    <td>MacOS</td>
+    <td>10</td>
+    <td>Released 2000</td>
+    <td>Compatible with Mac OS X 10.0 and newer versions</td>
+  </tr>
+  </table> 
+
 ## Download
 
  <table style="width:100%">
