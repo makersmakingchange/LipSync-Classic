@@ -4,7 +4,7 @@
 <img align="center" src="https://raw.githubusercontent.com/makersmakingchange/blog/gh-pages/_resources/images/LipSync_Logo.jpg" width="50%" height="50%" alt="LipSync Logo"/>
 </p>
 
-The "LipSync" is an assistive technology device which is being developed to allow quadriplegics and other people with limited hand use the ability to use touchscreen mobile devices by manipulation of a mouth-operated joystick with integrated sip and puff controls. We are releasing all of our work open-source, to make the Lipsync a solution that can be made at the community level for less than $300.
+The LipSync is an assistive technology device which is being developed to allow quadriplegics and other people with limited hand use the ability to use touchscreen mobile devices by manipulation of a mouth-operated joystick with integrated sip and puff controls. We are releasing all of our work open-source, to make the Lipsync a solution that can be made at the community level for less than $300.
 
 This GitHub repository will serve as a database for all files and documentation associated with the LipSync project.
 
@@ -20,7 +20,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>iOS</td>
     <td>13.1</td>
     <td>September 19,2019</td>
-    <td>Compatible with iphone 7 and newer versions (Requires USB to Lightening or USB to USB-C Adapter)</td>
+    <td>Compatible with iPhone 7 and newer versions (Requires USB to Lightening or USB to USB-C Adapter)</td>
   </tr>
   <tr>
     <td>Windows</td>
@@ -30,7 +30,7 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>Android</td>
-    <td>4,5,6,7,8,9</td>
+    <td>4-9</td>
     <td>Released 2013</td>
     <td>Compatible with Android 4 and newer versions (Requires USB On-The-Go)</td>
   </tr>
@@ -59,15 +59,21 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync Manual</td>
-    <td>1.4.6.1</td>
+    <td>1.5</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_Manual.pdf">LipSync_Manual.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
-    <td>1.4</td>
+    <td>1.5</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
+  </tr>
+  <tr>
+    <td>LipSync User Guide</td>
+    <td>1.0</td>
+    <td>PDF</td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
   </tr>
   <tr>
      <td>Mounting Document</td>
@@ -76,22 +82,22 @@ This GitHub repository will serve as a database for all files and documentation 
      <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Mounting_Document.pdf">Mounting_Document.pdf</a></td>
   </tr>
   <tr>
-    <td>LipSync BOM (XLSX)</td>
-    <td>July 3, 2018</td>
+    <td>LipSync Mouse BOM (XLSX)</td>
+    <td>September 16, 2019</td>
     <td>XLSX</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Mouse_BOM.xlsx">LipSync_Mouse_BOM.xlsx</a></td>
   </tr>
   <tr>
-    <td>LipSync BOM (CSV)</td>
-    <td>July 3, 2018</td>
+    <td>LipSync Mouse BOM (CSV)</td>
+    <td>September 16, 2019</td>
     <td>CSV</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_Mouse_BOM.csv" download target="_blank">LipSync_Mouse_BOM.csv</a></td>
   </tr>
   <tr>
-    <td>LipSync Firmware</td>
+    <td>LipSync Mouse Firmware</td>
     <td>2.67</td>
     <td>INO</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Mouse_Firmware.ino</a></td>
   </tr>
   <tr>
     <td>LipSync Interface Board Layout</td>
