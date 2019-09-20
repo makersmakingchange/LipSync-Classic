@@ -82,22 +82,22 @@ This GitHub repository will serve as a database for all files and documentation 
      <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Mounting_Document.pdf">Mounting_Document.pdf</a></td>
   </tr>
   <tr>
-    <td>LipSync Mouse BOM (XLSX)</td>
+    <td>LipSync BOM (XLSX)</td>
     <td>September 16, 2019</td>
     <td>XLSX</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_Mouse_BOM.xlsx">LipSync_Mouse_BOM.xlsx</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
   </tr>
   <tr>
-    <td>LipSync Mouse BOM (CSV)</td>
+    <td>LipSync BOM (CSV)</td>
     <td>September 16, 2019</td>
     <td>CSV</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_Mouse_BOM.csv" download target="_blank">LipSync_Mouse_BOM.csv</a></td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
   </tr>
   <tr>
-    <td>LipSync Mouse Firmware</td>
+    <td>LipSync Firmware</td>
     <td>2.67</td>
     <td>INO</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Mouse_Firmware.ino</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
   </tr>
   <tr>
     <td>LipSync Interface Board Layout</td>
