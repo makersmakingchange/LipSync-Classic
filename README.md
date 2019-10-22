@@ -95,7 +95,7 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync Firmware</td>
-    <td>2.67</td>
+    <td>2.7</td>
     <td>INO</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
   </tr>
