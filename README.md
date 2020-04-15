@@ -103,15 +103,39 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>LipSync Interface Board Layout</td>
     <td>2.71</td>
     <td>BRD</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.brd">LipSync_Interface_Board.brd</a></td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Eagle/LipSync_Interface_Board/LipSync_Interface_Board.brd">LipSync_Interface_Board.brd</a></td>
   </tr>
   <tr>
     <td>LipSync Interface Board Schematic</td>
     <td>2.71</td>
     <td>SCH</td>
-    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Eagle/LipSync_Interface_Board/LipSync_Interface_Board.sch">LipSync_Interface_Board.sch</a></td>
   </tr>
-    <tr>
+  <tr>
+    <td>JLCPCB LipSync Interface Board Gerber</td>
+    <td>2.71</td>
+    <td>ZIP</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Gerber/LipSync_Interface_Board/JLCPCB_LipSync_Interface_Board.zip">JLCPCB_LipSync_Interface_Board.zip</a></td>
+  </tr>
+  <tr>
+    <td>OSHPark LipSync Interface Board Gerber</td>
+    <td>2.71</td>
+    <td>ZIP</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Gerber/LipSync_Interface_Board/OSHPark_LipSync_Interface_Board.zip">OSHPark_LipSync_Interface_Board.zip</a></td>
+  </tr>
+  <tr>
+    <td>PCBWay LipSync Interface Board Gerber</td>
+    <td>2.71</td>
+    <td>ZIP</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Gerber/LipSync_Interface_Board/PCBWay_LipSync_Interface_Board.zip">PCBWay_LipSync_Interface_Board.zip</a></td>
+  </tr>
+  <tr>
+    <td>Seeed Fusion LipSync Interface Board Gerber</td>
+    <td>2.71</td>
+    <td>ZIP</td>
+    <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/PCB_design/Gerber/LipSync_Interface_Board/Seeed_Fusion_LipSync_Interface_Board.zip">Seeed_Fusion_LipSync_Interface_Board.zip</a></td>
+  </tr>
+  <tr>
     <td rowspan="9">Housing_design</td>
     <td rowspan="9">2.2d</td>
     <td rowspan="9">STL</td>
