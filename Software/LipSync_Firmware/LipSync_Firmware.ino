@@ -964,10 +964,10 @@ void writeSettings(String changeString) {
       delay(5);
     } 
      //Get cursor initialization values if received "IN,0:0" and perform cursor initialization if received "IN,1:1"
-     else if(changeChar[0]=='I' && changeChar[1]=='N' && changeChar[3]=='0' && changeChar[3]=='0' && changeString.length()==4) {
+     else if(changeChar[0]=='I' && changeChar[1]=='N' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getCursorInitialization();
       delay(5);
-    } else if (changeChar[0]=='I' && changeChar[1]=='N' && changeChar[3]=='1' && changeChar[3]=='1' && changeString.length()==4) {
+    } else if (changeChar[0]=='I' && changeChar[1]=='N' && changeChar[2]=='1' && changeChar[3]=='1' && changeString.length()==4) {
       setCursorInitialization(2,true);
       delay(5);
     } 
