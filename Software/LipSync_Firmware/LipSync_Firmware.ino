@@ -264,7 +264,7 @@ void loop() {
     Serial.print(yHigh);
     Serial.print(",");
     Serial.println(yLow); 
-    delay(50);
+    delay(150);
   }
 
   //Perform sip and puff actions raw mode is disabled 
