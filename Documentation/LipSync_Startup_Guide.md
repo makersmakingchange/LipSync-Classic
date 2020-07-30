@@ -1,6 +1,4 @@
-LipSync
-
-STARTUP GUIDE
+# LipSync STARTUP GUIDE
 
 **Version 1.5 / September 2019 www.MakersMakingChange.com**  
 
@@ -136,8 +134,8 @@ Supporting Applications
 The Assistant Menu allows quick access to important functions that cannot be
 accessed without physically touching the device, like the Home button, Back,
 Zoom In and Out, Screen Capture, Volume, and Restart. Turn on the Assistant Menu
-by going to **SETTING MY DEVICE ACCESSIBILITY DEXTERITY AND INTERACTION
-ASSISTANT MENU.**  If your phone doesn’t have Assistant Menu, apps Back Button
+by going to **SETTING -> MY DEVICE -> ACCESSIBILITY DEXTERITY AND INTERACTION
+-> ASSISTANT MENU.**  If your phone doesn’t have Assistant Menu, apps Back Button
 or Handy Soft Keys can be downloaded.
 
 A swiping action is required on some mobile device to unlock it. This can be
@@ -156,15 +154,15 @@ faster.
 
 ## Functions
 
-| FOR MOBILE DEVICES AND TABLETS |        |                |   |
-|--------------------------------|--------|----------------|---|
-| Function                       | Action | Time (seconds) |   |
-| Tap                            | Puff   | 1              |   |
-| Back button1                   | Sip    | 1              |   |
-| Drag2                          | Puff   | 3              |   |
-| Scrolling3                     | Sip    | 3              |   |
-| Cursor drift reset             | Puff   | 5              |   |
-| Home button1                   | Sip    | 5              |   |
+| FOR MOBILE DEVICES AND TABLETS |        |                |
+|--------------------------------|--------|----------------|
+| Function                       | Action | Time (seconds) |
+| Tap                            | Puff   | 1              |
+| Back button1                   | Sip    | 1              |
+| Drag2                          | Puff   | 3              |
+| Scrolling3                     | Sip    | 3              |
+| Cursor drift reset             | Puff   | 5              |
+| Home button1                   | Sip    | 5              |
 
 1 The back/home functions may not work if the device uses on-screen icons. In
 this case, move the cursor over the icon to tap.
@@ -175,16 +173,16 @@ this case, move the cursor over the icon to tap.
 
 Useful function examples:
 
-| FOR PCs AND LAPTOPS   |        |                |   |
-|-----------------------|--------|----------------|---|
-| Function              | Action | Time (seconds) |   |
-| Left click            | Puff   | 1              |   |
-| Right click           | Sip    | 1              |   |
-| Double-click          | Puff   | 1 each         |   |
-| Drag                  | Puff   | 3              |   |
-| Scrolling ( ↑ ↓ )     | Sip    | 3              |   |
-| Cursor drift reset    | Puff   | 5              |   |
-| Scrolling ( ↑ ↓ ← → ) | Sip    | 5              |   |
+| FOR PCs AND LAPTOPS   |        |                |
+|-----------------------|--------|----------------|
+| Function              | Action | Time (seconds) |
+| Left click            | Puff   | 1              |
+| Right click           | Sip    | 1              |
+| Double-click          | Puff   | 1 each         |
+| Drag                  | Puff   | 3              |
+| Scrolling ( ↑ ↓ )     | Sip    | 3              |
+| Cursor drift reset    | Puff   | 5              |
+| Scrolling ( ↑ ↓ ← → ) | Sip    | 5              |
 
 
 ## Speed Control
