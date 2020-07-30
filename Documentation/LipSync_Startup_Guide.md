@@ -1,6 +1,43 @@
-# LipSync STARTUP GUIDE
+![](media/36b9fb57ca8c536a4dc7f2f6f133262a.png)
+
+![LipSync](media/802dbf712eb99fcdae12b9f29f3426df.jpg)
+
+LipSync
+
+STARTUP GUIDE
 
 **Version 1.5 / September 2019 www.MakersMakingChange.com**  
+**Table of Contents**
+
+About the LipSync 3
+
+What Do You Get? 3
+
+Types of LipSync 3
+
+Getting Started 4
+
+Mounting 4
+
+Mobile Phone and Tablet Compatibility 5
+
+External Power Bank 5
+
+Connecting the LipSync to a Device 5
+
+Using the LipSync 7
+
+Functions 7
+
+Speed Control 8
+
+Feedback 9
+
+Troubleshooting 9
+
+Joystick Calibration 10
+
+![](media/852c757c8fafc9424dea5c547c481f1d.png)
 
 # About the LipSync 
 
@@ -21,6 +58,12 @@ Makers Making Change to help people in your community:
 **Want to make a build -- join us.**
 
 **Want to fund a build for a person with a disability -- join us.**
+
+## What Do You Get?
+
+![](media/35b1cbaa613d682a452e0e259a7b5899.jpg)
+
+![](media/35b1cbaa613d682a452e0e259a7b5899.jpg)
 
 ## Types of LipSync
 
@@ -84,6 +127,10 @@ Checklist for after mounting:
 
 ## Mobile Phone and Tablet Compatibility
 
+![](media/24bfd0d79f0c25e80eee6d6dac77c010.png)
+
+![](media/24bfd0d79f0c25e80eee6d6dac77c010.png)
+
 >   Not all mobile phones and tablets support external pointing devices like the
 >   LipSync or other mouse replacements. Apple iOS phones and tablets with iOS13
 >   and iPadOS or higher, and only some Android mobile phones and tablets
@@ -105,6 +152,8 @@ the mobile or tablet will not be charged.
 The order in which you connect the USB cables may affect how the LipSync
 functions. Plug the cables in the following order:
 
+![LipSync%20Startup%20Icons-17.png](media/600191695d149ed853140a92d62d2d54.png)
+
 1.  Connect the LipSync USB to the USB adapter cable’s receptacle.
 
 2.  Connect the other end of the adapter into the computing device and external
@@ -117,6 +166,8 @@ Note: If you are using a desktop or laptop the LipSync USB can be directly
 plugged into the computer USB port.
 
 ### Plugging into an iOS Device
+
+![LipSync%20Startup%20Icons-18.png](media/c4a5c7c0b0f0916f0d197277394207a9.png)
 
 1.  Connect the LipSync USB to a USB hub’s receptacle.
 
@@ -131,11 +182,13 @@ plugged into the computer USB port.
 
 Supporting Applications
 
+![](media/d2ff464c9376f5f629a012b3a3edac9e.jpg)
+
 The Assistant Menu allows quick access to important functions that cannot be
 accessed without physically touching the device, like the Home button, Back,
 Zoom In and Out, Screen Capture, Volume, and Restart. Turn on the Assistant Menu
-by going to **SETTING -> MY DEVICE -> ACCESSIBILITY DEXTERITY AND INTERACTION
--> ASSISTANT MENU.**  If your phone doesn’t have Assistant Menu, apps Back Button
+by going to **SETTING MY DEVICE ACCESSIBILITY DEXTERITY AND INTERACTION
+ASSISTANT MENU.**  If your phone doesn’t have Assistant Menu, apps Back Button
 or Handy Soft Keys can be downloaded.
 
 A swiping action is required on some mobile device to unlock it. This can be
@@ -147,6 +200,12 @@ faster.
 
 #  2 Using the LipSync
 
+![](media/1c62f030d97ce538b6f52611e7cf4289.jpg)
+
+.
+
+![](media/dfdd9f7139b0f6db04d9e068e0228cbf.png)
+
 >   IMPORTANT: Allow 3 seconds for the LED initialization sequence  
 >   to flash **each time** the LipSync is connected to a device before moving
 >   the mouthpiece. Moving it before the 3 seconds is complete will affect the
@@ -154,15 +213,15 @@ faster.
 
 ## Functions
 
-| FOR MOBILE DEVICES AND TABLETS |        |                |
-|--------------------------------|--------|----------------|
-| Function                       | Action | Time (seconds) |
-| Tap                            | Puff   | 1              |
-| Back button1                   | Sip    | 1              |
-| Drag2                          | Puff   | 3              |
-| Scrolling3                     | Sip    | 3              |
-| Cursor drift reset             | Puff   | 5              |
-| Home button1                   | Sip    | 5              |
+| FOR MOBILE DEVICES AND TABLETS |        |                |   |
+|--------------------------------|--------|----------------|---|
+| Function                       | Action | Time (seconds) |   |
+| Tap                            | Puff   | 1              |   |
+| Back button1                   | Sip    | 1              |   |
+| Drag2                          | Puff   | 3              |   |
+| Scrolling3                     | Sip    | 3              |   |
+| Cursor drift reset             | Puff   | 5              |   |
+| Home button1                   | Sip    | 5              |   |
 
 1 The back/home functions may not work if the device uses on-screen icons. In
 this case, move the cursor over the icon to tap.
@@ -171,19 +230,28 @@ this case, move the cursor over the icon to tap.
 
 3 The green LED will stay on at all times in this mode
 
+![](media/5443851f8144966daab2777c394c6eae.png)
+
+![](media/c4d3f2f5e2e6c2d8d6ed74fe10f6e261.png)
+
 Useful function examples:
 
-| FOR PCs AND LAPTOPS   |        |                |
-|-----------------------|--------|----------------|
-| Function              | Action | Time (seconds) |
-| Left click            | Puff   | 1              |
-| Right click           | Sip    | 1              |
-| Double-click          | Puff   | 1 each         |
-| Drag                  | Puff   | 3              |
-| Scrolling ( ↑ ↓ )     | Sip    | 3              |
-| Cursor drift reset    | Puff   | 5              |
-| Scrolling ( ↑ ↓ ← → ) | Sip    | 5              |
+| FOR PCs AND LAPTOPS   |        |                |   |
+|-----------------------|--------|----------------|---|
+| Function              | Action | Time (seconds) |   |
+| Left click            | Puff   | 1              |   |
+| Right click           | Sip    | 1              |   |
+| Double-click          | Puff   | 1 each         |   |
+| Drag                  | Puff   | 3              |   |
+| Scrolling ( ↑ ↓ )     | Sip    | 3              |   |
+| Cursor drift reset    | Puff   | 5              |   |
+| Scrolling ( ↑ ↓ ← → ) | Sip    | 5              |   |
 
+Useful function examples:
+
+![](media/0ffa6d477525c602e61bce5e85c7a9dd.png)
+
+![](media/471dc028754d797f88c3698ae2249ba1.png)
 
 ## Speed Control
 
@@ -235,3 +303,6 @@ for 3 seconds.
 
 **Solution 4:** Perform the joystick calibration found on the follow page.
 
+## Joystick Calibration
+
+![](media/d7a0a9af53f5dd11a11b472afa4ef454.jpg)
