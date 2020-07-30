@@ -1,6 +1,6 @@
-**LipSync Mouse: User Guide**
+# LipSync Mouse: User Guide
 
-# Introduction
+## Introduction
 
 The LipSync is a sip-and-puff joystick that allows a user with limited or no arm
 mobility to control their computer. It emulates a computer mouse and can perform
@@ -9,7 +9,7 @@ left click, right click, scroll, and other mouse functions.
 This assistive device is suitable for users with spinal cord injury, MS, ALS,
 and other disabilities that restrict arm movement.
 
-# Device Compatibility
+## Device Compatibility
 
 1.  Phone(Phone,Android 4.0+,iOS13+,Windows)
 
@@ -17,20 +17,20 @@ and other disabilities that restrict arm movement.
 
 3.  Computer & Laptop (Windows,MacOS)
 
-# Powering the LipSyn
+## Powering the LipSyn
 
 The LipSync does not have an internal battery so it needs to be powered at all
 times with an external power source. Users can draw power off of the device
 (except on iOS devices) or use a power bank(>2700 mAh).
 
-# Initialization
+## Initialization
 
 Allow 5 seconds for the LED initialization sequence to flash
 
 **each time** the LipSync is plugged into a device. Ensure the mouthpiece
 remains centred and untouched during this time.
 
-# Connecting to a Device
+## Connecting to a Device
 
 **For computers and Android & Windows devices**, connect the LipSync USB into
 the device. Use an adapter if necessary.
@@ -41,17 +41,16 @@ device.
 
 For more information, see *LipSync Mouse: Setup Guide*.
 
-# Cursor Setup on iOS Devices
+## Cursor Setup on iOS Devices
 
 1.  Open your device’s *Settings* \> *Accessibility* \> *Touch* \>
     *AssistiveTouch* \> Turn it on.
 
 2.  Turn off *Always Show Menu*
 
-# Functions for Mobile or Tablet
+## Functions for Mobile or Tablet
 
-| **FUNCTION**       | **ACTION** | **ACTION TIME**              |
-|                    |            | **(SECONDS)**                |
+| FUNCTION           |   ACTION   |   ACTION TIME(SECONDS)       |
 |--------------------|------------|------------------------------|
 | Tap                | Puff       | 1                            |
 | Back button1       | Sip        | 1                            |
@@ -65,10 +64,9 @@ this case, move the cursor over the icon to tap.
 2 The red LED will stay on at all times in this mode  
 3 The green LED will stay on at all times in this mode
 
-# Functions for Computer
+## Functions for Computer
 
-| **FUNCTION**        | **ACTION** | **ACTION TIME**              |
-|                     |            | **(SECONDS)**                |
+| FUNCTION            |   ACTION   |   ACTION TIME(SECONDS)       |
 |---------------------|------------|------------------------------|
 | Left click          | Puff       | 1                            |
 | Right click         | Sip        | 1                            |
