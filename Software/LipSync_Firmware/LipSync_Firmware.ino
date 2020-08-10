@@ -15,7 +15,7 @@
 
 //Developed by : MakersMakingChange
 //Firmware : LipSync_Firmware
-//VERSION: 2.71 (20 June 2020) 
+//VERSION: 2.71 (09 Aug 2020) 
 
 
 #include <EEPROM.h>
@@ -64,6 +64,7 @@
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_RADIUS 30.0                        //Constant joystick radius
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
+#define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
 
 //***VARIABLE DECLARATION***//
 
@@ -72,11 +73,13 @@ int actionButton[6] = {ACTION_BUTTON_1, ACTION_BUTTON_2, ACTION_BUTTON_3, ACTION
 
 int lastButtonState[5];   
 
-int xHigh, yHigh, xLow, yLow;                       
+int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
+int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
 int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //Individual neutral starting positions for each FSR
 
 int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
 
+float changeTolerance;
 
 float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
 float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
@@ -174,6 +177,8 @@ void setup() {
   delay(10);
   getCursorCalibration(false);                    //Get FSR Max calibration values 
   delay(10);
+  changeTolerance = getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,false); // Get change tolerance using max FSR readings and default tolerance percentage 
+  delay(10);
   getPressureThreshold(false);                    //Set the pressure sensor threshold boundaries
   delay(10);
   debugModeEnabled = getDebugMode(false);         //Get the debug mode state
@@ -209,6 +214,13 @@ void loop() {
   yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
   yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
 
+  //Check the FSR changes from previous reading and set the skip flag to true if the changes are beyond the tolerance 
+  bool skipChange = abs(xHigh - xHighPrev) < changeTolerance && abs(xLow - xLowPrev) < changeTolerance && abs(yHigh - yHighPrev) < changeTolerance && abs(yLow - yLowPrev) < changeTolerance;
+  xHighPrev = xHigh;
+  xLowPrev = xLow;
+  yHighPrev = yHigh;
+  yLowPrev = yLow;
+
   xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
   xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
   xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
@@ -220,7 +232,7 @@ void loop() {
     pollCounter++;
     delay(20); 
     //Perform cursor movment actions if joystick has been in active zone for 3 or more poll counts
-    if (pollCounter >= 3) {
+    if(!skipChange && pollCounter >= 3) {
         if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {
           //Serial.println("quad1");
           //Mouse.move(xCursorHigh(xHigh), yCursorHigh(yHigh), 0);
@@ -270,7 +282,7 @@ void loop() {
   //Perform sip and puff actions raw mode is disabled 
   if(!rawModeEnabled) {
     sipAndPuffHandler();
-  }                                                       //Pressure sensor sip and puff functions                                                   //Pressure sensor sip and puff functions
+  }                                                       //Pressure sensor sip and puff functions
   delay(5);
   pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
 }
@@ -659,10 +671,10 @@ void setCursorInitialization(int mode, bool responseEnabled) {
   delay(10);
 
   //Set the neutral values 
-  xHighNeutral = xHigh;
-  xLowNeutral = xLow;
-  yHighNeutral = yHigh;
-  yLowNeutral = yLow;
+  xHighPrev = xHighNeutral = xHigh;
+  xLowPrev = xLowNeutral = xLow;
+  yHighPrev = yHighNeutral = yHigh;
+  yLowPrev = yLowNeutral = yLow;
 
   //Get comp factors from memory if mode set to 1 
   if(mode==1){
@@ -782,6 +794,28 @@ void setCursorCalibration(bool responseEnabled) {
   Serial.print(",");
   Serial.println(xHighMax); 
   delay(10);
+}
+
+//*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
+
+int getChangeTolerance(float changePercent, bool responseEnabled) {
+  int changeTolerance=(int)((xHighMax+xLowMax+yHighMax+yLowMax) * (changePercent/100.0))/4;
+  if(responseEnabled){
+    Serial.print("SUCCESS:CT,0:"); 
+    Serial.print(changePercent); 
+    Serial.print(","); 
+    Serial.print(changeTolerance); 
+    Serial.print(","); 
+    Serial.print(xHighMax); 
+    Serial.print(","); 
+    Serial.print(xLowMax); 
+    Serial.print(",");
+    Serial.print(yHighMax); 
+    Serial.print(",");
+    Serial.println(xHighMax); 
+  }
+  delay(10);
+  return changeTolerance;
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
@@ -979,6 +1013,11 @@ void writeSettings(String changeString) {
       setCursorCalibration(true);
       delay(5);
     } 
+     //Get change tolerance values if received "CT,0:0" 
+      else if(changeChar[0]=='C' && changeChar[1]=='T' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
+      getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,true);
+      delay(5);
+    }
     //Get Button mapping : "MP,0:0" , Set Button mapping : "MP,1:012345"
     else if (changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getButtonMapping(true);
