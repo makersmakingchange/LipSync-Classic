@@ -79,10 +79,10 @@ int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //I
 
 int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
 
-float changeTolerance;
-
 float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
 float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
+
+int changeTolerance;                              //The change tolerance between FSRs readings 
 
 int cursorDeltaBox;                               //The delta value for the boundary range in all 4 directions about the x,y center
 int cursorDelta;                                  //The amount cursor moves in some single or combined direction
