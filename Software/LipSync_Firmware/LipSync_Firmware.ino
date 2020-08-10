@@ -82,7 +82,7 @@ int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set
 float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
 float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
 
-int changeTolerance;                              //The change tolerance between FSRs readings 
+int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
 
 int cursorDeltaBox;                               //The delta value for the boundary range in all 4 directions about the x,y center
 int cursorDelta;                                  //The amount cursor moves in some single or combined direction
@@ -177,7 +177,7 @@ void setup() {
   delay(10);
   getCursorCalibration(false);                    //Get FSR Max calibration values 
   delay(10);
-  changeTolerance = getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,false); // Get change tolerance using max FSR readings and default tolerance percentage 
+  getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,false); // Get change tolerance using max FSR readings and default tolerance percentage 
   delay(10);
   getPressureThreshold(false);                    //Set the pressure sensor threshold boundaries
   delay(10);
@@ -215,7 +215,7 @@ void loop() {
   yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are beyond the tolerance 
-  bool skipChange = abs(xHigh - xHighPrev) < changeTolerance && abs(xLow - xLowPrev) < changeTolerance && abs(yHigh - yHighPrev) < changeTolerance && abs(yLow - yLowPrev) < changeTolerance;
+  bool skipChange = abs(xHigh - xHighPrev) < xHighChangeTolerance && abs(xLow - xLowPrev) < xLowChangeTolerance && abs(yHigh - yHighPrev) < yHighChangeTolerance && abs(yLow - yLowPrev) < yLowChangeTolerance;
   xHighPrev = xHigh;
   xLowPrev = xLow;
   yHighPrev = yHigh;
@@ -782,6 +782,9 @@ void setCursorCalibration(bool responseEnabled) {
   EEPROM.put(28, yLowMax);
   delay(10);
 
+  getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,false);
+  delay(10);
+
   ledBlink(5, 250, 3);
 
    (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
@@ -798,24 +801,24 @@ void setCursorCalibration(bool responseEnabled) {
 
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
 
-int getChangeTolerance(float changePercent, bool responseEnabled) {
-  int changeTolerance=(int)((xHighMax+xLowMax+yHighMax+yLowMax) * (changePercent/100.0))/4;
+void getChangeTolerance(float changePercent, bool responseEnabled) {
+  xHighChangeTolerance=(int)(xHighMax * (changePercent/100.0));
+  xLowChangeTolerance=(int)(xLowMax * (changePercent/100.0));
+  yHighChangeTolerance=(int)(yHighMax * (changePercent/100.0));
+  yLowChangeTolerance=(int)(yLowMax * (changePercent/100.0));
   if(responseEnabled){
     Serial.print("SUCCESS:CT,0:"); 
     Serial.print(changePercent); 
     Serial.print(","); 
-    Serial.print(changeTolerance); 
+    Serial.print(xHighChangeTolerance); 
     Serial.print(","); 
-    Serial.print(xHighMax); 
+    Serial.print(xLowChangeTolerance); 
     Serial.print(","); 
-    Serial.print(xLowMax); 
+    Serial.print(yHighChangeTolerance); 
     Serial.print(",");
-    Serial.print(yHighMax); 
-    Serial.print(",");
-    Serial.println(xHighMax); 
+    Serial.println(yLowChangeTolerance); 
   }
   delay(10);
-  return changeTolerance;
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
