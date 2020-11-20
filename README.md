@@ -192,12 +192,12 @@ For technical questions, to get involved or share your LipSync experience we enc
 <p align="center">
 <a href="https://twitter.com/MakerMakeChange">
          <img alt="Twitter" img align="center" src="https://i.imgur.com/OvSm9h3.png">
-<a href="https://www.instagram.com/makersmakingchange/">
+<a href="https://www.instagram.com/makersmakingchange/"></a> 
          <img alt="Instagram" img align="center" src="https://i.imgur.com/ouUS0Xa.png">       
-<a href="https://www.facebook.com/makersmakechange/?fref=tag">
+<a href="https://www.facebook.com/makersmakechange/?fref=tag"></a> 
          <img alt="Facebook" img align="center" src="https://i.imgur.com/Ok6Jn8P.png"> 
-<a href="https://www.youtube.com/channel/UCtn0ODz_yq_w9Uy6lUXGX-A">
-         <img alt="Youtube" img align="center" src="https://i.imgur.com/roSOrQE.png">           
+<a href="https://www.youtube.com/channel/UCtn0ODz_yq_w9Uy6lUXGX-A"></a> 
+         <img alt="Youtube" img align="center" src="https://i.imgur.com/roSOrQE.png"></a>            
 </p>
 <br>
 <hr>
