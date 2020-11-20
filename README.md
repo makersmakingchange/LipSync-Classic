@@ -164,16 +164,44 @@ This GitHub repository will serve as a database for all files and documentation 
 </tr>
 </table> 
 
+## Resources
+
+<table style="width:100%">
+  <tr>
+    <th>Resource</th>
+    <th>Link</th>
+  </tr>
+  <tr>
+    <td>LipSync Firmware and Calibration Tutorial</td>
+    <td><a href="https://www.youtube.com/watch?v=RnpA24WH0Qk">Video</a></td>
+  </tr>
+    <tr>
+    <td>LipSync Build Tutorial</td>
+    <td><a href="https://www.youtube.com/watch?v=lBXpbkp5DW4&list=PLhoPg9bDvBR4CSFRfNbQ87ALnfaHOyM3C">Video</a></td>
+  </tr>
+</table> 
+
 ## Updates 
-For latest updates regarding the project we encourage you to visit our <a href="https://makersmakingchange.github.io/blog/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
+For latest updates regarding the project we encourage you to visit our <a href="https://www.makersmakingchange.com/news/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
 
 
 ## Contact Us
 
-For technical questions, to get involved or share your LipSync experience we encourage you to contact info@makersmakingchange.com
+For technical questions, to get involved or share your LipSync experience we encourage you to contact info@makersmakingchange.com.
 
-
-
+<p align="center">
+<a href="https://twitter.com/MakerMakeChange">
+         <img alt="Twitter" img align="center" src="https://i.imgur.com/OvSm9h3.png">
+<a href="https://www.instagram.com/makersmakingchange/">
+         <img alt="Instagram" img align="center" src="https://i.imgur.com/ouUS0Xa.png">       
+<a href="https://www.facebook.com/makersmakechange/?fref=tag">
+         <img alt="Facebook" img align="center" src="https://i.imgur.com/Ok6Jn8P.png"> 
+<a href="https://www.youtube.com/channel/UCtn0ODz_yq_w9Uy6lUXGX-A">
+         <img alt="Youtube" img align="center" src="https://i.imgur.com/roSOrQE.png">           
+</p>
+<br>
+<hr>
+<br>
 <p align="center">
 <img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/>
 </p>
