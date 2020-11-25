@@ -15,7 +15,7 @@
 
 //Developed by : MakersMakingChange
 //Firmware : LipSync_Firmware
-//VERSION: 2.71 (18 Aug 2020) 
+//VERSION: 2.71 (24 Nov 2020) 
 
 
 #include <EEPROM.h>
@@ -267,7 +267,6 @@ void loop() {
   //Debug information 
   
   if(debugModeEnabled) {
-    
     Serial.print("LOG:3:");
     Serial.print(xHigh);
     Serial.print(",");
@@ -443,10 +442,11 @@ void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
 
 bool getDebugMode(bool responseEnabled) {
   bool debugState=DEBUG_MODE;
+  int debugIntValue;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(34, debugState);
+    EEPROM.get(34, debugIntValue);
     delay(5);
-    if(debugState!=0 && debugState!=1) {
+    if(debugIntValue!=0 && debugIntValue!=1) {
       EEPROM.put(34, DEBUG_MODE);
       delay(5);
       debugState=DEBUG_MODE;
@@ -515,6 +515,7 @@ void sendDebugData() {
 //***SEND RAW DATA FUNCTION***//
 
 void sendRawData(int x, int y, int action, int xUp, int xDown,int yUp,int yDown) {
+
   Serial.print("RAW:1:"); 
   Serial.print(x); 
   Serial.print(","); 
@@ -529,16 +530,18 @@ void sendRawData(int x, int y, int action, int xUp, int xDown,int yUp,int yDown)
   Serial.print(yUp); 
   Serial.print(",");
   Serial.println(yDown); 
+  
 }
 
 //***GET RAW MODE STATE FUNCTION***//
 
 bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
+  int rawIntValue;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(36, rawState);
+    EEPROM.get(36, rawIntValue);
     delay(5);
-    if(rawState!=0 && rawState!=1) {
+    if(rawIntValue!=0 && rawIntValue!=1) { 
       EEPROM.put(36, RAW_MODE);
       delay(5);
       rawState=RAW_MODE;
