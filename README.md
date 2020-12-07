@@ -65,7 +65,7 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
-    <td>1.5</td>
+    <td>1.6</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
   </tr>
@@ -204,7 +204,7 @@ For technical questions, to get involved or share your LipSync experience we enc
 <br>
 <p align="center">
 <a href="https://www.oshwa.org">
-	<img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/>
+	<img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/></a>
 </p>
 
 <p align="center">
