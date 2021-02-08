@@ -71,7 +71,7 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync User Guide</td>
-    <td>1.0</td>
+    <td>1.1</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
   </tr>
