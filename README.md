@@ -20,7 +20,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>iOS</td>
     <td>13.1</td>
     <td>September 19,2019</td>
-    <td>Compatible with iPhone 7 and newer versions (Requires USB to Lightening or USB to USB-C Adapter)</td>
+    <td>Compatible with iPhone 7 and newer versions (Requires USB to Lightning or USB to USB-C Adapter)</td>
   </tr>
   <tr>
     <td>Windows</td>
