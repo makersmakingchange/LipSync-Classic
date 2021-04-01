@@ -20,7 +20,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>iOS</td>
     <td>13.1</td>
     <td>September 19,2019</td>
-    <td>Compatible with iPhone 7 and newer versions (Requires USB to Lightening or USB to USB-C Adapter)</td>
+    <td>Compatible with iPhone 7 and newer versions (Requires USB to Lightning or USB to USB-C Adapter)</td>
   </tr>
   <tr>
     <td>Windows</td>
@@ -65,13 +65,13 @@ This GitHub repository will serve as a database for all files and documentation 
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
-    <td>1.5</td>
+    <td>1.6</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync User Guide</td>
-    <td>1.0</td>
+    <td>1.1</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
   </tr>
@@ -164,18 +164,47 @@ This GitHub repository will serve as a database for all files and documentation 
 </tr>
 </table> 
 
+## Resources
+
+<table style="width:100%">
+  <tr>
+    <th>Resource</th>
+    <th>Link</th>
+  </tr>
+  <tr>
+    <td>LipSync Firmware and Calibration Tutorial</td>
+    <td><a href="https://www.youtube.com/watch?v=RnpA24WH0Qk">Video</a></td>
+  </tr>
+    <tr>
+    <td>LipSync Build Tutorial</td>
+    <td><a href="https://www.youtube.com/watch?v=lBXpbkp5DW4&list=PLhoPg9bDvBR4CSFRfNbQ87ALnfaHOyM3C">Video</a></td>
+  </tr>
+</table> 
+
 ## Updates 
-For latest updates regarding the project we encourage you to visit our <a href="https://makersmakingchange.github.io/blog/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
+For latest updates regarding the project we encourage you to visit our <a href="https://www.makersmakingchange.com/news/">blog</a> and <a href="https://hackaday.io/project/13424-lipsync">Hackaday</a> page.
 
 
 ## Contact Us
 
-For technical questions, to get involved or share your LipSync experience we encourage you to contact info@makersmakingchange.com
-
-
+For technical questions, to get involved or share your LipSync experience we encourage you to contact info@makersmakingchange.com.
 
 <p align="center">
-<img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/>
+<a href="https://twitter.com/MakerMakeChange">
+         <img alt="Twitter" img align="center" src="https://i.imgur.com/OvSm9h3.png"></a> 
+<a href="https://www.instagram.com/makersmakingchange/">
+         <img alt="Instagram" img align="center" src="https://i.imgur.com/ouUS0Xa.png"></a>        
+<a href="https://www.facebook.com/makersmakechange/?fref=tag"> 
+         <img alt="Facebook" img align="center" src="https://i.imgur.com/Ok6Jn8P.png"></a>  
+<a href="https://www.youtube.com/channel/UCtn0ODz_yq_w9Uy6lUXGX-A"> 
+         <img alt="Youtube" img align="center" src="https://i.imgur.com/roSOrQE.png"></a>            
+</p>
+<br>
+<hr>
+<br>
+<p align="center">
+<a href="https://www.oshwa.org">
+	<img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/></a>
 </p>
 
 <p align="center">
