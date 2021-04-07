@@ -10,7 +10,7 @@
 //  oooo::::::.  .ooo:    +ooo`           :o//:::+ooo:      /ooo.       ooo/     .o-o-o`   ./oooo/:::/+/
 //  +ooooooooo:  .ooo:    /ooo`           -/++ooo+/:.       :ooo.       ooo:      `.o.+      `-/+oooo+/-
 //
-//An assistive technology device which is developed to allow quadriplegics to use touchscreen mobile devices by manipulation of a mouth-operated joystick with integrated sip and puff controls.
+//An assistive technology alternative input device: a mouth-operated joystick with integrated sip and puff controls.
 */
 
 //Developed by : MakersMakingChange
