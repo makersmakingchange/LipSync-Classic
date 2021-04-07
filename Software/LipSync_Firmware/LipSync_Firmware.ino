@@ -987,16 +987,19 @@ void factoryReset(bool responseEnabled) {
     setButtonMapping(actionButton,false);               //set default action mapping
     delay(10);
 
-    //Set the default values that are stored in EEPROM
+    //Set the default values
     cursorSpeedCounter = SPEED_COUNTER; 
+    cursorDelay =     cursorParams[cursorSpeedCounter]._delay;
+    cursorFactor =    cursorParams[cursorSpeedCounter]._factor;
+    cursorMaxSpeed =  cursorParams[cursorSpeedCounter]._maxSpeed;
+    
     debugModeEnabled = DEBUG_MODE;  
     rawModeEnabled = RAW_MODE;
 
     getCompFactor();                                          
     delay(10);
-    cursorDelay =     cursorParams[cursorSpeedCounter]._delay;
-    cursorFactor =    cursorParams[cursorSpeedCounter]._factor;
-    cursorMaxSpeed =  cursorParams[cursorSpeedCounter]._maxSpeed;
+    
+    
     delay(10);
 
     }
