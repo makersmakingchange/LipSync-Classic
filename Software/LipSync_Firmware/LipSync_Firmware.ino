@@ -10,13 +10,14 @@
 //  oooo::::::.  .ooo:    +ooo`           :o//:::+ooo:      /ooo.       ooo/     .o-o-o`   ./oooo/:::/+/
 //  +ooooooooo:  .ooo:    /ooo`           -/++ooo+/:.       :ooo.       ooo:      `.o.+      `-/+oooo+/-
 //
-//An assistive technology alternative input device: a mouth-operated joystick with integrated sip and puff controls.
+//An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
 */
 
 //Developed by : MakersMakingChange
 //Firmware : LipSync_Firmware
 //VERSION: 2.71.1 (01 Apr 2021) 
-
+//Copyright Neil Squire Society 2021.
+// todo: add license
 
 #include <EEPROM.h>
 #include <Mouse.h>
