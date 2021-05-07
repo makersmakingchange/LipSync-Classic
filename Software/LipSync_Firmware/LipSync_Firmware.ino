@@ -722,7 +722,7 @@ void getCursorInitialization() {
 
 void setCursorInitialization(int mode, bool cmdResponseEnabled) {
 
-  ledOn(1);
+  ledOn(1); //Turn on Green LED
 
   xHigh = analogRead(X_DIR_HIGH_PIN);               //Set the initial neutral x-high value of joystick
   delay(10);
@@ -1219,12 +1219,13 @@ void pushButtonHandler(int switchPin1, int switchPin2) {
 //***SIP AND PUFF ACTION HANDLER FUNCTION***//
 
 void sipAndPuffHandler() {
-  //Perform pressure sensor sip and puff functions
-  cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;   //Read the pressure transducer analog value and convert it using ADC to a value between [0.0V - 5.0V]
+  //Read pressure sensor for sip and puff functions
+  cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;   //Read the pressure transducer analog value and convert it a voltage between [0.0V - 5.0V]
 
   //Check if the pressure is under puff pressure threshold 
   if (cursorPressure < puffThreshold) {             
-    while (cursorPressure < puffThreshold) {
+    //Puff detected
+    while (cursorPressure < puffThreshold) { // Continue measuring pressure until puff stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       puffCount++;                                //Count how long the pressure value has been under puff pressure threshold
       delay(5);
@@ -1243,7 +1244,8 @@ void sipAndPuffHandler() {
 
   //Check if the pressure is above sip pressure threshold 
   if (cursorPressure > sipThreshold) {
-    while (cursorPressure > sipThreshold) {
+    // Sip detected
+    while (cursorPressure > sipThreshold) { // Continue measuring pressure until sip stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       sipCount++;                                 //Count how long the pressure value has been above sip pressure threshold
       delay(5);
@@ -1315,7 +1317,7 @@ void performButtonAction(int actionButtonNumber) {
           Mouse.release(MOUSE_LEFT);
           ledClear();
         } else {
-          ledOn(2);
+          ledOn(2); //Turn on RED LED
           Mouse.press(MOUSE_LEFT);
           delay(5);
         }
@@ -1323,7 +1325,7 @@ void performButtonAction(int actionButtonNumber) {
       }
       case 3: {
         //Scroll: Perform mouse scroll action if sip counter value is under 750 and more than 150 ( 3 Second Long Sip )
-        ledOn(1);
+        ledOn(1); // Turn on Green LED
         cursorScroll();
         delay(5);
         break;
@@ -1358,13 +1360,13 @@ void performButtonAction(int actionButtonNumber) {
 
 void ledOn(int ledNumber) {
   switch (ledNumber) {
-    case 1: {
+    case 1: { //Turn GREEN LED on
         digitalWrite(LED_1_PIN, HIGH);
         delay(5);
         digitalWrite(LED_2_PIN, LOW);
         break;
       }
-    case 2: {
+    case 2: { // Turn RED LED on
         digitalWrite(LED_2_PIN, HIGH);
         delay(5);
         digitalWrite(LED_1_PIN, LOW);
@@ -1518,7 +1520,7 @@ void cursorScroll(void) {
     // Read sip and puff input
     float scrollRelease = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
 
-
+    // Read FSR Inputs
     xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
     xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
     xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
@@ -1551,7 +1553,7 @@ void cursorScroll(void) {
         int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
         int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
-        Mouse.move(0, 0, yCursor);
+        Mouse.move(0, 0, vCursor);
         delay(cursorDelay * 35);  // 5 x 35 = 175 ms
         
     
