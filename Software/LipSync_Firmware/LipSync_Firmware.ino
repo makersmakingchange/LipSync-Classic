@@ -68,13 +68,14 @@
 
 //***SERIAL SETTINGS VARIABLE***//
 
-#define SERIAL_SETTINGS true                    
+#define SERIAL_SETTINGS true                      //Enable API Serial interface = true , Disable API serial interface = false             
 
+const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
 
 //***VARIABLE DECLARATION***//
 
 //***Map Sip & Puff actions to cursor buttons for mode 1***//
-int actionButton[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};
+int actionButton[6]; 
 
 int lastButtonState[5];   
 
@@ -156,7 +157,7 @@ bool settingsEnabled = false;                           //Serial input settings 
 void setup() {
   
   Serial.begin(115200);                           //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
-  
+
   initializePins();                               //Initialize Arduino input and output pins
 
   Mouse.begin();                                  //Initialize the HID mouse functions
@@ -853,6 +854,9 @@ void getChangeTolerance(float changePercent, bool responseEnabled) {
 //***GET BUTTON MAPPING FUNCTION***//
 
 void getButtonMapping(bool responseEnabled) {
+  
+  memcpy(actionButton, defaultButtonMapping, sizeof(actionButton));     //Initialize default sip and puff button actions 
+  
   if (SERIAL_SETTINGS) {
     for (int i = 0; i < 6; i++) {
       int buttonMapping;
@@ -983,9 +987,7 @@ void factoryReset(bool responseEnabled) {
     EEPROM.put(36, RAW_MODE);                           //set default button mapping
     delay(10);  
     
-    //int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};
-    //setButtonMapping(defaultButtonMapping,false);
-    setButtonMapping(actionButton,false);               //set default action mapping
+    setButtonMapping(defaultButtonMapping,false);       //set default action mapping
     delay(10);
 
     //Set the default values
