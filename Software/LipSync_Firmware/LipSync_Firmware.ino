@@ -17,12 +17,12 @@
 //Firmware : LipSync_Firmware
 //VERSION: 2.71.1 (01 Apr 2021) 
 //Copyright Neil Squire Society 2021.
-// todo: add license
+
 
 #include <EEPROM.h>
 #include <Mouse.h>
 #include <math.h>
-
+#include "LipSync_Common.h"
 
 //***CUSTOMIZABLE VARIABLES***//
 #define SPEED_COUNTER 5                           //Default cursor speed level
@@ -134,8 +134,6 @@ _cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, se
 // Cursor Rotation Angle Variables
 int rotationAngle=0;                                      //Declare rotation angle variables
 float rotationAngle11, rotationAngle12, rotationAngle21, rotationAngle22;
-
-
 
 int cursorSpeedCounter; 
 
