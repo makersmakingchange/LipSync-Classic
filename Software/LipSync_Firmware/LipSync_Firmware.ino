@@ -1562,7 +1562,7 @@ void cursorScroll(void) {
       break;
     }
         
-    delay(250);
+    delay(cursorDelay);
   }
     if(debugModeEnabled) {
     Serial.println("CursorScroll Mode Ended");
