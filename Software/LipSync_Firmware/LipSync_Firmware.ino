@@ -1553,7 +1553,7 @@ void cursorScroll(void) {
         int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
         int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
-        Mouse.move(0, 0, vCursor);
+        Mouse.move(0, 0, -1* vCursor); // Apply vertical direction to scroll
         delay(cursorDelay * 35);  // 5 x 35 = 175 ms
         
     
