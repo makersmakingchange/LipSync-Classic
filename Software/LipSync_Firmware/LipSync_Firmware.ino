@@ -1502,7 +1502,7 @@ void cursorMiddleClick(void) {
 
 void cursorScroll(void) {
   if(debugModeEnabled) {
-    Serial.println("CursorScroll Mode Started");
+    Serial.println("cursorScroll Mode Started");
   }
   
   while (1) { //continue in scroll mode until released by a sip or a puff input
@@ -1553,7 +1553,7 @@ void cursorScroll(void) {
         int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
         int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
-        Mouse.move(0, 0, -1* vCursor); // Apply vertical direction to scroll
+        Mouse.move(0, 0, -1* vCursor); // Apply vertical direction to scroll 
         delay(cursorDelay * 35);  // 5 x 35 = 175 ms
         
     
@@ -1565,7 +1565,7 @@ void cursorScroll(void) {
     delay(cursorDelay);
   }
     if(debugModeEnabled) {
-    Serial.println("CursorScroll Mode Ended");
+    Serial.println("cursorScroll Mode Ended");
   }
 }
 
