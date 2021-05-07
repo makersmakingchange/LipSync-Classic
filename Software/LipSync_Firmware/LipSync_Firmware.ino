@@ -97,6 +97,10 @@ unsigned int puffCount, sipCount;                 //The puff and long sip increm
 
 int pollCounter = 0;                              //Cursor poll counter
 
+
+int xCursor = 0;                                  //Mouse cursor component
+int yCursor = 0;                                  //Mouse cursor component
+
 int cursorDelay;
 float cursorFactor;
 int cursorMaxSpeed;
@@ -212,44 +216,87 @@ void loop() {
   
   settingsEnabled=serialSettings(settingsEnabled);       //Check to see if setting option is enabled in Lipsync
 
+  cursorHandler();                                //Read the joystick values and output mouse cursor movements.
+
+  //Perform sip and puff actions raw mode is disabled 
+  if(!rawModeEnabled) {
+    sipAndPuffHandler();                           //Pressure sensor sip and puff functions
+  }                                                       
+  delay(5);
+  pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
+}
+
+//***END OF INFINITE LOOP***//
+
+//-----------------------------------------------------------------------------------//
+
+
+//*** CURSOR HANDLER FUNCTION***//
+
+void cursorHandler(void) {
+
+  // Reset cursor values
+  xCursor = 0;
+  yCursor = 0;
+
+  // Measure force sensitive resitors
   xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
-  xLow = analogRead(X_DIR_LOW_PIN);               //Read analog values of FSR's : A1
+  xLow  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
   yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
-  yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
+  yLow  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are in the change tolerance range
-  bool skipChange = abs(xHigh - xHighPrev) < xHighChangeTolerance && abs(xLow - xLowPrev) < xLowChangeTolerance && abs(yHigh - yHighPrev) < yHighChangeTolerance && abs(yLow - yLowPrev) < yLowChangeTolerance;
+  bool skipChange = abs(xHigh - xHighPrev) < xHighChangeTolerance 
+                 && abs(xLow  - xLowPrev)  < xLowChangeTolerance 
+                 && abs(yHigh - yHighPrev) < yHighChangeTolerance 
+                 && abs(yLow  - yLowPrev)  < yLowChangeTolerance;
+  
+  // Set FSR values for next skip check
   xHighPrev = xHigh;
   xLowPrev = xLow;
   yHighPrev = yHigh;
   yLowPrev = yLow;
 
+  // Calculate the magnitude of the movement for each direction / quadrant
   xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
   xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
   xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
   xLowYLow = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
 
-  //Check to see if the joystick has moved
+  //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
     
     pollCounter++;      //Add to the poll counter
     delay(20); 
+    
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
     if(!skipChange && pollCounter >= 3) {
         if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1
-          (rawModeEnabled)? sendRawData(xCursorHigh(xHigh),yCursorHigh(yHigh),sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursorHigh(xHigh), yCursorHigh(yHigh), 0);
+          xCursor = xCursorHigh(xHigh);
+          yCursor = yCursorHigh(yHigh);
+          
+          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4
-          (rawModeEnabled)? sendRawData(xCursorHigh(xHigh),yCursorLow(yLow),sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursorHigh(xHigh), yCursorLow(yLow), 0);
+          xCursor = xCursorHigh(xHigh);
+          yCursor = yCursorLow(yLow);
+          
+          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3
-           (rawModeEnabled)? sendRawData(xCursorLow(xLow),yCursorLow(yLow),sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursorLow(xLow), yCursorLow(yLow), 0);
+          xCursor = xCursorLow(xLow);
+          yCursor = yCursorLow(yLow);
+          
+          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2
-          (rawModeEnabled)? sendRawData(xCursorLow(xLow),yCursorHigh(yHigh),sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursorLow(xLow), yCursorHigh(yHigh), 0);
+          xCursor = xCursorLow(xLow);
+          yCursor = yCursorHigh(yHigh);
+          
+          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         }
@@ -272,20 +319,8 @@ void loop() {
     Serial.println(yLow); 
     delay(150);
   }
-
-  //Perform sip and puff actions raw mode is disabled 
-  if(!rawModeEnabled) {
-    sipAndPuffHandler();            //Pressure sensor sip and puff functions
-  }                                                       
-  delay(5);
-  pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
+  
 }
-
-//***END OF INFINITE LOOP***//
-
-//-----------------------------------------------------------------------------------//
-
-
 
 //***INITIALIZE PINS FUNCTION ***//
 void initializePins(void) {
@@ -1411,6 +1446,8 @@ void secondaryAction(void) {
 
     digitalWrite(LED_2_PIN, HIGH);                  //Turn red LED on
 
+    //todo implement angle code
+
     if (xHigh > (xHighNeutral + 50)) {
       cursorMiddleClick();
       break;
@@ -1462,23 +1499,72 @@ void cursorMiddleClick(void) {
 //***CURSOR SCROLL FUNCTION***//
 
 void cursorScroll(void) {
-  while (1) {
-    int scrollUp = analogRead(Y_DIR_HIGH_PIN);                      // A2
-    int scrollDown = analogRead(Y_DIR_LOW_PIN);                     // A10
-
-    float scrollRelease = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
+  if(debugModeEnabled) {
+    Serial.println("CursorScroll Mode Started");
+  }
+  
+  while (1) { //continue in scroll mode until released by a sip or a puff input
     
-    if (scrollUp > yHighNeutral + 30) {
-      Mouse.move(0, 0, -1 * yCursorHigh(scrollUp));
-      delay(cursorDelay * 35);
-    } else if (scrollDown > yLowNeutral + 30) {
-      Mouse.move(0, 0, -1 * yCursorLow(scrollDown));
-      delay(cursorDelay * 35);
-    } else if ((scrollRelease > sipThreshold) || (scrollRelease < puffThreshold)) {
+    int xCursor = 0;
+    int yCursor = 0;
+   
+    // read joystick movements
+    xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+    xLow = analogRead(X_DIR_LOW_PIN);               //Read analog values of FSR's : A1
+    yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+    yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
+
+    
+    // Read sip and puff input
+    float scrollRelease = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
+
+
+    xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
+    xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
+    xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
+    xLowYLow = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
+
+    //Check to see if the joystick has moved
+    if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
+      
+      //Joystick moved - determine which quadrant     
+      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1
+            xCursor = xCursorHigh(xHigh);
+            yCursor = yCursorHigh(yHigh);
+                        
+          } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4
+            xCursor = xCursorHigh(xHigh);
+            yCursor = yCursorLow(yLow);            
+            
+          } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3
+            xCursor = xCursorLow(xLow);
+            yCursor = yCursorLow(yLow);
+           
+            
+          } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2
+            xCursor = xCursorLow(xLow);
+            yCursor = yCursorHigh(yHigh);
+            
+          }
+
+        // Apply rotation transform to inputs
+        int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
+        int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
+
+        Mouse.move(0, 0, yCursor);
+        delay(cursorDelay * 35);  // 5 x 35 = 175 ms
+        
+    
+    }
+    else if ((scrollRelease > sipThreshold) || (scrollRelease < puffThreshold)) { // if sip or puff, stop scroll mode
       break;
     }
+        
+    delay(250);
   }
-  delay(250);
+    if(debugModeEnabled) {
+    Serial.println("CursorScroll Mode Ended");
+  }
 }
 
 
