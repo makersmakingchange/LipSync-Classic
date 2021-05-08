@@ -455,7 +455,7 @@ void getPressureThreshold(bool responseEnabled) {
   if(SERIAL_SETTINGS) {
     EEPROM.get(32, pressureThreshold);
     delay(5);
-    if(pressureThreshold<=0 || pressureThreshold>50) {
+    if(pressureThreshold<=5 || pressureThreshold>50) {
       EEPROM.put(32, PRESSURE_THRESHOLD);
       delay(5);
       pressureThreshold = PRESSURE_THRESHOLD;
@@ -480,23 +480,28 @@ void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
   
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Read neutral pressure transducer analog value [0.0V - 5.0V]
   
-  if(SERIAL_SETTINGS && (pressureThreshold>0 && pressureThreshold<=50)) {
+  if(SERIAL_SETTINGS && (pressureThreshold>=5 && pressureThreshold<=50)) {
     EEPROM.put(32, pressureThreshold); // Update value to memory from serial input
     delay(5); 
+    // Update threshold variables
+    sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
+    puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
+    if(responseEnabled) {
+      Serial.print("SUCCESS:PT,1:");
+    	Serial.print(pressureThreshold);
+    	Serial.print(":");
+    	Serial.println(pressureNominal); 
+    	delay(5);
+    }  
   } else {
     pressureThreshold = PRESSURE_THRESHOLD; //Use default pressure threshold value if bad serial input
-    delay(5); 
-  }
-  // Update threshold variables
-  sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
-  puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
-  
-  if(responseEnabled) {
-    Serial.print("SUCCESS:PT,1:");
-    Serial.print(pressureThreshold);
-    Serial.print(":");
-    Serial.println(pressureNominal); 
-    delay(5);
+    if(responseEnabled) {
+      Serial.print("FAIL:PT,1:");
+		  Serial.print(pressureThreshold);
+		  Serial.print(":");
+		  Serial.println(pressureNominal); 
+		  delay(5);
+	  }  
   }
 }
 
@@ -919,6 +924,7 @@ void getButtonMapping(bool responseEnabled) {
 //***SET BUTTON MAPPING FUNCTION***//
 
 void setButtonMapping(int buttonMapping[],bool responseEnabled) {
+
   if (SERIAL_SETTINGS) {
    for(int i = 0; i < 6; i++){
     EEPROM.put(42+i*2, buttonMapping[i]);
@@ -1082,6 +1088,7 @@ bool serialSettings(bool enabled) {
 //***PERFORM SETTINGS FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 
 void writeSettings(String changeString) {
+    String modifierString = changeString.substring(3);
     char changeChar[changeString.length()+1];
     changeString.toCharArray(changeChar, changeString.length()+1);
 
@@ -1110,18 +1117,16 @@ void writeSettings(String changeString) {
       else if(changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getPressureThreshold(true);
       delay(5);
-    } else if (changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5)) {
-      String pressureThresholdString = changeString.substring(3);
-      setPressureThreshold(pressureThresholdString.toInt(),true);
+    } else if (changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5) && isStrNumber(modifierString)) {
+      setPressureThreshold(modifierString.toInt(),true);
       delay(5);
     } 
      //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
       else if(changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getRotationAngle(true);
       delay(5);
-    } else if (changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5 || changeString.length()==6)) {
-      String rotationAngleString = changeString.substring(3);
-      setRotationAngle(rotationAngleString.toInt(),true);
+    } else if (changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5 || changeString.length()==6) && isStrNumber(modifierString)) {
+      setRotationAngle(modifierString.toInt(),true);
       delay(5);
     } 
      //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
@@ -1171,7 +1176,7 @@ void writeSettings(String changeString) {
     else if (changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getButtonMapping(true);
       delay(5);
-    } else if(changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='1' && changeString.length()==9) {
+    } else if(changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='1' && changeString.length()==9 && isStrNumber(modifierString)) {
       int buttonTempMapping[6];
       for(int i = 0; i< 6; i++){
          buttonTempMapping[i]=changeChar[3+i] - '0';
@@ -1569,6 +1574,16 @@ void cursorScroll(void) {
   }
 }
 
+//***CHECK IF STRING IS A NUMBER FUNCTION***//
+
+boolean isStrNumber(String str){
+  
+  for(byte i=0;i<str.length();i++)
+  {
+    if(!isDigit(str.charAt(i))) return false;
+  }
+  return true;
+}
 
 //***Y HIGH CURSOR MOVEMENT MODIFIER FUNCTION***//
 
