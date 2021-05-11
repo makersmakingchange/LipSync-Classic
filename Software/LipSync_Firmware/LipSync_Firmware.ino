@@ -77,7 +77,8 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 //***Map Sip & Puff actions to cursor buttons for mode 1***//
 int actionButton[6]; 
 
-int lastButtonState[5];   
+//Number of available sip and puff actions 
+int actionButtonSize = sizeof(actionButton)/sizeof(int);
 
 int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
 int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
@@ -477,7 +478,7 @@ void getPressureThreshold(bool responseEnabled) {
 //***SET PRESSURE THRESHOLD FUNCTION***//
 
 void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
-  
+  bool isValidThreshold = true;
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Read neutral pressure transducer analog value [0.0V - 5.0V]
   
   if(SERIAL_SETTINGS && (pressureThreshold>=5 && pressureThreshold<=50)) {
@@ -486,23 +487,18 @@ void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
     // Update threshold variables
     sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
     puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
-    if(responseEnabled) {
-      Serial.print("SUCCESS:PT,1:");
-    	Serial.print(pressureThreshold);
-    	Serial.print(":");
-    	Serial.println(pressureNominal); 
-    	delay(5);
-    }  
+    isValidThreshold = true;
   } else {
     pressureThreshold = PRESSURE_THRESHOLD; //Use default pressure threshold value if bad serial input
-    if(responseEnabled) {
-      Serial.print("FAIL:PT,1:");
-		  Serial.print(pressureThreshold);
-		  Serial.print(":");
-		  Serial.println(pressureNominal); 
-		  delay(5);
-	  }  
+    isValidThreshold = false;
   }
+   if(responseEnabled) {
+      (isValidThreshold) ? Serial.print("SUCCESS:PT,1:"):Serial.print("FAIL:PT,1:");
+      Serial.print(pressureThreshold);
+      Serial.print(":");
+      Serial.println(pressureNominal); 
+      delay(5);
+    }  
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -892,22 +888,30 @@ void getChangeTolerance(float changePercent, bool responseEnabled) {
 //***GET BUTTON MAPPING FUNCTION***//
 
 void getButtonMapping(bool responseEnabled) {
-  
-  memcpy(actionButton, defaultButtonMapping, sizeof(actionButton));     //Initialize default sip and puff button actions 
+  bool isValidMapping = true;
+  memcpy(actionButton, defaultButtonMapping, actionButtonSize);     //Copy the default sip and puff button action mapping
   
   if (SERIAL_SETTINGS) {
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(42+i*2, buttonMapping);
       delay(5);
-      if(buttonMapping<1 || buttonMapping >8) {
-        EEPROM.put(42+i*2, actionButton[i]);
-        delay(5);
+      if(buttonMapping<0 || buttonMapping >7) {
+        isValidMapping = false;
+        break;
       } else {
         actionButton[i]=buttonMapping;
         delay(5);
       }
     }
+    if(!isValidMapping){
+      for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
+        EEPROM.put(42+i*2, defaultButtonMapping[i]);
+        delay(5);
+        actionButton[i]=defaultButtonMapping[i];
+        delay(5);
+      }
+    }   
   }
   if(responseEnabled) {
     Serial.print("SUCCESS:MP,0:");
@@ -924,17 +928,27 @@ void getButtonMapping(bool responseEnabled) {
 //***SET BUTTON MAPPING FUNCTION***//
 
 void setButtonMapping(int buttonMapping[],bool responseEnabled) {
-
+  
+  bool isValidMapping = true;
+  
   if (SERIAL_SETTINGS) {
-   for(int i = 0; i < 6; i++){
-    EEPROM.put(42+i*2, buttonMapping[i]);
-    delay(5);
-    actionButton[i]=buttonMapping[i];
-    delay(5);
-   }     
+   for(int i = 0; i < actionButtonSize; i++){           //Check if it's a valid mapping
+    if(buttonMapping[i]<0 || buttonMapping[i] >7) {
+      isValidMapping = false;
+      break;
+    }
+   }
+   if(isValidMapping){                                  //Save the mapping into EEPROM if it's a valid mapping
+    for(int i = 0; i < actionButtonSize; i++){
+      EEPROM.put(42+i*2, buttonMapping[i]);
+      delay(10);
+      actionButton[i]=buttonMapping[i];
+      delay(5);
+    }     
+   }  
   } 
   if(responseEnabled) {
-    Serial.print("SUCCESS:MP,1:");
+    (isValidMapping) ? Serial.print("SUCCESS:MP,1:") : Serial.print("FAIL:MP,1:");
     Serial.print(actionButton[0]); 
     Serial.print(actionButton[1]); 
     Serial.print(actionButton[2]); 
@@ -1177,11 +1191,11 @@ void writeSettings(String changeString) {
       getButtonMapping(true);
       delay(5);
     } else if(changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='1' && changeString.length()==9 && isStrNumber(modifierString)) {
-      int buttonTempMapping[6];
-      for(int i = 0; i< 6; i++){
-         buttonTempMapping[i]=changeChar[3+i] - '0';
+      int tempButtonMapping[actionButtonSize];
+      for(int i = 0; i< actionButtonSize; i++){
+         tempButtonMapping[i]=changeChar[3+i] - '0';          //Convert char arrat to int array
       }
-      setButtonMapping(buttonTempMapping,true);
+      setButtonMapping(tempButtonMapping,true);
       delay(5);
     }
      //Perform factory reset if received "FR,0:0"
