@@ -22,7 +22,6 @@
 #include <EEPROM.h>
 #include <Mouse.h>
 #include <math.h>
-#include "LipSync_Common.h"
 
 //***CUSTOMIZABLE VARIABLES***//
 #define SPEED_COUNTER 5                           //Default cursor speed level
