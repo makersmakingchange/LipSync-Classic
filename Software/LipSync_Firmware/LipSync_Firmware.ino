@@ -30,7 +30,7 @@
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
 #define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
-                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
+                                                 //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 
 // INPUTS: (1: Short puff, 2: Short sip, 3: Long puff, 4: Long sip, 5: Very long puff, 6: Very long sip)
 // OUTPUTS: (0: Left Click, 1: Right Click, 2: Drag, 3: Scroll, 4: Middle Click, 5: Initialization, 6: Calibration )
@@ -65,6 +65,32 @@
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
+
+// LipSync EEPROM Memory Usage - DO NOT CHANGE
+#define EEPROM_modelNumber 0          //int:0,1; 255 on fresh Arduino
+#define EEPROM_speedCounter 2         //int:2,3; 
+#define EEPROM_defaultIsSet 4         //int:4,5; 
+#define EEPROM_yHighComp 6            //float:6,7,8,9; 
+#define EEPROM_yLowComp 10            //float:10,11,12,13; 
+#define EEPROM_xHighComp 14           //float:14,15,16,17; 
+#define EEPROM_xLowComp 18            //float:18,19,20,21; 
+#define EEPROM_xHighMax 22            //int:22,23; 
+#define EEPROM_xLowMax 24             //int:24,25; 
+#define EEPROM_yHighMax 26            //int:26,27; 
+#define EEPROM_yLowMax 28             //int:28,29; 
+#define EEPROM_rotationAngle 30       //int:30,31; 
+#define EEPROM_pressureThreshold 32   //int:32,33; 
+#define EEPROM_debugIntValue 34       //int:34,35; 
+#define EEPROM_RawIntValue 36         //int:36,37;
+#define EEPROM_deadzoneValue 38       //int:38,39;
+#define EEPROM_buttonMode 40          //int:40,41;
+#define EEPROM_buttonMapping0 42      //int:42,43; 
+#define EEPROM_buttonMapping1 44      //int:44,45; 
+#define EEPROM_buttonMapping2 46      //int:46,47; 
+#define EEPROM_buttonMapping3 48      //int:48,49; 
+#define EEPROM_buttonMapping4 50      //int:50,51; 
+#define EEPROM_buttonMapping5 52      //int:52,53; 
+#define EEPROM_configNumber 54        //int:54,55; 3 when Bluetooth configured 
 
 //***SERIAL SETTINGS VARIABLE***//
 
@@ -153,6 +179,8 @@ bool rawModeEnabled;
 bool settingsEnabled = false;                           //Serial input settings command mode enabled or disabled 
 
 
+
+
 //-----------------------------------------------------------------------------------//
 
 //***MICROCONTROLLER AND PERIPHERAL MODULES CONFIGURATION***//
@@ -160,7 +188,7 @@ bool settingsEnabled = false;                           //Serial input settings 
 void setup() {
   
   Serial.begin(115200);                           //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
-
+  
   initializePins();                               //Initialize Arduino input and output pins
 
   Mouse.begin();                                  //Initialize the HID mouse functions
@@ -353,11 +381,11 @@ void initializePins(void) {
 
 void getModelNumber(bool responseEnabled) {
   EEPROM.get(0, modelNumber);
-  if (modelNumber != 1) {                                 //If the previous firmware was different model then factory reset the settings 
+  if (modelNumber != 1) {                          //If the previous firmware was different model then factory reset the settings 
     factoryReset(false);
     delay(10);
     
-    modelNumber = 1;                                      //And store the model number in EEPROM 
+    modelNumber = 1;                               //And store the model number in EEPROM 
     EEPROM.put(0, modelNumber);
     delay(10);
   }  
@@ -1022,8 +1050,7 @@ void updateRotationAngle(void){
 
 //***FACTORY RESET FUNCTION***//
 
-void factoryReset(bool responseEnabled) {
-  if (SERIAL_SETTINGS) {
+void factoryReset(bool responseEnabled) { 
            
     EEPROM.put(2, SPEED_COUNTER);         // set default cursor speed counter
     delay(10);
@@ -1054,11 +1081,7 @@ void factoryReset(bool responseEnabled) {
 
     getCompFactor();                                          
     delay(10);
-    
-    
-    delay(10);
-
-    }
+      
 
   if(responseEnabled) {
     Serial.println("SUCCESS:FR,0:0");
