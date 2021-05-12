@@ -379,13 +379,13 @@ void initializePins(void) {
 //***GET MODEL NUMBER FUNCTION***//
 
 void getModelNumber(bool responseEnabled) {
-  EEPROM.get(0, modelNumber);
+  EEPROM.get(EEPROM_modelNumber, modelNumber);
   if (modelNumber != 1) {                          //If the previous firmware was different model then factory reset the settings 
     factoryReset(false);
     delay(10);
     
     modelNumber = 1;                               //And store the model number in EEPROM 
-    EEPROM.put(0, modelNumber);
+    EEPROM.put(EEPROM_modelNumber, modelNumber);
     delay(10);
   }  
   if(responseEnabled){
@@ -399,15 +399,15 @@ void getVersionNumber(void) {
   Serial.println("SUCCESS:VN,0:V2.71");
 }
 
-//***HID CURSOR SPEED FUNCTION***//
+//***GET CURSOR SPEED FUNCTION***//
 
 int getCursorSpeed(bool responseEnabled) {
   int speedCounter = SPEED_COUNTER;
-  EEPROM.get(2, speedCounter);
+  EEPROM.get(EEPROM_speedCounter, speedCounter);
   delay(5);
   if(speedCounter<0 || speedCounter >10){
     speedCounter = SPEED_COUNTER;
-    EEPROM.put(2, speedCounter);
+    EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(5);
   }
   if(responseEnabled){
@@ -418,9 +418,18 @@ int getCursorSpeed(bool responseEnabled) {
   return speedCounter;
 }
 
+//***SET CURSOR SPEED FUNCTION***//
+
+void setCursorSpeed(int newSpeedCounter) {
+	if(newSpeedCounter>=0 && newSpeedCounter <=10){
+    EEPROM.put(EEPROM_speedCounter, newSpeedCounter);
+    delay(5);
+  } 
+}
+
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
 
-int increaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
+int increaseCursorSpeed(int speedCounter,bool responseEnabled) {
   speedCounter++;
 
   if (speedCounter == 11) {
@@ -433,10 +442,10 @@ int increaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
     cursorFactor = cursorParams[speedCounter]._factor;
     cursorMaxSpeed = cursorParams[speedCounter]._maxSpeed;
 
-    EEPROM.put(2, speedCounter);
+    EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(25);
   }
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
   Serial.print("SS,1:");
   Serial.println(speedCounter); 
   delay(5);
@@ -445,7 +454,7 @@ int increaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
 
 //***DECREASE CURSOR SPEED LEVEL FUNCTION***//
 
-int decreaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
+int decreaseCursorSpeed(int speedCounter,bool responseEnabled) {
   speedCounter--;
   if (speedCounter == -1) {
     ledBlink(6, 50, 3);
@@ -456,7 +465,7 @@ int decreaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
     cursorFactor = cursorParams[speedCounter]._factor;
     cursorMaxSpeed = cursorParams[speedCounter]._maxSpeed;
 
-    EEPROM.put(2, speedCounter);
+    EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(25);
  
   } else {
@@ -466,10 +475,10 @@ int decreaseCursorSpeed(int speedCounter,bool cmdResponseEnabled) {
     cursorFactor = cursorParams[speedCounter]._factor;
     cursorMaxSpeed = cursorParams[speedCounter]._maxSpeed;
 
-    EEPROM.put(2, speedCounter);
+    EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(25);
   }
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
   Serial.print("SS,1:");
   Serial.println(speedCounter);  
   delay(5);
@@ -481,10 +490,10 @@ void getPressureThreshold(bool responseEnabled) {
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Initial neutral pressure transducer analog value [0.0V - 5.0V]
   int pressureThreshold = PRESSURE_THRESHOLD;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(32, pressureThreshold);
+    EEPROM.get(EEPROM_pressureThreshold, pressureThreshold);
     delay(5);
     if(pressureThreshold<=5 || pressureThreshold>50) {
-      EEPROM.put(32, PRESSURE_THRESHOLD);
+      EEPROM.put(EEPROM_pressureThreshold, PRESSURE_THRESHOLD);
       delay(5);
       pressureThreshold = PRESSURE_THRESHOLD;
     }    
@@ -509,7 +518,7 @@ void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Read neutral pressure transducer analog value [0.0V - 5.0V]
   
   if(SERIAL_SETTINGS && (pressureThreshold>=5 && pressureThreshold<=50)) {
-    EEPROM.put(32, pressureThreshold); // Update value to memory from serial input
+    EEPROM.put(EEPROM_pressureThreshold, pressureThreshold); // Update value to memory from serial input
     delay(5); 
     // Update threshold variables
     sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
@@ -534,10 +543,10 @@ bool getDebugMode(bool responseEnabled) {
   bool debugState=DEBUG_MODE;
   int debugIntValue;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(34, debugIntValue);
+    EEPROM.get(EEPROM_debugIntValue, debugIntValue);
     delay(5);
     if(debugIntValue!=0 && debugIntValue!=1) {
-      EEPROM.put(34, DEBUG_MODE);
+      EEPROM.put(EEPROM_debugIntValue, DEBUG_MODE);
       delay(5);
       debugState=DEBUG_MODE;
       }   
@@ -561,7 +570,7 @@ bool getDebugMode(bool responseEnabled) {
 
 bool setDebugMode(bool debugState,bool responseEnabled) {
   if(SERIAL_SETTINGS) {
-    (debugState) ? EEPROM.put(34, 1) : EEPROM.put(34, 0);
+    (debugState) ? EEPROM.put(EEPROM_debugIntValue, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
     delay(5);    
   } else {
     debugState=DEBUG_MODE;
@@ -630,10 +639,10 @@ bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(36, rawIntValue);
+    EEPROM.get(EEPROM_RawIntValue, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
-      EEPROM.put(36, RAW_MODE);
+      EEPROM.put(EEPROM_RawIntValue, RAW_MODE);
       delay(5);
       rawState=RAW_MODE;
       }   
@@ -654,7 +663,7 @@ bool getRawMode(bool responseEnabled) {
 
 bool setRawMode(bool rawState,bool responseEnabled) {
   if(SERIAL_SETTINGS) {
-    (rawState) ? EEPROM.put(36, 1) : EEPROM.put(36, 0);
+    (rawState) ? EEPROM.put(EEPROM_RawIntValue, 1) : EEPROM.put(EEPROM_RawIntValue, 0);
     delay(5);    
   } else {
     rawState=RAW_MODE;
@@ -675,35 +684,35 @@ void getCompFactor(void) {
   int compFactorIsSet;
   float defaultCompFactor = CURSOR_DEFAULT_COMP_FACTOR;
 
-  EEPROM.get(4, compFactorIsSet);
+  EEPROM.get(EEPROM_defaultIsSet, compFactorIsSet);
   delay(10);
 
   if (compFactorIsSet == 1) {
     //Get the Comp values from Memory 
-    EEPROM.get(6, yHighComp);
+    EEPROM.get(EEPROM_yHighComp, yHighComp);
     delay(10);
-    EEPROM.get(10, yLowComp);
+    EEPROM.get(EEPROM_yLowComp, yLowComp);
     delay(10);
-    EEPROM.get(14, xHighComp);
+    EEPROM.get(EEPROM_xHighComp, xHighComp);
     delay(10);
-    EEPROM.get(18, xLowComp);
+    EEPROM.get(EEPROM_xLowComp, xLowComp);
     delay(10);
   } else {
     //Set the Comp values for first time
-    EEPROM.put(6, defaultCompFactor);
+    EEPROM.put(EEPROM_yHighComp, defaultCompFactor);
     delay(10);
 
-    EEPROM.put(10, defaultCompFactor);
+    EEPROM.put(EEPROM_yLowComp, defaultCompFactor);
     delay(10);
 
-    EEPROM.put(14, defaultCompFactor);
+    EEPROM.put(EEPROM_xHighComp, defaultCompFactor);
     delay(10);
 
-    EEPROM.put(18, defaultCompFactor);
+    EEPROM.put(EEPROM_xLowComp, defaultCompFactor);
     delay(10);
 
     compFactorIsSet = 1;
-    EEPROM.put(4, compFactorIsSet);
+    EEPROM.put(EEPROM_defaultIsSet, compFactorIsSet);
     delay(10);
   }
 
@@ -722,13 +731,13 @@ void setCompFactor(void) {
   xHighComp = (finalMax - xHighNeutral) / (xHighMax - xHighNeutral);
   xLowComp = (finalMax - xLowNeutral) / (xLowMax - xLowNeutral);
 
-  EEPROM.put(6, yHighComp);
+  EEPROM.put(EEPROM_yHighComp, yHighComp);
   delay(10);
-  EEPROM.put(10, yLowComp);
+  EEPROM.put(EEPROM_yLowComp, yLowComp);
   delay(10);
-  EEPROM.put(14, xHighComp);
+  EEPROM.put(EEPROM_xHighComp, xHighComp);
   delay(10);
-  EEPROM.put(18, xLowComp);
+  EEPROM.put(EEPROM_xLowComp, xLowComp);
   delay(10);
 }
 
@@ -748,7 +757,7 @@ void getCursorInitialization() {
 
 //***SET CURSOR INITIALIZATION FUNCTION***//
 
-void setCursorInitialization(int mode, bool cmdResponseEnabled) {
+void setCursorInitialization(int mode, bool responseEnabled) {
 
   ledOn(1); //Turn on Green LED
 
@@ -779,16 +788,16 @@ void setCursorInitialization(int mode, bool cmdResponseEnabled) {
   }
 
   //Get the Comp values from Memory 
-  EEPROM.get(6, yHighComp);
+  EEPROM.get(EEPROM_yHighComp, yHighComp);
   delay(10);
-  EEPROM.get(10, yLowComp);
+  EEPROM.get(EEPROM_yLowComp, yLowComp);
   delay(10);
-  EEPROM.get(14, xHighComp);
+  EEPROM.get(EEPROM_xHighComp, xHighComp);
   delay(10);
-  EEPROM.get(18, xLowComp);
+  EEPROM.get(EEPROM_xLowComp, xLowComp);
   delay(10);
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.print("IN,1:"); 
   Serial.print(xHighNeutral); 
   Serial.print(","); 
@@ -806,13 +815,13 @@ void setCursorInitialization(int mode, bool cmdResponseEnabled) {
 void getCursorCalibration(bool responseEnable) {
   
   //Get the max values from Memory 
-  EEPROM.get(22, xHighMax);
+  EEPROM.get(EEPROM_xHighMax, xHighMax);
   delay(10);
-  EEPROM.get(24, xLowMax);
+  EEPROM.get(EEPROM_xLowMax, xLowMax);
   delay(10);
-  EEPROM.get(26, yHighMax);
+  EEPROM.get(EEPROM_yHighMax, yHighMax);
   delay(10);
-  EEPROM.get(28, yLowMax);
+  EEPROM.get(EEPROM_yLowMax, yLowMax);
   delay(10);
 
   xHighYHighRadius = CURSOR_RADIUS;
@@ -835,31 +844,31 @@ void getCursorCalibration(bool responseEnable) {
 
 //*** SET CURSOR CALIBRATION FUNCTION***//
 
-void setCursorCalibration(bool cmdResponseEnabled) {
+void setCursorCalibration(bool responseEnabled) {
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.println("CA,1:0");                                                   //Start the joystick calibration sequence 
   ledBlink(4, 300, 3);
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.println("CA,1:1"); 
   ledBlink(6, 500, 1);
   yHighMax = analogRead(Y_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.println("CA,1:2"); 
   ledBlink(6, 500, 1);
   xHighMax = analogRead(X_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.println("CA,1:3"); 
   ledBlink(6, 500, 1);
   yLowMax = analogRead(Y_DIR_LOW_PIN);
   ledBlink(1, 1000, 2);
 
-  (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.println("CA,1:4"); 
   ledBlink(6, 500, 1);
   xLowMax = analogRead(X_DIR_LOW_PIN);
@@ -867,18 +876,18 @@ void setCursorCalibration(bool cmdResponseEnabled) {
 
   setCompFactor();
 
-  EEPROM.put(22, xHighMax);
+  EEPROM.put(EEPROM_xHighMax, xHighMax);
   delay(10);
-  EEPROM.put(24, xLowMax);
+  EEPROM.put(EEPROM_xLowMax, xLowMax);
   delay(10);
-  EEPROM.put(26, yHighMax);
+  EEPROM.put(EEPROM_yHighMax, yHighMax);
   delay(10);
-  EEPROM.put(28, yLowMax);
+  EEPROM.put(EEPROM_yLowMax, yLowMax);
   delay(10);
 
   ledBlink(5, 250, 3);
 
-   (cmdResponseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+   (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
   Serial.print("CA,1:5:"); 
   Serial.print(xHighMax); 
   Serial.print(","); 
@@ -921,7 +930,7 @@ void getButtonMapping(bool responseEnabled) {
   if (SERIAL_SETTINGS) {
     for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
-      EEPROM.get(42+i*2, buttonMapping);
+      EEPROM.get(EEPROM_buttonMapping0+i*2, buttonMapping);
       delay(5);
       if(buttonMapping<0 || buttonMapping >7) {
         isValidMapping = false;
@@ -933,7 +942,7 @@ void getButtonMapping(bool responseEnabled) {
     }
     if(!isValidMapping){
       for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
-        EEPROM.put(42+i*2, defaultButtonMapping[i]);
+        EEPROM.put(EEPROM_buttonMapping0+i*2, defaultButtonMapping[i]);
         delay(5);
         actionButton[i]=defaultButtonMapping[i];
         delay(5);
@@ -967,7 +976,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
    }
    if(isValidMapping){                                  //Save the mapping into EEPROM if it's a valid mapping
     for(int i = 0; i < actionButtonSize; i++){
-      EEPROM.put(42+i*2, buttonMapping[i]);
+      EEPROM.put(EEPROM_buttonMapping0+i*2, buttonMapping[i]);
       delay(10);
       actionButton[i]=buttonMapping[i];
       delay(5);
@@ -991,7 +1000,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
 int getRotationAngle(bool responseEnabled) {
 
    //Get the rotation angle from memory 
-    EEPROM.get(30, rotationAngle);
+    EEPROM.get(EEPROM_rotationAngle, rotationAngle);
     delay(10);
 
   if(responseEnabled) {
@@ -1010,7 +1019,7 @@ void setRotationAngle(int inputRotationAngle, bool responseEnabled) {
 
   if(SERIAL_SETTINGS && (inputRotationAngle >= 0 && inputRotationAngle <=360)) {
     rotationAngle = inputRotationAngle; //update value to global variable
-    EEPROM.put(30, rotationAngle); // Update value to memory from serial input
+    EEPROM.put(EEPROM_rotationAngle, rotationAngle); // Update value to memory from serial input
     delay(5);
     if(responseEnabled) {
       Serial.print("SUCCESS:RA,1:");
@@ -1051,7 +1060,8 @@ void updateRotationAngle(void){
 
 void factoryReset(bool responseEnabled) { 
            
-    EEPROM.put(2, SPEED_COUNTER);         // set default cursor speed counter
+    //EEPROM.put(EEPROM_speedCounter, SPEED_COUNTER);         // set default cursor speed counter
+    setCursorSpeed(SPEED_COUNTER);
     delay(10);
     
     setPressureThreshold(PRESSURE_THRESHOLD, false);    //set default pressure threshold
@@ -1060,10 +1070,12 @@ void factoryReset(bool responseEnabled) {
     setRotationAngle(ROTATION_ANGLE, false);            //set default rotation angle
     delay(10);
     
-    EEPROM.put(34, DEBUG_MODE);                         //set default debug mode
+    //EEPROM.put(EEPROM_debugIntValue, DEBUG_MODE);                         //set default debug mode
+    setDebugMode(DEBUG_MODE,false);
     delay(10);  
     
-    EEPROM.put(36, RAW_MODE);                           //set default button mapping
+    //EEPROM.put(EEPROM_RawIntValue, RAW_MODE);                           //set default button mapping
+    setRawMode(RAW_MODE,false);
     delay(10);  
     
     setButtonMapping(defaultButtonMapping,false);       //set default action mapping
