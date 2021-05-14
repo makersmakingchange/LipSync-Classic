@@ -403,28 +403,48 @@ void getVersionNumber(void) {
 
 int getCursorSpeed(bool responseEnabled) {
   int speedCounter = SPEED_COUNTER;
-  EEPROM.get(EEPROM_speedCounter, speedCounter);
-  delay(5);
-  if(speedCounter<0 || speedCounter >10){
-    speedCounter = SPEED_COUNTER;
-    EEPROM.put(EEPROM_speedCounter, speedCounter);
+  if(SERIAL_SETTINGS) {
+    EEPROM.get(EEPROM_speedCounter, speedCounter);
     delay(5);
-  }
+    if(speedCounter<0 || speedCounter >10){
+      speedCounter = SPEED_COUNTER;
+      EEPROM.put(EEPROM_speedCounter, speedCounter);
+      delay(5);
+    }
+  } 
+  
   if(responseEnabled){
     Serial.print("SUCCESS:SS,0:");
-    Serial.println(speedCounter);      
+    Serial.println(speedCounter); 
+    delay(5);     
   } 
-  delay(5);
   return speedCounter;
 }
 
 //***SET CURSOR SPEED FUNCTION***//
 
-void setCursorSpeed(int newSpeedCounter) {
-	if(newSpeedCounter>=0 && newSpeedCounter <=10){
-    EEPROM.put(EEPROM_speedCounter, newSpeedCounter);
+int setCursorSpeed(int inputSpeedCounter, bool responseEnabled) {
+
+  bool isValidSpeed = true;
+  int speedCounter = inputSpeedCounter;
+  if(speedCounter>=0 && speedCounter <=10){
+    EEPROM.put(EEPROM_speedCounter, speedCounter);
+    delay(10);
+    if(!SERIAL_SETTINGS){ speedCounter = SPEED_COUNTER; }
+    isValidSpeed = true;
+  } else {
+    EEPROM.get(EEPROM_speedCounter, speedCounter);
+    delay(10); 
+    isValidSpeed = false;
+  }
+  delay(5); 
+  
+ if(responseEnabled) {
+    (isValidSpeed) ? Serial.print("SUCCESS:SS,2:"):Serial.print("FAIL:SS,2:");
+    Serial.println(speedCounter); 
     delay(5);
-  } 
+  }  
+  return speedCounter;
 }
 
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
@@ -497,9 +517,8 @@ void getPressureThreshold(bool responseEnabled) {
       delay(5);
       pressureThreshold = PRESSURE_THRESHOLD;
     }    
-  } else {
-    pressureThreshold = PRESSURE_THRESHOLD;
-  }
+  } 
+  
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   if(responseEnabled) {
@@ -513,28 +532,33 @@ void getPressureThreshold(bool responseEnabled) {
 
 //***SET PRESSURE THRESHOLD FUNCTION***//
 
-void setPressureThreshold(int pressureThreshold, bool responseEnabled) {
+void setPressureThreshold(int inputPressureThreshold, bool responseEnabled) {
   bool isValidThreshold = true;
+  int pressureThreshold = inputPressureThreshold;
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Read neutral pressure transducer analog value [0.0V - 5.0V]
-  
-  if(SERIAL_SETTINGS && (pressureThreshold>=5 && pressureThreshold<=50)) {
+
+  if (pressureThreshold>=5 && pressureThreshold<=50) {
     EEPROM.put(EEPROM_pressureThreshold, pressureThreshold); // Update value to memory from serial input
-    delay(5); 
+    delay(10); 
+    if(!SERIAL_SETTINGS){ pressureThreshold = PRESSURE_THRESHOLD; }
     // Update threshold variables
     sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
     puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
     isValidThreshold = true;
   } else {
-    pressureThreshold = PRESSURE_THRESHOLD; //Use default pressure threshold value if bad serial input
+    EEPROM.get(EEPROM_pressureThreshold, pressureThreshold);
+    delay(10); 
     isValidThreshold = false;
   }
-   if(responseEnabled) {
-      (isValidThreshold) ? Serial.print("SUCCESS:PT,1:"):Serial.print("FAIL:PT,1:");
-      Serial.print(pressureThreshold);
-      Serial.print(":");
-      Serial.println(pressureNominal); 
-      delay(5);
-    }  
+  delay(5); 
+  
+ if(responseEnabled) {
+    (isValidThreshold) ? Serial.print("SUCCESS:PT,1:"):Serial.print("FAIL:PT,1:");
+    Serial.print(pressureThreshold);
+    Serial.print(":");
+    Serial.println(pressureNominal); 
+    delay(5);
+  }  
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -569,13 +593,12 @@ bool getDebugMode(bool responseEnabled) {
 //***SET DEBUG MODE STATE FUNCTION***//
 
 bool setDebugMode(bool debugState,bool responseEnabled) {
-  if(SERIAL_SETTINGS) {
-    (debugState) ? EEPROM.put(EEPROM_debugIntValue, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
-    delay(5);    
-  } else {
-    debugState=DEBUG_MODE;
-    delay(5);    
-  }
+
+  (debugState) ? EEPROM.put(EEPROM_debugIntValue, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
+  delay(10);
+  if(!SERIAL_SETTINGS) { debugState=DEBUG_MODE; }    
+  delay(5);
+  
   if(responseEnabled) {
     Serial.print("SUCCESS:DM,1:");
     Serial.println(debugState); 
@@ -639,10 +662,10 @@ bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   if(SERIAL_SETTINGS) {
-    EEPROM.get(EEPROM_RawIntValue, rawIntValue);
+    EEPROM.get(EEPROM_rawIntValue, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
-      EEPROM.put(EEPROM_RawIntValue, RAW_MODE);
+      EEPROM.put(EEPROM_rawIntValue, RAW_MODE);
       delay(5);
       rawState=RAW_MODE;
       }   
@@ -662,13 +685,12 @@ bool getRawMode(bool responseEnabled) {
 //***SET RAW MODE STATE FUNCTION***//
 
 bool setRawMode(bool rawState,bool responseEnabled) {
-  if(SERIAL_SETTINGS) {
-    (rawState) ? EEPROM.put(EEPROM_RawIntValue, 1) : EEPROM.put(EEPROM_RawIntValue, 0);
-    delay(5);    
-  } else {
-    rawState=RAW_MODE;
-    delay(5);    
-  }
+  
+  (rawState) ? EEPROM.put(EEPROM_rawIntValue, 1) : EEPROM.put(EEPROM_rawIntValue, 0);
+  delay(5);    
+  if(!SERIAL_SETTINGS) { rawState=RAW_MODE; }
+  delay(5);    
+    
   if(responseEnabled) {
     Serial.print("SUCCESS:RM,1:");
     Serial.println(rawState); 
@@ -931,7 +953,7 @@ void getButtonMapping(bool responseEnabled) {
     for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(EEPROM_buttonMapping0+i*2, buttonMapping);
-      delay(5);
+      delay(10);
       if(buttonMapping<0 || buttonMapping >7) {
         isValidMapping = false;
         break;
@@ -943,7 +965,7 @@ void getButtonMapping(bool responseEnabled) {
     if(!isValidMapping){
       for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
         EEPROM.put(EEPROM_buttonMapping0+i*2, defaultButtonMapping[i]);
-        delay(5);
+        delay(10);
         actionButton[i]=defaultButtonMapping[i];
         delay(5);
       }
@@ -967,13 +989,13 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
   
   bool isValidMapping = true;
   
-  if (SERIAL_SETTINGS) {
    for(int i = 0; i < actionButtonSize; i++){           //Check if it's a valid mapping
     if(buttonMapping[i]<0 || buttonMapping[i] >7) {
       isValidMapping = false;
       break;
     }
    }
+   
    if(isValidMapping){                                  //Save the mapping into EEPROM if it's a valid mapping
     for(int i = 0; i < actionButtonSize; i++){
       EEPROM.put(EEPROM_buttonMapping0+i*2, buttonMapping[i]);
@@ -981,8 +1003,10 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
       actionButton[i]=buttonMapping[i];
       delay(5);
     }     
-   }  
-  } 
+    if(!SERIAL_SETTINGS) { memcpy(actionButton, defaultButtonMapping, actionButtonSize);  }
+   } 
+   delay(5);
+
   if(responseEnabled) {
     (isValidMapping) ? Serial.print("SUCCESS:MP,1:") : Serial.print("FAIL:MP,1:");
     Serial.print(actionButton[0]); 
@@ -999,9 +1023,13 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
 
 int getRotationAngle(bool responseEnabled) {
 
-   //Get the rotation angle from memory 
-    EEPROM.get(EEPROM_rotationAngle, rotationAngle);
-    delay(10);
+   if(SERIAL_SETTINGS) {
+     //Get the rotation angle from memory 
+      EEPROM.get(EEPROM_rotationAngle, rotationAngle);
+      delay(10);
+   } else {
+      rotationAngle = ROTATION_ANGLE;
+   }
 
   if(responseEnabled) {
     Serial.print("SUCCESS:RA,0:");
@@ -1013,26 +1041,27 @@ int getRotationAngle(bool responseEnabled) {
 
 }
 
-//***SET ROTATION ANGLE FUNCTION***///
+//***SET ROTATION ANGLE FUNCTION***///  
 
 void setRotationAngle(int inputRotationAngle, bool responseEnabled) {
 
-  if(SERIAL_SETTINGS && (inputRotationAngle >= 0 && inputRotationAngle <=360)) {
+  bool isValidRotationAngle = true;
+  
+  if(inputRotationAngle >= 0 && inputRotationAngle <=360) {
     rotationAngle = inputRotationAngle; //update value to global variable
     EEPROM.put(EEPROM_rotationAngle, rotationAngle); // Update value to memory from serial input
-    delay(5);
-    if(responseEnabled) {
-      Serial.print("SUCCESS:RA,1:");
-      Serial.println(rotationAngle);
-      delay(5);
-    } 
+    delay(10);
+    if(!SERIAL_SETTINGS) {rotationAngle = ROTATION_ANGLE; }    //Use default rotation angle if bad serial input
+    isValidRotationAngle = true;
   } else {
-    rotationAngle = ROTATION_ANGLE; //Use default rotation angle if bad serial input
-    if(responseEnabled) {
-      Serial.print("FAIL:RA,1:");
-      Serial.println(rotationAngle);
-      delay(5);
-    }
+    isValidRotationAngle = false;
+  }
+  delay(5);
+  
+  if(responseEnabled) {
+    (isValidRotationAngle) ? Serial.print("SUCCESS:RA,1:"):Serial.print("FAIL:RA,1:");
+    Serial.println(rotationAngle);
+    delay(5);
   }
 
   updateRotationAngle(); // Update rotation transform
@@ -1060,25 +1089,23 @@ void updateRotationAngle(void){
 
 void factoryReset(bool responseEnabled) { 
            
-    //EEPROM.put(EEPROM_speedCounter, SPEED_COUNTER);         // set default cursor speed counter
-    setCursorSpeed(SPEED_COUNTER);
+    setCursorSpeed(SPEED_COUNTER,false);                                  // set default cursor speed counter
     delay(10);
     
-    setPressureThreshold(PRESSURE_THRESHOLD, false);    //set default pressure threshold
+    setPressureThreshold(PRESSURE_THRESHOLD, false);                      //set default pressure threshold
     delay(10);
     
-    setRotationAngle(ROTATION_ANGLE, false);            //set default rotation angle
+    setRotationAngle(ROTATION_ANGLE, false);                              //set default rotation angle
     delay(10);
     
-    //EEPROM.put(EEPROM_debugIntValue, DEBUG_MODE);                         //set default debug mode
-    setDebugMode(DEBUG_MODE,false);
+    setDebugMode(DEBUG_MODE,false);                                       //set default debug mode
     delay(10);  
     
-    //EEPROM.put(EEPROM_RawIntValue, RAW_MODE);                           //set default button mapping
-    setRawMode(RAW_MODE,false);
+    //EEPROM.put(EEPROM_RawIntValue, RAW_MODE);
+    setRawMode(RAW_MODE,false);                                           //set default button mapping
     delay(10);  
     
-    setButtonMapping(defaultButtonMapping,false);       //set default action mapping
+    setButtonMapping(defaultButtonMapping,false);                         //set default action mapping
     delay(10);
 
     //Set the default values
@@ -1150,7 +1177,7 @@ void writeSettings(String changeString) {
       getVersionNumber();
       delay(5);
     }   
-    //Get cursor speed value if received "SS,0:0", decrease the cursor if received "SS,1:1" and increase the cursor speed if received "SS,1:2"
+    //Get cursor speed value if received "SS,0:0", decrease the cursor if received "SS,1:1" and increase the cursor speed if received "SS,1:2" , and set the cursor speed value if received "SS,2:{speed 0 to 10}"
     else if(changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       cursorSpeedCounter = getCursorSpeed(true);
       delay(5);
@@ -1160,8 +1187,11 @@ void writeSettings(String changeString) {
     } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='1' && changeChar[3]=='2' && changeString.length()==4) {
       cursorSpeedCounter = increaseCursorSpeed(cursorSpeedCounter,true);
       delay(5);
-    } 
-     //Get pressure threshold values if received "PT,0:0" and pressure threshold values if received "PT,1:{threshold 1% to 50%}"
+    } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='2' && ( changeString.length()==4 || changeString.length()==5) && isStrNumber(modifierString)) {
+      setCursorSpeed(modifierString.toInt(),true);
+      delay(5);
+    }  
+     //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
       else if(changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getPressureThreshold(true);
       delay(5);
