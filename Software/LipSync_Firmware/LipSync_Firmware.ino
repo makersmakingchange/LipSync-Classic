@@ -25,11 +25,13 @@
 
 //***CUSTOMIZABLE VARIABLES***//
 #define SPEED_COUNTER 5                           //Default cursor speed level
-#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold 
+#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
+#define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
+#define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
 #define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
-                                                 //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
+                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 
 // INPUTS: (1: Short puff, 2: Short sip, 3: Long puff, 4: Long sip, 5: Very long puff, 6: Very long sip)
 // OUTPUTS: (0: Left Click, 1: Right Click, 2: Drag, 3: Scroll, 4: Middle Click, 5: Initialization, 6: Calibration )
@@ -123,7 +125,6 @@ unsigned int puffCount, sipCount;                 //The puff and long sip increm
 
 int pollCounter = 0;                              //Cursor poll counter
 
-
 int xCursor = 0;                                  //Mouse cursor component
 int yCursor = 0;                                  //Mouse cursor component
 
@@ -176,8 +177,6 @@ int modelNumber;                                        //Declare LipSync model 
 bool debugModeEnabled;                                  //Declare raw and debug enable variable
 bool rawModeEnabled;
 bool settingsEnabled = false;                           //Serial input settings command mode enabled or disabled 
-
-
 
 
 //-----------------------------------------------------------------------------------//
@@ -389,14 +388,14 @@ void getModelNumber(bool responseEnabled) {
     delay(10);
   }  
   if(responseEnabled){
-    Serial.println("SUCCESS:MN,0:1");
+    Serial.println("SUCCESS,0:MN,0:1");
   }
 }
 
 //***GET VERSION FUNCTION***//
 
 void getVersionNumber(void) {
-  Serial.println("SUCCESS:VN,0:V2.71");
+  Serial.println("SUCCES,0:VN,0:V2.71");
 }
 
 //***GET CURSOR SPEED FUNCTION***//
@@ -414,7 +413,7 @@ int getCursorSpeed(bool responseEnabled) {
   } 
   
   if(responseEnabled){
-    Serial.print("SUCCESS:SS,0:");
+    Serial.print("SUCCESS,0:SS,0:");
     Serial.println(speedCounter); 
     delay(5);     
   } 
@@ -440,7 +439,7 @@ int setCursorSpeed(int inputSpeedCounter, bool responseEnabled) {
   delay(5); 
   
  if(responseEnabled) {
-    (isValidSpeed) ? Serial.print("SUCCESS:SS,2:"):Serial.print("FAIL:SS,2:");
+    (isValidSpeed) ? Serial.print("SUCCESS,0:SS,1:"):Serial.print("FAIL,2:SS,1:");
     Serial.println(speedCounter); 
     delay(5);
   }  
@@ -465,8 +464,8 @@ int increaseCursorSpeed(int speedCounter,bool responseEnabled) {
     EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(25);
   }
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
-  Serial.print("SS,1:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
+  Serial.print("SS,2:");
   Serial.println(speedCounter); 
   delay(5);
   return speedCounter;
@@ -498,8 +497,8 @@ int decreaseCursorSpeed(int speedCounter,bool responseEnabled) {
     EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(25);
   }
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:"); 
-  Serial.print("SS,1:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
+  Serial.print("SS,2:");
   Serial.println(speedCounter);  
   delay(5);
   return speedCounter;
@@ -512,7 +511,7 @@ void getPressureThreshold(bool responseEnabled) {
   if(API_ENABLED) {
     EEPROM.get(EEPROM_pressureThreshold, pressureThreshold);
     delay(5);
-    if(pressureThreshold<=5 || pressureThreshold>50) {
+    if(pressureThreshold<=PRESSURE_THRESHOLD_MIN || pressureThreshold>PRESSURE_THRESHOLD_MAX) {
       EEPROM.put(EEPROM_pressureThreshold, PRESSURE_THRESHOLD);
       delay(5);
       pressureThreshold = PRESSURE_THRESHOLD;
@@ -522,7 +521,7 @@ void getPressureThreshold(bool responseEnabled) {
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   if(responseEnabled) {
-    Serial.print("SUCCESS:PT,0:");
+    Serial.print("SUCCESS,0:PT,0:");
     Serial.print(pressureThreshold);
     Serial.print(":");
     Serial.println(pressureNominal);
@@ -553,7 +552,7 @@ void setPressureThreshold(int inputPressureThreshold, bool responseEnabled) {
   delay(5); 
   
  if(responseEnabled) {
-    (isValidThreshold) ? Serial.print("SUCCESS:PT,1:"):Serial.print("FAIL:PT,1:");
+    (isValidThreshold) ? Serial.print("SUCCESS,0:PT,1:"):Serial.print("FAIL,2:PT,1:");
     Serial.print(pressureThreshold);
     Serial.print(":");
     Serial.println(pressureNominal); 
@@ -580,7 +579,7 @@ bool getDebugMode(bool responseEnabled) {
   }
 
   if(responseEnabled) {
-    Serial.print("SUCCESS:DM,0:");
+    Serial.print("SUCCESS,0:DM,0:");
     Serial.println(debugState); 
     delay(5);
     if(debugState){
@@ -600,7 +599,7 @@ bool setDebugMode(bool debugState,bool responseEnabled) {
   delay(5);
   
   if(responseEnabled) {
-    Serial.print("SUCCESS:DM,1:");
+    Serial.print("SUCCESS,0:DM,1:");
     Serial.println(debugState); 
     delay(5);
     if(debugState){
@@ -675,7 +674,7 @@ bool getRawMode(bool responseEnabled) {
   }
 
   if(responseEnabled) {
-    Serial.print("SUCCESS:RM,0:");
+    Serial.print("SUCCESS,0:RM,0:");
     Serial.println(rawState); 
     delay(5);
    }
@@ -692,7 +691,7 @@ bool setRawMode(bool rawState,bool responseEnabled) {
   delay(5);    
     
   if(responseEnabled) {
-    Serial.print("SUCCESS:RM,1:");
+    Serial.print("SUCCESS,0:RM,1:");
     Serial.println(rawState); 
     delay(5);
    }
@@ -766,7 +765,7 @@ void setCompFactor(void) {
 //***GET CURSOR INITIALIZATION FUNCTION***//
 
 void getCursorInitialization() {
-  Serial.print("SUCCESS:IN,0:"); 
+  Serial.print("SUCCESS,0:IN,0:"); 
   Serial.print(xHighNeutral); 
   Serial.print(","); 
   Serial.print(xLowNeutral); 
@@ -819,7 +818,7 @@ void setCursorInitialization(int mode, bool responseEnabled) {
   EEPROM.get(EEPROM_xLowComp, xLowComp);
   delay(10);
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.print("IN,1:"); 
   Serial.print(xHighNeutral); 
   Serial.print(","); 
@@ -852,7 +851,7 @@ void getCursorCalibration(bool responseEnable) {
   xLowYHighRadius = CURSOR_RADIUS;
 
   if(responseEnable){
-    Serial.print("SUCCESS:CA,0:"); 
+    Serial.print("SUCCESS,0:CA,0:"); 
     Serial.print(xHighMax); 
     Serial.print(","); 
     Serial.print(xLowMax); 
@@ -868,29 +867,29 @@ void getCursorCalibration(bool responseEnable) {
 
 void setCursorCalibration(bool responseEnabled) {
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.println("CA,1:0");                                                   //Start the joystick calibration sequence 
   ledBlink(4, 300, 3);
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.println("CA,1:1"); 
   ledBlink(6, 500, 1);
   yHighMax = analogRead(Y_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.println("CA,1:2"); 
   ledBlink(6, 500, 1);
   xHighMax = analogRead(X_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.println("CA,1:3"); 
   ledBlink(6, 500, 1);
   yLowMax = analogRead(Y_DIR_LOW_PIN);
   ledBlink(1, 1000, 2);
 
-  (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.println("CA,1:4"); 
   ledBlink(6, 500, 1);
   xLowMax = analogRead(X_DIR_LOW_PIN);
@@ -909,7 +908,7 @@ void setCursorCalibration(bool responseEnabled) {
 
   ledBlink(5, 250, 3);
 
-   (responseEnabled) ? Serial.print("SUCCESS:") : Serial.print("MANUAL:");
+   (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
   Serial.print("CA,1:5:"); 
   Serial.print(xHighMax); 
   Serial.print(","); 
@@ -929,7 +928,7 @@ void getChangeTolerance(float changePercent, bool responseEnabled) {
   yHighChangeTolerance=(int)(yHighMax * (changePercent/100.0));
   yLowChangeTolerance=(int)(yLowMax * (changePercent/100.0));
   if(responseEnabled){
-    Serial.print("SUCCESS:CT,0:"); 
+    Serial.print("SUCCESS,0:CT,0:"); 
     Serial.print(changePercent); 
     Serial.print(","); 
     Serial.print(xHighChangeTolerance); 
@@ -972,7 +971,7 @@ void getButtonMapping(bool responseEnabled) {
     }   
   }
   if(responseEnabled) {
-    Serial.print("SUCCESS:MP,0:");
+    Serial.print("SUCCESS,0:MP,0:");
     Serial.print(actionButton[0]); 
     Serial.print(actionButton[1]); 
     Serial.print(actionButton[2]); 
@@ -1008,7 +1007,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
    delay(5);
 
   if(responseEnabled) {
-    (isValidMapping) ? Serial.print("SUCCESS:MP,1:") : Serial.print("FAIL:MP,1:");
+    (isValidMapping) ? Serial.print("SUCCESS,0:MP,1:") : Serial.print("FAIL,2:MP,1:");
     Serial.print(actionButton[0]); 
     Serial.print(actionButton[1]); 
     Serial.print(actionButton[2]); 
@@ -1032,7 +1031,7 @@ int getRotationAngle(bool responseEnabled) {
    }
 
   if(responseEnabled) {
-    Serial.print("SUCCESS:RA,0:");
+    Serial.print("SUCCESS,0:RA,0:");
     Serial.println(rotationAngle); 
     delay(5);
    }
@@ -1059,7 +1058,7 @@ void setRotationAngle(int inputRotationAngle, bool responseEnabled) {
   delay(5);
   
   if(responseEnabled) {
-    (isValidRotationAngle) ? Serial.print("SUCCESS:RA,1:"):Serial.print("FAIL:RA,1:");
+    (isValidRotationAngle) ? Serial.print("SUCCESS,0:RA,1:"):Serial.print("FAIL,2:RA,1:");
     Serial.println(rotationAngle);
     delay(5);
   }
@@ -1122,7 +1121,7 @@ void factoryReset(bool responseEnabled) {
       
 
   if(responseEnabled) {
-    Serial.println("SUCCESS:FR,0:0");
+    Serial.println("SUCCESS,0:FR,0:0");
     delay(5);
    }
    ledBlink(2, 250, 1);
@@ -1138,21 +1137,20 @@ bool serialSettings(bool enabled) {
      {  
        inString = Serial.readString();            //Check if serial has received or read input string and word "SETTINGS" is in input string.
        if (settingsFlag==false && inString=="SETTINGS") {
-        Serial.println("SUCCESS:SETTINGS");
+        Serial.println("SUCCESS,0:SETTINGS");
        settingsFlag=true;                         //Set the return flag to true so settings actions can be performed in the next call to the function
        }
        else if (settingsFlag==true && inString=="EXIT") {
-        Serial.println("SUCCESS:EXIT");
+        Serial.println("SUCCESS,0:EXIT");
        settingsFlag=false;                         //Set the return flag to false so settings actions can be exited
        }
-       else if (settingsFlag==true && (inString.length()==(6) || inString.length()==(7) || inString.length()==(8) || inString.length()==(11)) && inString.charAt(2)==',' && inString.charAt(4)==':'){ //Check if the input parameter is true and the received string is 3 characters only
-        inString.replace(",","");                 //Remove commas 
-        inString.replace(":","");                 //Remove :
+       else if (settingsFlag==true && isValidCommandFormat(inString)){ //Check if command's format is correct and it's in settings mode
         writeSettings(inString);                  //Sub function to process valid strings
         settingsFlag=false;   
        }
        else {
-        Serial.println("FAIL:SETTINGS");
+        Serial.print("FAIL,0");
+        Serial.println(inString);
         settingsFlag=false;      
        }
        Serial.flush();  
@@ -1160,15 +1158,52 @@ bool serialSettings(bool enabled) {
     return settingsFlag;
 }
 
+//***VALIDATE INPUT COMMAND FORMAT FUNCTION***//
+
+bool isValidCommandFormat (String inputCommand) {
+  bool isValidFormart;
+  if ((inputCommand.length()==(6) || inputCommand.length()==(7) || inputCommand.length()==(8) || inputCommand.length()==(11)) && inputCommand.charAt(2)==',' && inputCommand.charAt(4)==':'){ 
+    isValidFormart = true;
+   }
+   else {
+     isValidFormart = false;
+   }
+  return isValidFormart;
+}
+
+//***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
+
+bool isValidCommandParamter(String paramterString) {
+  bool isValidParamter;
+  if (isStrNumber(paramterString)){ 
+    isValidParamter = true;
+   }
+   else {
+     isValidParamter = false;
+   }
+  return isValidParamter;
+}
+
 //***PERFORM SETTINGS FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 
-void writeSettings(String changeString) {
-    String modifierString = changeString.substring(3);
+void writeSettings(String inputChangeString) {
+  
+    String changeString = inputChangeString;
+    changeString.replace(",","");                 //Remove commas 
+    changeString.replace(":","");                 //Remove :
+    
+    String paramterString = changeString.substring(3);
     char changeChar[changeString.length()+1];
     changeString.toCharArray(changeChar, changeString.length()+1);
 
+    //Check if command's parameter is valid
+    if(!isValidCommandParamter(paramterString)) {
+      Serial.print("FAIL,2:");
+      Serial.println(inputChangeString);
+      delay(5);   
+    }
     //Get Model number : "MN,0:0"
-    if(changeChar[0]=='M' && changeChar[1]=='N' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
+    else if(changeChar[0]=='M' && changeChar[1]=='N' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getModelNumber(true);
       delay(5);
     } 
@@ -1181,30 +1216,31 @@ void writeSettings(String changeString) {
     else if(changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       cursorSpeedCounter = getCursorSpeed(true);
       delay(5);
-    } else if(changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='1' && changeChar[3]=='1' && changeString.length()==4) {
+    } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5)) {
+      setCursorSpeed(paramterString.toInt(),true);
+      delay(5);
+    } 
+    else if(changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='2' && changeChar[3]=='1' && changeString.length()==4) {
       cursorSpeedCounter = decreaseCursorSpeed(cursorSpeedCounter,true);
       delay(5);
-    } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='1' && changeChar[3]=='2' && changeString.length()==4) {
+    } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='2' && changeChar[3]=='2' && changeString.length()==4) {
       cursorSpeedCounter = increaseCursorSpeed(cursorSpeedCounter,true);
       delay(5);
-    } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='2' && ( changeString.length()==4 || changeString.length()==5) && isStrNumber(modifierString)) {
-      setCursorSpeed(modifierString.toInt(),true);
-      delay(5);
-    }  
+    }
      //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
       else if(changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getPressureThreshold(true);
       delay(5);
-    } else if (changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5) && isStrNumber(modifierString)) {
-      setPressureThreshold(modifierString.toInt(),true);
+    } else if (changeChar[0]=='P' && changeChar[1]=='T' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5)) {
+      setPressureThreshold(paramterString.toInt(),true);
       delay(5);
     } 
      //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
       else if(changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getRotationAngle(true);
       delay(5);
-    } else if (changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5 || changeString.length()==6) && isStrNumber(modifierString)) {
-      setRotationAngle(modifierString.toInt(),true);
+    } else if (changeChar[0]=='R' && changeChar[1]=='A' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5 || changeString.length()==6)) {
+      setRotationAngle(paramterString.toInt(),true);
       delay(5);
     } 
      //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
@@ -1254,7 +1290,7 @@ void writeSettings(String changeString) {
     else if (changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='0' && changeChar[3]=='0' && changeString.length()==4) {
       getButtonMapping(true);
       delay(5);
-    } else if(changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='1' && changeString.length()==9 && isStrNumber(modifierString)) {
+    } else if(changeChar[0]=='M' && changeChar[1]=='P' && changeChar[2]=='1' && changeString.length()==9) {
       int tempButtonMapping[actionButtonSize];
       for(int i = 0; i< actionButtonSize; i++){
          tempButtonMapping[i]=changeChar[3+i] - '0';          //Convert char arrat to int array
@@ -1267,7 +1303,8 @@ void writeSettings(String changeString) {
       factoryReset(true);
       delay(5);
     } else {
-      Serial.println("FAIL:SETTINGS");
+      Serial.print("FAIL,1:");            //Invalid command
+      Serial.println(inputChangeString);
       delay(5);        
       }
 }
