@@ -93,7 +93,7 @@
 
 //***SERIAL SETTINGS VARIABLE***//
 
-#define SERIAL_SETTINGS true                      //Enable API Serial interface = true , Disable API serial interface = false             
+#define API_ENABLED true                      //Enable API Serial interface = true , Disable API serial interface = false       
 
 const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
 
@@ -403,7 +403,7 @@ void getVersionNumber(void) {
 
 int getCursorSpeed(bool responseEnabled) {
   int speedCounter = SPEED_COUNTER;
-  if(SERIAL_SETTINGS) {
+  if(API_ENABLED) {
     EEPROM.get(EEPROM_speedCounter, speedCounter);
     delay(5);
     if(speedCounter<0 || speedCounter >10){
@@ -430,7 +430,7 @@ int setCursorSpeed(int inputSpeedCounter, bool responseEnabled) {
   if(speedCounter>=0 && speedCounter <=10){
     EEPROM.put(EEPROM_speedCounter, speedCounter);
     delay(10);
-    if(!SERIAL_SETTINGS){ speedCounter = SPEED_COUNTER; }
+    if(!API_ENABLED){ speedCounter = SPEED_COUNTER; }
     isValidSpeed = true;
   } else {
     EEPROM.get(EEPROM_speedCounter, speedCounter);
@@ -509,7 +509,7 @@ int decreaseCursorSpeed(int speedCounter,bool responseEnabled) {
 void getPressureThreshold(bool responseEnabled) {
   float pressureNominal = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; // Initial neutral pressure transducer analog value [0.0V - 5.0V]
   int pressureThreshold = PRESSURE_THRESHOLD;
-  if(SERIAL_SETTINGS) {
+  if(API_ENABLED) {
     EEPROM.get(EEPROM_pressureThreshold, pressureThreshold);
     delay(5);
     if(pressureThreshold<=5 || pressureThreshold>50) {
@@ -540,7 +540,7 @@ void setPressureThreshold(int inputPressureThreshold, bool responseEnabled) {
   if (pressureThreshold>=5 && pressureThreshold<=50) {
     EEPROM.put(EEPROM_pressureThreshold, pressureThreshold); // Update value to memory from serial input
     delay(10); 
-    if(!SERIAL_SETTINGS){ pressureThreshold = PRESSURE_THRESHOLD; }
+    if(!API_ENABLED){ pressureThreshold = PRESSURE_THRESHOLD; }
     // Update threshold variables
     sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
     puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
@@ -566,7 +566,7 @@ void setPressureThreshold(int inputPressureThreshold, bool responseEnabled) {
 bool getDebugMode(bool responseEnabled) {
   bool debugState=DEBUG_MODE;
   int debugIntValue;
-  if(SERIAL_SETTINGS) {
+  if(API_ENABLED) {
     EEPROM.get(EEPROM_debugIntValue, debugIntValue);
     delay(5);
     if(debugIntValue!=0 && debugIntValue!=1) {
@@ -596,7 +596,7 @@ bool setDebugMode(bool debugState,bool responseEnabled) {
 
   (debugState) ? EEPROM.put(EEPROM_debugIntValue, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
   delay(10);
-  if(!SERIAL_SETTINGS) { debugState=DEBUG_MODE; }    
+  if(!API_ENABLED) { debugState=DEBUG_MODE; }    
   delay(5);
   
   if(responseEnabled) {
@@ -661,7 +661,7 @@ void sendRawData(int x, int y, int action, int xUp, int xDown,int yUp,int yDown)
 bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
-  if(SERIAL_SETTINGS) {
+  if(API_ENABLED) {
     EEPROM.get(EEPROM_rawIntValue, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
@@ -688,7 +688,7 @@ bool setRawMode(bool rawState,bool responseEnabled) {
   
   (rawState) ? EEPROM.put(EEPROM_rawIntValue, 1) : EEPROM.put(EEPROM_rawIntValue, 0);
   delay(5);    
-  if(!SERIAL_SETTINGS) { rawState=RAW_MODE; }
+  if(!API_ENABLED) { rawState=RAW_MODE; }
   delay(5);    
     
   if(responseEnabled) {
@@ -949,7 +949,7 @@ void getButtonMapping(bool responseEnabled) {
   bool isValidMapping = true;
   memcpy(actionButton, defaultButtonMapping, actionButtonSize);     //Copy the default sip and puff button action mapping
   
-  if (SERIAL_SETTINGS) {
+  if (API_ENABLED) {
     for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(EEPROM_buttonMapping0+i*2, buttonMapping);
@@ -990,7 +990,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
   bool isValidMapping = true;
   
    for(int i = 0; i < actionButtonSize; i++){           //Check if it's a valid mapping
-    if(buttonMapping[i]<0 || buttonMapping[i] >7) {
+    if(buttonMapping[i]<0 || buttonMapping[i] >7) {     // Up to 8 input actions but 6 available 
       isValidMapping = false;
       break;
     }
@@ -1003,7 +1003,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
       actionButton[i]=buttonMapping[i];
       delay(5);
     }     
-    if(!SERIAL_SETTINGS) { memcpy(actionButton, defaultButtonMapping, actionButtonSize);  }
+    if(!API_ENABLED) { memcpy(actionButton, defaultButtonMapping, actionButtonSize);  }
    } 
    delay(5);
 
@@ -1023,7 +1023,7 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
 
 int getRotationAngle(bool responseEnabled) {
 
-   if(SERIAL_SETTINGS) {
+   if(API_ENABLED) {
      //Get the rotation angle from memory 
       EEPROM.get(EEPROM_rotationAngle, rotationAngle);
       delay(10);
@@ -1051,7 +1051,7 @@ void setRotationAngle(int inputRotationAngle, bool responseEnabled) {
     rotationAngle = inputRotationAngle; //update value to global variable
     EEPROM.put(EEPROM_rotationAngle, rotationAngle); // Update value to memory from serial input
     delay(10);
-    if(!SERIAL_SETTINGS) {rotationAngle = ROTATION_ANGLE; }    //Use default rotation angle if bad serial input
+    if(!API_ENABLED) {rotationAngle = ROTATION_ANGLE; }    //Use default rotation angle if bad serial input
     isValidRotationAngle = true;
   } else {
     isValidRotationAngle = false;
