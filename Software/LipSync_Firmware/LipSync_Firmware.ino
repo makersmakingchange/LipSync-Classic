@@ -440,7 +440,7 @@ int setCursorSpeed(int inputSpeedCounter, bool responseEnabled) {
   
  if(responseEnabled) {
     (isValidSpeed) ? Serial.print("SUCCESS,0:SS,1:"):Serial.print("FAIL,2:SS,1:");
-    Serial.println(speedCounter); 
+    Serial.println(inputSpeedCounter); 
     delay(5);
   }  
   return speedCounter;
@@ -553,7 +553,7 @@ void setPressureThreshold(int inputPressureThreshold, bool responseEnabled) {
   
  if(responseEnabled) {
     (isValidThreshold) ? Serial.print("SUCCESS,0:PT,1:"):Serial.print("FAIL,2:PT,1:");
-    Serial.print(pressureThreshold);
+    Serial.print(inputPressureThreshold);
     Serial.print(":");
     Serial.println(pressureNominal); 
     delay(5);
@@ -1008,12 +1008,12 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
 
   if(responseEnabled) {
     (isValidMapping) ? Serial.print("SUCCESS,0:MP,1:") : Serial.print("FAIL,2:MP,1:");
-    Serial.print(actionButton[0]); 
-    Serial.print(actionButton[1]); 
-    Serial.print(actionButton[2]); 
-    Serial.print(actionButton[3]); 
-    Serial.print(actionButton[4]); 
-    Serial.println(actionButton[5]); 
+    Serial.print(buttonMapping[0]); 
+    Serial.print(buttonMapping[1]); 
+    Serial.print(buttonMapping[2]); 
+    Serial.print(buttonMapping[3]); 
+    Serial.print(buttonMapping[4]); 
+    Serial.println(buttonMapping[5]); 
     delay(5);
    }
 }
@@ -1021,23 +1021,23 @@ void setButtonMapping(int buttonMapping[],bool responseEnabled) {
 //***GET ROTATION ANGLE FUNCTION***///
 
 int getRotationAngle(bool responseEnabled) {
-
+  int tempRotationAngle = ROTATION_ANGLE;
+   
    if(API_ENABLED) {
      //Get the rotation angle from memory 
-      EEPROM.get(EEPROM_rotationAngle, rotationAngle);
+      EEPROM.get(EEPROM_rotationAngle, tempRotationAngle);
       delay(10);
    } else {
-      rotationAngle = ROTATION_ANGLE;
+      tempRotationAngle = ROTATION_ANGLE;
    }
 
   if(responseEnabled) {
     Serial.print("SUCCESS,0:RA,0:");
-    Serial.println(rotationAngle); 
+    Serial.println(tempRotationAngle); 
     delay(5);
    }
 
-   return rotationAngle;
-
+   return tempRotationAngle;
 }
 
 //***SET ROTATION ANGLE FUNCTION***///  
@@ -1059,7 +1059,7 @@ void setRotationAngle(int inputRotationAngle, bool responseEnabled) {
   
   if(responseEnabled) {
     (isValidRotationAngle) ? Serial.print("SUCCESS,0:RA,1:"):Serial.print("FAIL,2:RA,1:");
-    Serial.println(rotationAngle);
+    Serial.println(inputRotationAngle);
     delay(5);
   }
 
@@ -1149,7 +1149,7 @@ bool serialSettings(bool enabled) {
         settingsFlag=false;   
        }
        else {
-        Serial.print("FAIL,0");
+        Serial.print("FAIL,0:");
         Serial.println(inString);
         settingsFlag=false;      
        }
@@ -1217,7 +1217,7 @@ void writeSettings(String inputChangeString) {
       cursorSpeedCounter = getCursorSpeed(true);
       delay(5);
     } else if (changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='1' && ( changeString.length()==4 || changeString.length()==5)) {
-      setCursorSpeed(paramterString.toInt(),true);
+      cursorSpeedCounter = setCursorSpeed(paramterString.toInt(),true);
       delay(5);
     } 
     else if(changeChar[0]=='S' && changeChar[1]=='S' && changeChar[2]=='2' && changeChar[3]=='1' && changeString.length()==4) {
