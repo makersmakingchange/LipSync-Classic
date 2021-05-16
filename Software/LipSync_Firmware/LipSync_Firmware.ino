@@ -1311,24 +1311,24 @@ void writeSettings(String inputChangeString) {
 
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
 
-void pushButtonHandler(int switchPin1, int switchPin2) {
+void pushButtonHandler(int switchUpPin, int switchDownPin) {
     //Cursor speed control push button functions below
-  if (digitalRead(switchPin1) == LOW) {
+  if (digitalRead(switchUpPin) == LOW) {
     delay(200);
     clearButtonAction();
     delay(50);
-    if (digitalRead(switchPin2) == LOW) {
+    if (digitalRead(switchDownPin) == LOW) {
       setCursorCalibration(false);                      //Call joystick calibration if both push button up and down are pressed 
     } else {
       cursorSpeedCounter = increaseCursorSpeed(cursorSpeedCounter,false);                      //Call increase cursor speed function if push button up is pressed 
     }
   }
 
-  if (digitalRead(switchPin2) == LOW) {
+  if (digitalRead(switchDownPin) == LOW) {
     delay(200);
     clearButtonAction();
     delay(50);
-    if (digitalRead(switchPin1) == LOW) {
+    if (digitalRead(switchUpPin) == LOW) {
       setCursorCalibration(false);                      //Call joystick calibration if both push button up and down are pressed 
     } else {
       cursorSpeedCounter = decreaseCursorSpeed(cursorSpeedCounter,false);                      //Call increase cursor speed function if push button up is pressed 
