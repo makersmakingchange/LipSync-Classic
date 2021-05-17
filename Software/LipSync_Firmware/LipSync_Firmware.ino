@@ -23,6 +23,33 @@
 #include <Mouse.h>
 #include <math.h>
 
+                                                 
+//***OUTPUT ACTIONS***// - DO NOT CHANGE 
+// These are the different actions the LipSync can perform based on different sip and puff inputs.
+#define OUTPUT_NOTHING 0                              // No action
+#define OUTPUT_LEFT_CLICK 1                           // Generates a short left click
+#define OUTPUT_RIGHT_CLICK 2                          // Generates a short right click
+#define OUTPUT_DRAG 3                                 // Initiates drag mode, holding down left click until cancelled
+#define OUTPUT_SCROLL 4                               // Initiates scroll mode. Vertical motion generates mouse scroll wheel movement.
+#define OUTPUT_MIDDLE_CLICK 5                         // Generates a short middle click
+#define OUTPUT_CURSOR_HOME_RESET 6                    // Initiates the cursor home reset routine to reset center position. 
+#define OUTPUT_CURSOR_CALIBRATION 7                   // Initiates the cursor calibration to calibrate joystick range and reset center position.
+
+//***OUTPUT MAPPING***// - CUSTOMIZABLE
+//These values can be changed to remap different output actions to different input actions
+#define ACTION_SHORT_PUFF   OUTPUT_LEFT_CLICK        //Default: Left Click
+#define ACTION_SHORT_SIP    OUTPUT_RIGHT_CLICK       //Default: Right Click
+#define ACTION_LONG_PUFF    OUTPUT_DRAG              //Default: Drag
+#define ACTION_LONG_SIP     OUTPUT_SCROLL            //Default: Scroll
+#define ACTION_VLONG_PUFF   OUTPUT_CURSOR_HOME_RESET //Default: Cursor Home Reset
+#define ACTION_VLONG_SIP    OUTPUT_NOTHING           //Default: No action
+
+//Example - Reverse sip and puff so puff does right click and sip does left click.
+//To use these settings, uncomment these lines and comment out the corresponding lines above.
+//#define ACTION_SHORT_PUFF   OUTPUT_RIGHT_CLICK     
+//#define ACTION_SHORT_SIP    OUTPUT_LEFT_CLICK        
+
+
 //***CUSTOMIZABLE VARIABLES***//
 #define SPEED_COUNTER 5                           //Default cursor speed level
 #define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
@@ -32,25 +59,18 @@
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
 #define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
                                                   //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
-
-// INPUTS: (1: Short puff, 2: Short sip, 3: Long puff, 4: Long sip, 5: Very long puff, 6: Very long sip)
-// ACTIONS:(0: Nothing, 1: Left Click, 2: Right Click, 3: Drag, 4: Scroll, 5: Middle Click, 6: Cursor Home Reset, 7: Joystick Calibration )
-#define INPUT_1 1                                 //A1.Short Puff (Default: 1-Left Click)
-#define INPUT_2 2                                 //A2.Short Sip (Default: 2-Right Click)
-#define INPUT_3 3                                 //A3.Long Puff (Default: 3-Drag)
-#define INPUT_4 4                                 //A4.Long Sip (Default: Scroll
-#define INPUT_5 6                                 //A5.Very Long Puff (Default: 6-Cursor Home Reset)
-#define INPUT_6 0                                 //A6.Very Long Sip (Default: 0-Unmapped)
-     
-
+ 
 //***DON'T CHANGE THESE VARIABLES***//
 #define CURSOR_DEFAULT_SPEED 30                   //Maximum default USB cursor speed                  
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_RADIUS 30.0                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
-const int BUTTON_MAPPING[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Code-defined sip and puff buttons action
-const int DEFAULT_BUTTON_MAPPING[6] = {1, 2, 3, 4, 6, 0};     //Default sip and puff buttons actions
+#define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
+const int BUTTON_MAPPING[INPUT_ACTION_COUNT] = 
+  {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
+   ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_SHORT_PUFF};     
+const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     //MMC default sip and puff buttons actions
 
 //***PIN ASSIGNMENTS***//
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
@@ -99,10 +119,7 @@ const int DEFAULT_BUTTON_MAPPING[6] = {1, 2, 3, 4, 6, 0};     //Default sip and 
 //***VARIABLE DECLARATION***//
 
 //***Map Sip & Puff actions to cursor buttons for mode 1***//
-int actionButton[6]; 
-
-//Number of available sip and puff actions 
-int actionButtonSize = sizeof(actionButton)/sizeof(int);
+int actionButton[INPUT_ACTION_COUNT]; 
 
 int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
 int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
@@ -991,17 +1008,17 @@ void getChangeTolerance(float changePercent, bool responseEnabled) {
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
-
+//Retrieve button mapping
 void getButtonMapping(bool responseEnabled) {
   bool isValidMapping = true;
-  //memcpy(actionButton, BUTTON_MAPPING, actionButtonSize);     //Copy the default sip and puff button action mapping
+  //memcpy(actionButton, BUTTON_MAPPING, INPUT_ACTION_COUNT);     //Copy the default sip and puff button action mapping
   
   if (API_ENABLED) {
-    for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
+    for (int i = 0; i < INPUT_ACTION_COUNT; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(EEPROM_buttonMapping1+i*2, buttonMapping);
       delay(10);
-      if(buttonMapping<0 || buttonMapping >7) {
+      if(buttonMapping < 0 || buttonMapping > 7) {
         isValidMapping = false;
         break;
       } else {
@@ -1010,7 +1027,7 @@ void getButtonMapping(bool responseEnabled) {
       }
     }
     if(!isValidMapping){
-      for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
+      for(int i = 0; i < INPUT_ACTION_COUNT; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
         EEPROM.put(EEPROM_buttonMapping1+i*2, BUTTON_MAPPING[i]);
         delay(10);
         actionButton[i]=BUTTON_MAPPING[i];
@@ -1034,26 +1051,27 @@ void getButtonMapping(bool responseEnabled) {
 }
 
 //***SET BUTTON MAPPING FUNCTION***//
-
-void setButtonMapping(int inputButtonMapping[],bool responseEnabled) {
+//
+void setButtonMapping(int inputButtonMapping[], bool responseEnabled) {
   
   bool isValidMapping = true;
   
-   for(int i = 0; i < actionButtonSize; i++){           //Check if it's a valid mapping
+  
+   for(int i = 0; i < INPUT_ACTION_COUNT; i++){           // Check each action for validity
     if(inputButtonMapping[i]<0 || inputButtonMapping[i] >7) {     // Up to 8 input actions but 6 available 
       isValidMapping = false;
       break;
     }
    }
    
-   if(isValidMapping){                                  //Save the mapping into EEPROM if it's a valid mapping
-    for(int i = 0; i < actionButtonSize; i++){
-      EEPROM.put(EEPROM_buttonMapping1+i*2, buttonMapping[i]);
+   if(isValidMapping){  //Valid mapping                                 
+    for(int i = 0; i < INPUT_ACTION_COUNT; i++){
+      EEPROM.put(EEPROM_buttonMapping1+i*2, inputButtonMapping[i]); //Save the mapping into EEPROM if it's a valid mapping
       delay(10);
       actionButton[i]=inputButtonMapping[i];
       delay(5);
     }     
-    if(!API_ENABLED) { memcpy(actionButton, BUTTON_MAPPING, actionButtonSize);  }
+    if(!API_ENABLED) { memcpy(actionButton, BUTTON_MAPPING, INPUT_ACTION_COUNT);  } 
    } 
    delay(5);
 
@@ -1382,8 +1400,8 @@ void performCommand(String inputCommandString) {
       (isValidCommandParamter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
       delay(5);
     } else if(commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='1' && commandString.length()==9) {
-      int tempButtonMapping[actionButtonSize];
-      for(int i = 0; i< actionButtonSize; i++){
+      int tempButtonMapping[INPUT_ACTION_COUNT];
+      for(int i = 0; i< INPUT_ACTION_COUNT; i++){
          tempButtonMapping[i]=commandChar[3+i] - '0';          //Convert char arrat to int array
       }
       (isValidCommandParamter(paramterString)) ? setButtonMapping(tempButtonMapping,true) : printCommandResponse(false,2,inputCommandString);
@@ -1502,14 +1520,14 @@ void clearButtonAction(){
 }
 
 //***PERFORM BUTTON ACTION FUNCTION**//
-
-void performButtonAction(int actionButtonNumber) {
-    switch (actionButtonNumber) {
-      case 0: {
+// Perform mapped output actions (e.g. left click) based on input action (e.g. short puff)
+void performButtonAction(int outputAction) {
+    switch (outputAction) {
+      case OUTPUT_NOTHING: {
         //do nothing
         break;
       }
-      case 1: {
+      case OUTPUT_LEFT_CLICK: {
         //Left Click: Perform mouse left click action
         //Default: puff counter value is under PUFF_COUNT_THRESHOLD_MED ( 1 Second Short Puff )
         ledClear();
@@ -1521,7 +1539,7 @@ void performButtonAction(int actionButtonNumber) {
         }
         break;
       }
-      case 2: {
+      case OUTPUT_RIGHT_CLICK: {
         //Right Click: Perform mouse right click action
         //Default: if sip counter value is under SIP_COUNT_THRESHOLD_MED ( 1 Second Short Sip )
         ledClear();
@@ -1529,7 +1547,7 @@ void performButtonAction(int actionButtonNumber) {
         delay(5);
         break;
       }
-      case 3: {
+      case OUTPUT_DRAG: {
         //Drag: Perform mouse left press action ( Drag Action ) 
         //Default: if puff counter value is under 750 and more than PUFF_COUNT_THRESHOLD_MED ( 3 Second Long Puff )
         if (Mouse.isPressed(MOUSE_LEFT)) {
@@ -1542,7 +1560,7 @@ void performButtonAction(int actionButtonNumber) {
         }
         break;
       }
-      case 4: {
+      case OUTPUT_SCROLL: {
         //Scroll: Perform mouse scroll action
         //Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
         ledOn(1); // Turn on Green LED
@@ -1550,13 +1568,13 @@ void performButtonAction(int actionButtonNumber) {
         delay(5);
         break;
       }
-      case 5: {
+      case OUTPUT_MIDDLE_CLICK: {
         //Perform cursor middle click
         cursorMiddleClick();
         delay(5);
         break;
       }
-      case 6: {
+      case OUTPUT_CURSOR_HOME_RESET: {
         //Cursor Initialization: Perform cursor manual home initialization to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
         clearButtonAction();
@@ -1566,7 +1584,7 @@ void performButtonAction(int actionButtonNumber) {
         delay(5);
         break;
       }
-      case 7: {
+      case OUTPUT_CURSOR_CALIBRATION: {
         //Cursor Calibration: Perform cursor Calibration to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
         clearButtonAction();
