@@ -29,6 +29,12 @@
 #define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
+
+#define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input in cycle counts 
+#define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff in cycle counts 
+#define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input in cycle counts 
+#define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in cycle counts
+
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
 #define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
                                                   //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
@@ -1441,15 +1447,20 @@ void sipAndPuffHandler() {
     while (cursorPressure < puffThreshold) { // Continue measuring pressure until puff stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       puffCount++;                                //Count how long the pressure value has been under puff pressure threshold
+      if (puffCount == PUFF_COUNT_THRESHOLD_MED) { // When first count threshold is reached, turn on light
+        ledOn(2); //Turn on RED LED  
+      } else if (puffCount == PUFF_COUNT_THRESHOLD_LONG) {
+        ledClear(); //Turn off RED LED
+      }
       delay(5);
     }
 
     //USB puff actions 
-      if (puffCount < 150) {
+      if (puffCount < PUFF_COUNT_THRESHOLD_MED) {
         performButtonAction(actionButton[0]);
-      } else if (puffCount > 150 && puffCount < 750) {
+      } else if (puffCount >= PUFF_COUNT_THRESHOLD_MED && puffCount < PUFF_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[2]);
-      } else if (puffCount > 750) {
+      } else if (puffCount >= PUFF_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[4]);
       }
     puffCount = 0;                                //Reset puff counter
@@ -1461,15 +1472,20 @@ void sipAndPuffHandler() {
     while (cursorPressure > sipThreshold) { // Continue measuring pressure until sip stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       sipCount++;                                 //Count how long the pressure value has been above sip pressure threshold
+      if (sipCount == SIP_COUNT_THRESHOLD_MED) { // When first count threshold is reached, turn on light
+        ledOn(1); //Turn on green led
+      } else if(sipCount == SIP_COUNT_THRESHOLD_LONG){
+        ledClear(); // Turn off LEDs.
+      }
       delay(5);
     }
 
     //USB Sip actions 
-      if (sipCount < 150) {
+      if (sipCount < SIP_COUNT_THRESHOLD_MED) {
         performButtonAction(actionButton[1]);
-      } else if (sipCount > 150 && sipCount < 750) {
+      } else if (sipCount >= SIP_COUNT_THRESHOLD_MED && sipCount < SIP_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[3]);
-      } else {
+      } else if(sipCount >= SIP_COUNT_THRESHOLD_LONG){
         //Perform seconday function if sip counter value is more than 750 ( 5 second Long Sip )
         performButtonAction(actionButton[5]);
       }
