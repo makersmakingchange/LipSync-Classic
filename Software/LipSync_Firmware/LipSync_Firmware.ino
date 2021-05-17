@@ -34,15 +34,15 @@
                                                   //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 
 // INPUTS: (1: Short puff, 2: Short sip, 3: Long puff, 4: Long sip, 5: Very long puff, 6: Very long sip)
-// OUTPUTS: (0: Left Click, 1: Right Click, 2: Drag, 3: Scroll, 4: Middle Click, 5: Initialization, 6: Calibration )
-
-// INPUT - ACTION Mapping     
-#define INPUT_1 0                                 //A1.Short Puff: Left Click  
-#define INPUT_2 1                                 //A2.Short Sip: Right Click  
-#define INPUT_3 2                                 //A3.Long Puff: Drag
-#define INPUT_4 3                                 //A4.Long Sip: Scroll
-#define INPUT_5 5                                 //A5.Very Long Puff: Cursor Home Initialization
-#define INPUT_6 4                                 //A6.Very Long Sip: Cursor Middle Click
+// ACTIONS:(0: Nothing, 1: Left Click, 2: Right Click, 3: Drag, 4: Scroll, 5: Middle Click, 6: Cursor Home Reset, 7: Joystick Calibration )
+#define INPUT_1 1                                 //A1.Short Puff (Default: 1-Left Click)
+#define INPUT_2 2                                 //A2.Short Sip (Default: 2-Right Click)
+#define INPUT_3 3                                 //A3.Long Puff (Default: 3-Drag)
+#define INPUT_4 4                                 //A4.Long Sip (Default: Scroll
+#define INPUT_5 6                                 //A5.Very Long Puff (Default: 6-Cursor Home Reset)
+#define INPUT_6 0                                 //A6.Very Long Sip (Default: 0-Unmapped)
+const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
+//todo - this isn't the default - factory default should be different than whatever is entered here
       
 
 //***DON'T CHANGE THESE VARIABLES***//
@@ -85,17 +85,18 @@
 #define EEPROM_rawIntValue 36         //int:36,37;
 #define EEPROM_deadzoneValue 38       //int:38,39;
 #define EEPROM_buttonMode 40          //int:40,41;
-#define EEPROM_buttonMapping0 42      //int:42,43; 
-#define EEPROM_buttonMapping1 44      //int:44,45; 
-#define EEPROM_buttonMapping2 46      //int:46,47; 
-#define EEPROM_buttonMapping3 48      //int:48,49; 
-#define EEPROM_buttonMapping4 50      //int:50,51; 
 #define EEPROM_buttonMapping5 52      //int:52,53; 
 #define EEPROM_configNumber 54        //int:54,55; 3 when Bluetooth configured 
 
 //***SERIAL SETTINGS VARIABLE***//
 
 #define API_ENABLED true                      //Enable API Serial interface = true , Disable API serial interface = false       
+#define EEPROM_buttonMapping1 42                  //int:42,43; 
+#define EEPROM_buttonMapping2 44                  //int:44,45; 
+#define EEPROM_buttonMapping3 46                  //int:46,47; 
+#define EEPROM_buttonMapping4 48                  //int:48,49; 
+#define EEPROM_buttonMapping5 50                  //int:50,51; 
+#define EEPROM_buttonMapping6 52                  //int:52,53; 
 
 const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
 
@@ -1002,7 +1003,7 @@ void getButtonMapping(bool responseEnabled) {
   if (API_ENABLED) {
     for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
-      EEPROM.get(EEPROM_buttonMapping0+i*2, buttonMapping);
+      EEPROM.get(EEPROM_buttonMapping1+i*2, buttonMapping);
       delay(10);
       if(buttonMapping<0 || buttonMapping >7) {
         isValidMapping = false;
@@ -1014,7 +1015,7 @@ void getButtonMapping(bool responseEnabled) {
     }
     if(!isValidMapping){
       for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
-        EEPROM.put(EEPROM_buttonMapping0+i*2, defaultButtonMapping[i]);
+        EEPROM.put(EEPROM_buttonMapping1+i*2, defaultButtonMapping[i]);
         delay(10);
         actionButton[i]=defaultButtonMapping[i];
         delay(5);
@@ -1051,7 +1052,7 @@ void setButtonMapping(int inputButtonMapping[],bool responseEnabled) {
    
    if(isValidMapping){                                  //Save the mapping into EEPROM if it's a valid mapping
     for(int i = 0; i < actionButtonSize; i++){
-      EEPROM.put(EEPROM_buttonMapping0+i*2, inputButtonMapping[i]);
+      EEPROM.put(EEPROM_buttonMapping1+i*2, buttonMapping[i]);
       delay(10);
       actionButton[i]=inputButtonMapping[i];
       delay(5);
@@ -1504,10 +1505,17 @@ void clearButtonAction(){
   delay(5);
 }
 
+//***PERFORM BUTTON ACTION FUNCTION**//
+
 void performButtonAction(int actionButtonNumber) {
     switch (actionButtonNumber) {
       case 0: {
-        //Left Click: Perform mouse left click action if puff counter value is under 150 ( 1 Second Short Puff )
+        //do nothing
+        break;
+      }
+      case 1: {
+        //Left Click: Perform mouse left click action
+        //Default: puff counter value is under PUFF_COUNT_THRESHOLD_MED ( 1 Second Short Puff )
         ledClear();
         if (Mouse.isPressed(MOUSE_LEFT)) {
           Mouse.release(MOUSE_LEFT);
@@ -1517,15 +1525,17 @@ void performButtonAction(int actionButtonNumber) {
         }
         break;
       }
-      case 1: {
-        //Right Click: Perform mouse right click action if sip counter value is under 150 ( 1 Second Short Sip )
+      case 2: {
+        //Right Click: Perform mouse right click action
+        //Default: if sip counter value is under SIP_COUNT_THRESHOLD_MED ( 1 Second Short Sip )
         ledClear();
         Mouse.click(MOUSE_RIGHT);
         delay(5);
         break;
       }
-      case 2: {
-        //Drag: Perform mouse left press action ( Drag Action ) if puff counter value is under 750 and more than 150 ( 3 Second Long Puff )
+      case 3: {
+        //Drag: Perform mouse left press action ( Drag Action ) 
+        //Default: if puff counter value is under 750 and more than PUFF_COUNT_THRESHOLD_MED ( 3 Second Long Puff )
         if (Mouse.isPressed(MOUSE_LEFT)) {
           Mouse.release(MOUSE_LEFT);
           ledClear();
@@ -1536,21 +1546,23 @@ void performButtonAction(int actionButtonNumber) {
         }
         break;
       }
-      case 3: {
-        //Scroll: Perform mouse scroll action if sip counter value is under 750 and more than 150 ( 3 Second Long Sip )
+      case 4: {
+        //Scroll: Perform mouse scroll action
+        //Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
         ledOn(1); // Turn on Green LED
         cursorScroll();
         delay(5);
         break;
       }
-      case 4: {
+      case 5: {
         //Perform cursor middle click
         cursorMiddleClick();
         delay(5);
         break;
       }
-      case 5: {
-        //Cursor Initialization: Perform cursor manual home initialization to reset default value of FSR's if puff counter value is more than 750 ( 5 second Long Puff )
+      case 6: {
+        //Cursor Initialization: Perform cursor manual home initialization to reset default value of FSR's
+        //Default: if puff counter value is more than 750 ( 5 second Long Puff )
         clearButtonAction();
         ledClear();
         ledBlink(4, 350, 3); 
@@ -1558,8 +1570,9 @@ void performButtonAction(int actionButtonNumber) {
         delay(5);
         break;
       }
-      case 6: {
-        //Cursor Calibration: Perform cursor Calibration to reset default value of FSR's if puff counter value is more than 750 ( 5 second Long Puff )
+      case 7: {
+        //Cursor Calibration: Perform cursor Calibration to reset default value of FSR's
+        //Default: if puff counter value is more than 750 ( 5 second Long Puff )
         clearButtonAction();
         ledClear();
         setCursorCalibration(false);
