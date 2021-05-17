@@ -57,6 +57,7 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+#define PRESSURE_THRESHOLD 10                     //Default Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold, %V
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold, %V
 
@@ -563,10 +564,10 @@ bool getDebugMode(bool responseEnabled) {
   bool debugState=DEBUG_MODE;
   int debugIntValue;
   if(API_ENABLED) {
-    EEPROM.get(EEPROM_debugIntValue, debugIntValue);
+    EEPROM.get(EEPROM_debugModeEnabled, debugIntValue);
     delay(5);
     if(debugIntValue!=0 && debugIntValue!=1) {
-      EEPROM.put(EEPROM_debugIntValue, DEBUG_MODE);
+      EEPROM.put(EEPROM_debugModeEnabled, DEBUG_MODE);
       delay(5);
       debugState=DEBUG_MODE;
       }   
@@ -590,7 +591,7 @@ bool getDebugMode(bool responseEnabled) {
 
 bool setDebugMode(bool debugState,bool responseEnabled) {
 
-  (debugState) ? EEPROM.put(EEPROM_debugIntValue, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
+  (debugState) ? EEPROM.put(EEPROM_debugModeEnabled, 1) : EEPROM.put(EEPROM_debugModeEnabled, 0);
   delay(10);
   if(!API_ENABLED) { debugState=DEBUG_MODE; }    
   delay(5);
@@ -658,7 +659,7 @@ bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   if(API_ENABLED) {
-    EEPROM.get(EEPROM_rawIntValue, rawIntValue);
+    EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
       delay(5);
@@ -681,7 +682,7 @@ bool getRawMode(bool responseEnabled) {
 
 bool setRawMode(bool rawState,bool responseEnabled) {
   
-  (rawState) ? EEPROM.put(EEPROM_rawIntValue, 1) : EEPROM.put(EEPROM_rawIntValue, 0);
+  (rawState) ? EEPROM.put(EEPROM_rawModeEnabled, 1) : EEPROM.put(EEPROM_rawModeEnabled, 0);
   delay(5);    
   if(!API_ENABLED) { rawState=RAW_MODE; }
   delay(5);    
