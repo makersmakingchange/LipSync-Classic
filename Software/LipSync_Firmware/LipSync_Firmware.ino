@@ -53,7 +53,7 @@
 //***DON'T CHANGE THESE VARIABLES***//
 #define CURSOR_DEFAULT_SPEED 30                   //Maximum default USB cursor speed                  
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-#define CURSOR_RADIUS 30.0                        //Joystick deadband
+#define CURSOR_DEADBAND 30                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
 
@@ -118,8 +118,8 @@ int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //I
 
 int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
 
-float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
-float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
+int xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;  //Squared Distance from joytick center in each quadrant
+int xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius; // Squared deadband distance from center
 
 int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
 
@@ -290,10 +290,10 @@ void cursorHandler(void) {
   yLowPrev = yLow;
 
   // Calculate the magnitude of the movement for each direction / quadrant
-  xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
-  xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
-  xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-  xLowYLow = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
+  xHighYHigh = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
+  xHighYLow  = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yLow - yLowNeutral) > 0) ? (yLow - yLowNeutral) : 0);    //The sqrt() function raises input to power 1/2, returning a float type
+  xLowYHigh  = sq(((xLow  - xLowNeutral)  > 0) ? (xLow - xLowNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
+  xLowYLow   = sq(((xLow  - xLowNeutral)  > 0) ? (xLow - xLowNeutral) : 0) + sq(((yLow - yLowNeutral) > 0) ? (yLow - yLowNeutral) : 0);         //a larger digital value with a positive application force, a large negative difference
 
   //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
@@ -353,6 +353,8 @@ void cursorHandler(void) {
   }
   
 }
+
+
 
 //***INITIALIZE PINS FUNCTION ***//
 void initializePins(void) {
@@ -880,10 +882,10 @@ void getCursorCalibration(bool responseEnable) {
   EEPROM.get(EEPROM_yLowMax, yLowMax);
   delay(10);
 
-  xHighYHighRadius = CURSOR_RADIUS;
-  xHighYLowRadius = CURSOR_RADIUS;
-  xLowYLowRadius = CURSOR_RADIUS;
-  xLowYHighRadius = CURSOR_RADIUS;
+  xHighYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
+  xHighYLowRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
+  xLowYLowRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
+  xLowYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
   if(responseEnable){
     //printCommandResponse(true,0,"CA,0:"+(String)xHighMax+","+(String)xLowMax+","+(String)yHighMax+","+(String)yLowMax);
@@ -1739,10 +1741,14 @@ void cursorScroll(void) {
     float scrollRelease = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
 
     // Read FSR Inputs
-    xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
-    xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
-    xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-    xLowYLow = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
+    xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) 
+    + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
+    xHighYLow  = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) 
+    + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
+    xLowYHigh  = sqrt(sq(((xLow  - xLowNeutral)  > 0) ? (float)(xLow  - xLowNeutral)  : 0.0) 
+    + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
+    xLowYLow   = sqrt(sq(((xLow  - xLowNeutral)  > 0) ? (float)(xLow  - xLowNeutral)  : 0.0) 
+    + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
 
     //Check to see if the joystick has moved
     if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
