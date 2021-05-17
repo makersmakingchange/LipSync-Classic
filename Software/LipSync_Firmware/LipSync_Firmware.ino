@@ -41,9 +41,7 @@
 #define INPUT_4 4                                 //A4.Long Sip (Default: Scroll
 #define INPUT_5 6                                 //A5.Very Long Puff (Default: 6-Cursor Home Reset)
 #define INPUT_6 0                                 //A6.Very Long Sip (Default: 0-Unmapped)
-const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
-//todo - this isn't the default - factory default should be different than whatever is entered here
-      
+     
 
 //***DON'T CHANGE THESE VARIABLES***//
 #define CURSOR_DEFAULT_SPEED 30                   //Maximum default USB cursor speed                  
@@ -51,6 +49,8 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 #define CURSOR_RADIUS 30.0                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+const int BUTTON_MAPPING[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Code-defined sip and puff buttons action
+const int DEFAULT_BUTTON_MAPPING[6] = {1, 2, 3, 4, 6, 0};     //Default sip and puff buttons actions
 
 //***PIN ASSIGNMENTS***//
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
@@ -85,20 +85,16 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 #define EEPROM_rawIntValue 36         //int:36,37;
 #define EEPROM_deadzoneValue 38       //int:38,39;
 #define EEPROM_buttonMode 40          //int:40,41;
-#define EEPROM_buttonMapping5 52      //int:52,53; 
+#define EEPROM_buttonMapping1 42      //int:42,43; 
+#define EEPROM_buttonMapping2 44      //int:44,45; 
+#define EEPROM_buttonMapping3 46      //int:46,47; 
+#define EEPROM_buttonMapping4 48      //int:48,49; 
+#define EEPROM_buttonMapping5 50      //int:50,51; 
+#define EEPROM_buttonMapping6 52      //int:52,53; 
 #define EEPROM_configNumber 54        //int:54,55; 3 when Bluetooth configured 
 
 //***SERIAL SETTINGS VARIABLE***//
-
 #define API_ENABLED true                      //Enable API Serial interface = true , Disable API serial interface = false       
-#define EEPROM_buttonMapping1 42                  //int:42,43; 
-#define EEPROM_buttonMapping2 44                  //int:44,45; 
-#define EEPROM_buttonMapping3 46                  //int:46,47; 
-#define EEPROM_buttonMapping4 48                  //int:48,49; 
-#define EEPROM_buttonMapping5 50                  //int:50,51; 
-#define EEPROM_buttonMapping6 52                  //int:52,53; 
-
-const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
 
 //***VARIABLE DECLARATION***//
 
@@ -998,7 +994,7 @@ void getChangeTolerance(float changePercent, bool responseEnabled) {
 
 void getButtonMapping(bool responseEnabled) {
   bool isValidMapping = true;
-  //memcpy(actionButton, defaultButtonMapping, actionButtonSize);     //Copy the default sip and puff button action mapping
+  //memcpy(actionButton, BUTTON_MAPPING, actionButtonSize);     //Copy the default sip and puff button action mapping
   
   if (API_ENABLED) {
     for (int i = 0; i < actionButtonSize; i++) {                    //Check if it's a valid mapping
@@ -1015,9 +1011,9 @@ void getButtonMapping(bool responseEnabled) {
     }
     if(!isValidMapping){
       for(int i = 0; i < actionButtonSize; i++){                       //Save the default mapping into EEPROM if it's not a valid mapping
-        EEPROM.put(EEPROM_buttonMapping1+i*2, defaultButtonMapping[i]);
+        EEPROM.put(EEPROM_buttonMapping1+i*2, BUTTON_MAPPING[i]);
         delay(10);
-        actionButton[i]=defaultButtonMapping[i];
+        actionButton[i]=BUTTON_MAPPING[i];
         delay(5);
       }
     }   
@@ -1057,7 +1053,7 @@ void setButtonMapping(int inputButtonMapping[],bool responseEnabled) {
       actionButton[i]=inputButtonMapping[i];
       delay(5);
     }     
-    if(!API_ENABLED) { memcpy(actionButton, defaultButtonMapping, actionButtonSize);  }
+    if(!API_ENABLED) { memcpy(actionButton, BUTTON_MAPPING, actionButtonSize);  }
    } 
    delay(5);
 
@@ -1176,7 +1172,7 @@ void factoryReset(bool responseEnabled) {
     setRawMode(RAW_MODE,false);                                           //set default button mapping
     delay(10);  
     
-    setButtonMapping(defaultButtonMapping,false);                         //set default action mapping
+    setButtonMapping(BUTTON_MAPPING,false);                         //set default action mapping
     delay(10);
 
     //Set the default values
