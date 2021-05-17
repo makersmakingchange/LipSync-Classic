@@ -608,7 +608,7 @@ bool getDebugMode(bool responseEnabled) {
 void setDebugMode(bool debugState,bool responseEnabled) {
 
   debugModeEnabled=debugState;
-  (debugModeEnabled) ? EEPROM.put(EEPROM_debugModeEnabled, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
+  //(debugModeEnabled) ? EEPROM.put(EEPROM_debugModeEnabled, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
   delay(10);
   if(!API_ENABLED) { debugModeEnabled=DEBUG_MODE; }    
   delay(5);
@@ -678,7 +678,7 @@ bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   if(API_ENABLED) {
-    EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
+    //EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
       delay(5);
@@ -705,7 +705,7 @@ bool getRawMode(bool responseEnabled) {
 void setRawMode(bool rawState,bool responseEnabled) {
 
   rawModeEnabled=rawState;
-  (rawModeEnabled) ? EEPROM.put(EEPROM_rawModeEnabled, 1) : EEPROM.put(EEPROM_rawIntValue, 0);
+  (rawModeEnabled) ? EEPROM.put(EEPROM_rawModeEnabled, 1) : EEPROM.put(EEPROM_rawModeEnabled, 0);
   delay(5);    
   if(!API_ENABLED) { rawModeEnabled=RAW_MODE; }
   delay(5);    
@@ -1168,7 +1168,6 @@ void factoryReset(bool responseEnabled) {
     setDebugMode(DEBUG_MODE,false);                                       //set default debug mode
     delay(10);  
     
-    //EEPROM.put(EEPROM_RawIntValue, RAW_MODE);
     setRawMode(RAW_MODE,false);                                           //set default button mapping
     delay(10);  
     
