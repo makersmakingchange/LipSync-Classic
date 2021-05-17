@@ -43,6 +43,11 @@
 #define INPUT_4 3                                 //A4.Long Sip: Scroll
 #define INPUT_5 5                                 //A5.Very Long Puff: Cursor Home Initialization
 #define INPUT_6 4                                 //A6.Very Long Sip: Cursor Middle Click
+
+#define XHIGH_DIRECTION 1                         //Mouthpiece right movements correspond to positive (i.e. right) mouse movement
+#define XLOW_DIRECTION -1                         //Mouthpiece left movements correspond to negative (i.e. left) mouse movement
+#define YHIGH_DIRECTION -1                        //Mouthpiece up movements correspond to negative (i.e. up) mouse movement
+#define YLOW_DIRECTION 1                          //Mouthpiece down movements correspond to positive (i.e. down) mouse movement
       
 
 //***DON'T CHANGE THESE VARIABLES***//
@@ -299,29 +304,29 @@ void cursorHandler(void) {
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
     if(!skipChange && pollCounter >= 3) {
         if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1
-          xCursor = xCursorHigh(xHigh);
-          yCursor = yCursorHigh(yHigh);
+          xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+          yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4
-          xCursor = xCursorHigh(xHigh);
-          yCursor = yCursorLow(yLow);
+          xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+          yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3
-          xCursor = xCursorLow(xLow);
-          yCursor = yCursorLow(yLow);
+          xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+          yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
         } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2
-          xCursor = xCursorLow(xLow);
-          yCursor = yCursorHigh(yHigh);
+          xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+          yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
@@ -1744,21 +1749,21 @@ void cursorScroll(void) {
       
       //Joystick moved - determine which quadrant     
       if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1
-            xCursor = xCursorHigh(xHigh);
-            yCursor = yCursorHigh(yHigh);
+            xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+            yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
                         
           } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4
-            xCursor = xCursorHigh(xHigh);
-            yCursor = yCursorLow(yLow);            
+            xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+            yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);            
             
           } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3
-            xCursor = xCursorLow(xLow);
-            yCursor = yCursorLow(yLow);
+            xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+            yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
            
             
           } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2
-            xCursor = xCursorLow(xLow);
-            yCursor = yCursorHigh(yHigh);
+            xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+            yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
             
           }
 
@@ -1782,107 +1787,27 @@ void cursorScroll(void) {
   }
 }
 
-
-//***Y HIGH CURSOR MOVEMENT MODIFIER FUNCTION***//
-
-int yCursorHigh(int j) {
-
-  if (j > yHighNeutral) {
-    //Calculate Y up factor ( 1.25 multiplied by Y high comp multiplied by ratio of Y value to Y High Maximum value )
-    float yHighNeutral_factor = 1.25 * (yHighComp * (((float)(j - yHighNeutral)) / (yHighMax - yHighNeutral)));
-
-    //Use the calculated Y up factor to none linearize the maximum speeds
-    int k = (int)(round(-1.0 * pow(cursorMaxSpeed, yHighNeutral_factor)) - 1.0);
-
-    //Select maximum speed
-    int maxSpeed = round(-1.0 * pow(cursorMaxSpeed, 1.25*yHighComp)) - 1.0;
-
-    //Map the value to a value between 0 and the selected maximum speed
-    k = map(k, 0, (round(-1.0 * pow(cursorMaxSpeed, 1.25*yHighComp)) - 1.0), 0, maxSpeed); 
-
-    //Set a constrain
-    k = constrain(k,-1 * cursorMaxSpeed, 0);
-
-    return k;
-  } else {
-    return 0;
-  }
-}
-
-//***Y LOW CURSOR MOVEMENT MODIFIER FUNCTION***//
-
-int yCursorLow(int j) {
-
-  if (j > yLowNeutral) {
-    //Calculate Y down factor ( 1.25 multiplied by Y low comp multiplied by ratio of Y value to Y Low Maximum value )
-    float yLowNeutral_factor = 1.25 * (yLowComp * (((float)(j - yLowNeutral)) / (yLowMax - yLowNeutral)));
-
-    //Use the calculated Y down factor to none linearize the maximum speeds
-    int k = (int)(round(1.0 * pow(cursorMaxSpeed, yLowNeutral_factor)) - 1.0);
-
-    //Select maximum speed
-    int maxSpeed = round(1.0 * pow(cursorMaxSpeed, 1.25*yLowComp)) - 1.0;
-
-    //Map the values to a value between 0 and the selected maximum speed
-    k = map(k, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*yLowComp)) - 1.0), 0, maxSpeed); 
-    
-    //Set a constrain   
-    k = constrain(k,0,cursorMaxSpeed);
-    
-    return k;
-  } else {
-    return 0;
-  }
-}
-
-//***X HIGH CURSOR MOVEMENT MODIFIER FUNCTION***//
-
-int xCursorHigh(int j) {
-
-  if (j > xHighNeutral) {
-    //Calculate X right factor ( 1.25 multiplied by X high comp multiplied by ratio of X value to X High Maximum value )
-    float xHighNeutral_factor = 1.25 * (xHighComp * (((float)(j - xHighNeutral)) / (xHighMax - xHighNeutral)));
-
-    //Use the calculated X down factor to none linearize the maximum speeds
-    int k = (int)(round(1.0 * pow(cursorMaxSpeed, xHighNeutral_factor)) - 1.0);
-
-    //Select maximum speed
-    int maxSpeed = round(1.0 * pow(cursorMaxSpeed, 1.25*xHighComp)) - 1.0;
-
-    //Map the values to a value between 0 and the selected maximum speed
-    k = map(k, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*xHighComp)) - 1.0), 0, maxSpeed); 
-    
-    //Set a constrain
-    k = constrain(k,0,cursorMaxSpeed);
-    
-    return k;
-  } else {
-    return 0;
-  }
-}
-
-//***X LOW CURSOR MOVEMENT MODIFIER FUNCTION***//
-
-int xCursorLow(int j) {
-
-  if (j > xLowNeutral) {
+//***FSR CURSOR MOVEMENT MODIFIER FUNCTION***//
+// Converts FSR voltage readings into mouse cursor movements
+int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue) {
+  int cursorOutput = 0;
+  
+  if (rawValue > neutralValue) { //FSR pressed 
     //Calculate X left factor ( 1.25 multiplied by X low comp multiplied by ratio of X value to X low Maximum value )
-    float xLowNeutral_factor = 1.25 * (xLowComp * (((float)(j - xLowNeutral)) / (xLowMax - xLowNeutral)));
+    float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
 
     //Use the calculated X down factor to none linearize the maximum speeds
-    int k = (int)(round(-1.0 * pow(cursorMaxSpeed, xLowNeutral_factor)) - 1.0);
+    cursorOutput = (int)(round(-1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
 
     //Select maximum speed
-    int maxSpeed = round(-1.0 * pow(cursorMaxSpeed, 1.25*xLowComp)) - 1.0;
+    int maxSpeed = round(-1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
 
     //Map the values to a value between 0 and the selected maximum speed
-    k = map(k, 0, (round(-1.0 * pow(cursorMaxSpeed, 1.25*xLowComp)) - 1.0), 0, maxSpeed); 
+    cursorOutput = map(cursorOutput, 0, (round(-1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); 
     
     //Set a constrain 
-    k = constrain(k,-1 * cursorMaxSpeed, 0);
-     
-    return k;
-  } else {
-    return 0;
-  }
+    cursorOutput = constrain(cursorOutput,cursorMaxSpeed, 0);   
+  } //end FSR pressed
+  
+  return cursorOutput;
 }
