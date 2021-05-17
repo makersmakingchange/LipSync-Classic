@@ -65,42 +65,39 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 #define LED_2_PIN 5                               // LipSync LED Color2 : RED - digital outputpin 4
 #define BUTTON_DOWN_PIN 7                         // Cursor Control Button 2: DOWN - digital input pin 7 (internally pulled-up)
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
-
 #define TRANS_CONTROL_PIN A3                      // Bluetooth Transistor Control Pin - digital output pin A3
 #define PIO4_PIN A4                               // Bluetooth PIO4_PIN Command Pin - digital output pin A4
-
 #define PRESSURE_PIN A5                           // Sip & Puff Pressure Transducer Pin - analog input pin A5
 #define X_DIR_HIGH_PIN A0                         // X Direction High (Cartesian positive x : right) - analog input pin A0
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
 
-// LipSync EEPROM Memory Usage - DO NOT CHANGE
-#define EEPROM_modelNumber 0          //int:0,1; 255 on fresh Arduino
-#define EEPROM_speedCounter 2         //int:2,3; 
-#define EEPROM_defaultIsSet 4         //int:4,5; 
-#define EEPROM_yHighComp 6            //float:6,7,8,9; 
-#define EEPROM_yLowComp 10            //float:10,11,12,13; 
-#define EEPROM_xHighComp 14           //float:14,15,16,17; 
-#define EEPROM_xLowComp 18            //float:18,19,20,21; 
-#define EEPROM_xHighMax 22            //int:22,23; 
-#define EEPROM_xLowMax 24             //int:24,25; 
-#define EEPROM_yHighMax 26            //int:26,27; 
-#define EEPROM_yLowMax 28             //int:28,29; 
-#define EEPROM_rotationAngle 30       //int:30,31; 
-#define EEPROM_pressureThreshold 32   //int:32,33; 
-#define EEPROM_debugIntValue 34       //int:34,35; 
-#define EEPROM_rawIntValue 36         //int:36,37;
-#define EEPROM_deadzoneValue 38       //int:38,39;
-#define EEPROM_buttonMode 40          //int:40,41;
-#define EEPROM_buttonMapping0 42      //int:42,43; 
-#define EEPROM_buttonMapping1 44      //int:44,45; 
-#define EEPROM_buttonMapping2 46      //int:46,47; 
-#define EEPROM_buttonMapping3 48      //int:48,49; 
-#define EEPROM_buttonMapping4 50      //int:50,51; 
-#define EEPROM_buttonMapping5 52      //int:52,53; 
-#define EEPROM_configNumber 54        //int:54,55; 3 when Bluetooth configured 
-
+//***LIPSYNC EEPROM MEMORY***// - DO NOT CHANGE
+#define EEPROM_modelNumber 0                      //int:0,1; 255 on fresh Arduino
+#define EEPROM_speedCounter 2                     //int:2,3; 
+#define EEPROM_defaultIsSet 4                     //int:4,5; 
+#define EEPROM_yHighComp 6                        //float:6,7,8,9; 
+#define EEPROM_yLowComp 10                        //float:10,11,12,13; 
+#define EEPROM_xHighComp 14                       //float:14,15,16,17; 
+#define EEPROM_xLowComp 18                        //float:18,19,20,21; 
+#define EEPROM_xHighMax 22                        //int:22,23; 
+#define EEPROM_xLowMax 24                         //int:24,25; 
+#define EEPROM_yHighMax 26                        //int:26,27; 
+#define EEPROM_yLowMax 28                         //int:28,29; 
+#define EEPROM_rotationAngle 30                   //int:30,31; 
+#define EEPROM_pressureThreshold 32               //int:32,33; 
+#define EEPROM_debugModeEnabled 34                //int:34,35; 
+#define EEPROM_rawModeEnabled 36                  //int:36,37;
+#define EEPROM_deadzoneValue 38                   //int:38,39;
+#define EEPROM_buttonMode 40                      //int:40,41;
+#define EEPROM_buttonMapping0 42                  //int:42,43; 
+#define EEPROM_buttonMapping1 44                  //int:44,45; 
+#define EEPROM_buttonMapping2 46                  //int:46,47; 
+#define EEPROM_buttonMapping3 48                  //int:48,49; 
+#define EEPROM_buttonMapping4 50                  //int:50,51; 
+#define EEPROM_buttonMapping5 52                  //int:52,53; 
+#define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
 
 //Cursor Speed Level structure 
 typedef struct {
@@ -146,7 +143,6 @@ int cursorDeltaBox;                               //The delta value for the boun
 int cursorDelta;                                  //The amount cursor moves in some single or combined direction
 
 unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
-
 int pollCounter = 0;                              //Cursor poll counter
 
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
@@ -164,8 +160,6 @@ int yHighMaxDebug, yLowMaxDebug, xHighMaxDebug, xLowMaxDebug;
 
 int rotationAngle = ROTATION_ANGLE;                       //Rotation angle variables
 float rotationAngle11, rotationAngle12, rotationAngle21, rotationAngle22;
-
-
 
 float sipThreshold;                                       //Sip pressure threshold in volts
 float puffThreshold;                                      //Puff pressure threshold in volts
@@ -289,9 +283,9 @@ void cursorHandler(void) {
 
   // Calculate the magnitude of the movement for each direction / quadrant
   xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
-  xHighYLow = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
-  xLowYHigh = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-  xLowYLow = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
+  xHighYLow  = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
+  xLowYHigh  = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
+  xLowYLow   = sqrt(sq(((xLow - xLowNeutral) > 0) ? (float)(xLow - xLowNeutral) : 0.0) + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
 
   //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
@@ -378,6 +372,7 @@ void initializePins(void) {
 }
 
 
+
 //***GET MODEL NUMBER FUNCTION***//
 
 void getModelNumber(bool responseEnabled) {
@@ -460,7 +455,6 @@ int increaseCursorSpeed(int speedCounter,bool responseEnabled) {
   } else {
     ledBlink(speedCounter+1, 100, 1);
     
-    cursorDelay = cursorParams[speedCounter]._delay;
     cursorFactor = cursorParams[speedCounter]._factor;
     cursorMaxSpeed = cursorParams[speedCounter]._maxSpeed;
 
@@ -667,7 +661,6 @@ bool getRawMode(bool responseEnabled) {
     EEPROM.get(EEPROM_rawIntValue, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
-      EEPROM.put(EEPROM_rawIntValue, RAW_MODE);
       delay(5);
       rawState=RAW_MODE;
       }   
@@ -1387,6 +1380,8 @@ void sipAndPuffHandler() {
   }
 }
 
+// Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is deteced
+
 int sipAndPuffRawHandler() {
   int currentAction = 0;
   cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;   
@@ -1499,7 +1494,7 @@ void ledOn(int ledNumber) {
 }
 
 //***LED CLEAR FUNCTION***//
-
+//Turns off both LEDs
 void ledClear(void) {
   digitalWrite(LED_1_PIN, LOW);
   digitalWrite(LED_2_PIN, LOW);
