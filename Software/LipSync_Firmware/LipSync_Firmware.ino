@@ -1354,6 +1354,11 @@ void sipAndPuffHandler() {
     while (cursorPressure < puffThreshold) { // Continue measuring pressure until puff stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       puffCount++;                                //Count how long the pressure value has been under puff pressure threshold
+      if (puffCount == PUFF_COUNT_THRESHOLD_MED) { // When first count threshold is reached, turn on light
+        ledOn(2); //Turn on RED LED  
+      } else if (puffCount == PUFF_COUNT_THRESHOLD_LONG) {
+        ledClear(); //Turn off RED LED
+      }
       delay(5);
     }
 
@@ -1374,6 +1379,11 @@ void sipAndPuffHandler() {
     while (cursorPressure > sipThreshold) { // Continue measuring pressure until sip stops
       cursorPressure = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
       sipCount++;                                 //Count how long the pressure value has been above sip pressure threshold
+      if (sipCount == SIP_COUNT_THRESHOLD_MED) { // When first count threshold is reached, turn on light
+        ledOn(1); //Turn on green led
+      } else if(sipCount == SIP_COUNT_THRESHOLD_LONG){
+        ledClear(); // Turn off LEDs.
+      }
       delay(5);
     }
 
