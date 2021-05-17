@@ -29,6 +29,12 @@
 #define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
+
+#define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input in cycle counts 
+#define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff in cycle counts 
+#define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input in cycle counts 
+#define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in cycle counts
+
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
 #define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
                                                   //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
