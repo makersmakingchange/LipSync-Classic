@@ -1358,11 +1358,11 @@ void sipAndPuffHandler() {
     }
 
     //USB puff actions 
-      if (puffCount < 150) {
+      if (puffCount < PUFF_COUNT_THRESHOLD_MED) {
         performButtonAction(actionButton[0]);
-      } else if (puffCount > 150 && puffCount < 750) {
+      } else if (puffCount >= PUFF_COUNT_THRESHOLD_MED && puffCount < PUFF_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[2]);
-      } else if (puffCount > 750) {
+      } else if (puffCount >= PUFF_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[4]);
       }
     puffCount = 0;                                //Reset puff counter
@@ -1378,11 +1378,11 @@ void sipAndPuffHandler() {
     }
 
     //USB Sip actions 
-      if (sipCount < 150) {
+      if (sipCount < SIP_COUNT_THRESHOLD_MED) {
         performButtonAction(actionButton[1]);
-      } else if (sipCount > 150 && sipCount < 750) {
+      } else if (sipCount >= SIP_COUNT_THRESHOLD_MED && sipCount < SIP_COUNT_THRESHOLD_LONG) {
         performButtonAction(actionButton[3]);
-      } else {
+      } else if(sipCount >= SIP_COUNT_THRESHOLD_LONG){
         //Perform seconday function if sip counter value is more than 750 ( 5 second Long Sip )
         performButtonAction(actionButton[5]);
       }
