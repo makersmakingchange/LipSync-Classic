@@ -24,39 +24,47 @@
 #include <math.h>
 
 //***CUSTOMIZABLE VARIABLES***//
-#define SPEED_COUNTER 5                           //Default cursor speed level
-#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
-#define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
-#define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
-#define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
-#define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
-                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 
+#define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input in cycle counts
+#define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff in cycle counts
+#define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input in cycle counts
+#define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in cycle counts
+
+#define CURSOR_RADIUS 30                          //Joystick deadband
+#define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed     
+#define SPEED_COUNTER 5                           //Default cursor speed level
+
+//***INPUT - ACTION Mapping***//
 // INPUTS: (1: Short puff, 2: Short sip, 3: Long puff, 4: Long sip, 5: Very long puff, 6: Very long sip)
-// OUTPUTS: (0: Left Click, 1: Right Click, 2: Drag, 3: Scroll, 4: Middle Click, 5: Initialization, 6: Calibration )
+// ACTIONS:(0: Nothing, 1: Left Click, 2: Right Click, 3: Drag, 4: Scroll, 5: Middle Click, 6: Cursor Home Reset, 7: Joystick Calibration )
+#define INPUT_1 1                                 //A1.Short Puff (Default: 1-Left Click)
+#define INPUT_2 2                                 //A2.Short Sip (Default: 2-Right Click)
+#define INPUT_3 3                                 //A3.Long Puff (Default: 3-Drag)
+#define INPUT_4 4                                 //A4.Long Sip (Default: Scroll
+#define INPUT_5 6                                 //A5.Very Long Puff (Default: 6-Cursor Home Reset)
+#define INPUT_6 0                                 //A6.Very Long Sip (Default: 0-Unmapped)
+const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
+//todo - this isn't the default - factory default should be different than whatever is entered here
 
-// INPUT - ACTION Mapping     
-#define INPUT_1 0                                 //A1.Short Puff: Left Click  
-#define INPUT_2 1                                 //A2.Short Sip: Right Click  
-#define INPUT_3 2                                 //A3.Long Puff: Drag
-#define INPUT_4 3                                 //A4.Long Sip: Scroll
-#define INPUT_5 5                                 //A5.Very Long Puff: Cursor Home Initialization
-#define INPUT_6 4                                 //A6.Very Long Sip: Cursor Middle Click
-      
+//*** DEVELOPER SETTINGS***//
+#define API_ENABLED true                          //Enable API Serial interface = true , Disable API serial interface = false (Default: true)   
+#define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
+#define RAW_MODE false                            //Enable raw FSR readings to serial output (Default: false)
+                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"    
 
-//***DON'T CHANGE THESE VARIABLES***//
-#define CURSOR_DEFAULT_SPEED 30                   //Maximum default USB cursor speed                  
+//***DON'T CHANGE THESE VARIABLES***//            
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-#define CURSOR_RADIUS 30.0                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+#define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold, %V
+#define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold, %V
 
-//***PIN ASSIGNMENTS***//
-#define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
-#define BUTTON_DOWN_PIN 7                         // Cursor Control Button 2: DOWN - digital input pin 7 (internally pulled-up)
+//***PIN ASSIGNMENTS***// - DO NOT CHANGE
 #define LED_1_PIN 4                               // LipSync LED Color1 : GREEN - digital output pin 5
 #define LED_2_PIN 5                               // LipSync LED Color2 : RED - digital outputpin 4
+#define BUTTON_DOWN_PIN 7                         // Cursor Control Button 2: DOWN - digital input pin 7 (internally pulled-up)
+#define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
 
 #define TRANS_CONTROL_PIN A3                      // Bluetooth Transistor Control Pin - digital output pin A3
 #define PIO4_PIN A4                               // Bluetooth PIO4_PIN Command Pin - digital output pin A4
@@ -93,52 +101,6 @@
 #define EEPROM_buttonMapping5 52      //int:52,53; 
 #define EEPROM_configNumber 54        //int:54,55; 3 when Bluetooth configured 
 
-//***SERIAL SETTINGS VARIABLE***//
-
-#define API_ENABLED true                      //Enable API Serial interface = true , Disable API serial interface = false       
-
-const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5, INPUT_6};     //Default sip and puff buttons action on the factory reset
-
-//***VARIABLE DECLARATION***//
-
-//***Map Sip & Puff actions to cursor buttons for mode 1***//
-int actionButton[6]; 
-
-//Number of available sip and puff actions 
-int actionButtonSize = sizeof(actionButton)/sizeof(int);
-
-int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
-int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
-int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //Individual neutral starting positions for each FSR
-
-int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
-
-float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
-float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
-
-int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
-
-int cursorDeltaBox;                               //The delta value for the boundary range in all 4 directions about the x,y center
-int cursorDelta;                                  //The amount cursor moves in some single or combined direction
-
-unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
-
-int pollCounter = 0;                              //Cursor poll counter
-
-int xCursor = 0;                                  //Mouse cursor component
-int yCursor = 0;                                  //Mouse cursor component
-
-int cursorDelay;
-float cursorFactor;
-int cursorMaxSpeed;
-
-float yHighComp = 1.0;
-float yLowComp = 1.0;
-float xHighComp = 1.0;
-float xLowComp = 1.0;
-
-float yHighDebug, yLowDebug, xHighDebug, xLowDebug;
-int yHighMaxDebug, yLowMaxDebug, xHighMaxDebug, xLowMaxDebug;
 
 //Cursor Speed Level structure 
 typedef struct {
@@ -161,20 +123,61 @@ _cursor setting10 = {5, -1.1, CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED)};
 _cursor setting11 = {5, -1.1, CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 
 _cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, setting6, setting7, setting8, setting9, setting10, setting11};
+  
 
-// Cursor Rotation Angle Variables
-int rotationAngle=0;                                      //Declare rotation angle variables
+//***VARIABLE DECLARATION***//
+
+//***Map Sip & Puff actions to cursor buttons for mode 1***//
+int actionButton[6]; 
+int actionButtonSize = sizeof(actionButton)/sizeof(int);                      //Number of available sip and puff actions 
+
+int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
+int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
+int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //Individual neutral starting positions for each FSR
+
+int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
+
+float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
+float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
+
+int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
+
+int cursorDeltaBox;                               //The delta value for the boundary range in all 4 directions about the x,y center
+int cursorDelta;                                  //The amount cursor moves in some single or combined direction
+
+unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
+
+int pollCounter = 0;                              //Cursor poll counter
+
+int cursorSpeedCounter;                           // Variable to track current cursor speed level
+int cursorDelay;                                  // Current cursor delay
+float cursorFactor;                               // Current cursor factor
+int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
+
+float yHighComp = 1.0;
+float yLowComp = 1.0;
+float xHighComp = 1.0;
+float xLowComp = 1.0;
+
+float yHighDebug, yLowDebug, xHighDebug, xLowDebug;
+int yHighMaxDebug, yLowMaxDebug, xHighMaxDebug, xLowMaxDebug;
+
+int rotationAngle = ROTATION_ANGLE;                       //Rotation angle variables
 float rotationAngle11, rotationAngle12, rotationAngle21, rotationAngle22;
 
-int cursorSpeedCounter; 
 
-float sipThreshold;                                     //Declare sip and puff variables 
-float puffThreshold;
-float cursorPressure;
+
+float sipThreshold;                                       //Sip pressure threshold in volts
+float puffThreshold;                                      //Puff pressure threshold in volts
+
+float cursorPressure;                                     //Variable to hold pressure readings
+
+int xCursor = 0;                                          //Mouse cursor component
+int yCursor = 0;                                          //Mouse cursor component
 
 int modelNumber;                                        //Declare LipSync model number variable 
 
-bool debugModeEnabled;                                  //Declare raw and debug enable variable
+bool debugModeEnabled;                                    //Declare raw and debug enable variable
 bool rawModeEnabled;
 bool settingsEnabled = false;                           //Serial input settings command mode enabled or disabled 
 
