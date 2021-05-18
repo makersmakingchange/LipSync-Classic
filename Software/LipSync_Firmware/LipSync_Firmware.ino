@@ -291,9 +291,9 @@ void cursorHandler(void) {
 
   // Calculate the magnitude of the movement for each direction / quadrant
   xHighYHigh = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
-  xHighYLow  = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yLow - yLowNeutral) > 0) ? (yLow - yLowNeutral) : 0);    //The sqrt() function raises input to power 1/2, returning a float type
-  xLowYHigh  = sq(((xLow  - xLowNeutral)  > 0) ? (xLow - xLowNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-  xLowYLow   = sq(((xLow  - xLowNeutral)  > 0) ? (xLow - xLowNeutral) : 0) + sq(((yLow - yLowNeutral) > 0) ? (yLow - yLowNeutral) : 0);         //a larger digital value with a positive application force, a large negative difference
+  xHighYLow  = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yLow  - yLowNeutral)  > 0) ? (yLow  - yLowNeutral)  : 0);    //
+  xLowYHigh  = sq(((xLow  - xLowNeutral)  > 0) ? (xLow  - xLowNeutral)  : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);    //These are the squared vector magnitudes of each quadrant 1-4. Since the FSRs all register
+  xLowYLow   = sq(((xLow  - xLowNeutral)  > 0) ? (xLow  - xLowNeutral)  : 0) + sq(((yLow  - yLowNeutral)  > 0) ? (yLow  - yLowNeutral)  : 0);    //a larger digital value with a positive application force, a large negative difference
 
   //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
@@ -302,29 +302,30 @@ void cursorHandler(void) {
     delay(20); 
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-    if(!skipChange && pollCounter >= 3) {
-        if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1
+    //if(!skipChange && pollCounter >= 3) { //todo temp disable drift reduction
+    if(pollCounter >= 3) {
+        if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1 (Upper left)
           xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
           yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
-        } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4
+        } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4 (Lower Left)
           xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
           yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
-        } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3
+        } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3 (Lower Right)
           xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
           yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
           
           (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
           delay(cursorDelay);
           pollCounter = 0;
-        } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2
+        } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2 (Upper Right)
           xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
           yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
           
@@ -1732,25 +1733,19 @@ void cursorScroll(void) {
    
     // read joystick movements
     xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
-    xLow = analogRead(X_DIR_LOW_PIN);               //Read analog values of FSR's : A1
+    xLow  = analogRead(X_DIR_LOW_PIN);               //Read analog values of FSR's : A1
     yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
-    yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
-
+    yLow  = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
     
     // Read sip and puff input
     float scrollRelease = (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0;
 
     // Read FSR Inputs
-    xHighYHigh = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) 
-    + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
-    xHighYLow  = sqrt(sq(((xHigh - xHighNeutral) > 0) ? (float)(xHigh - xHighNeutral) : 0.0) 
-    + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));    //The sqrt() function raises input to power 1/2, returning a float type
-    xLowYHigh  = sqrt(sq(((xLow  - xLowNeutral)  > 0) ? (float)(xLow  - xLowNeutral)  : 0.0) 
-    + sq(((yHigh - yHighNeutral) > 0) ? (float)(yHigh - yHighNeutral) : 0.0));          //These are the vector magnitudes of each quadrant 1-4. Since the FSRs all register
-    xLowYLow   = sqrt(sq(((xLow  - xLowNeutral)  > 0) ? (float)(xLow  - xLowNeutral)  : 0.0) 
-    + sq(((yLow - yLowNeutral) > 0) ? (float)(yLow - yLowNeutral) : 0.0));         //a larger digital value with a positive application force, a large negative difference
-
-    //Check to see if the joystick has moved
+    xHighYHigh = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
+    xHighYLow  = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yLow  - yLowNeutral)  > 0) ? (yLow  - yLowNeutral)  : 0);    //
+    xLowYHigh  = sq(((xLow  - xLowNeutral)  > 0) ? (xLow  - xLowNeutral)  : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);    //These are the squared vector magnitudes of each quadrant 1-4. Since the FSRs all register
+    xLowYLow   = sq(((xLow  - xLowNeutral)  > 0) ? (xLow  - xLowNeutral)  : 0) + sq(((yLow  - yLowNeutral)  > 0) ? (yLow  - yLowNeutral)  : 0);    //a larger digital value with a positive application force, a large negative difference
+      //Check to see if the joystick has moved
     if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
       
       //Joystick moved - determine which quadrant     
@@ -1803,16 +1798,16 @@ int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue
     float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
 
     //Use the calculated X down factor to none linearize the maximum speeds
-    cursorOutput = (int)(round(-1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
+    cursorOutput = (int)(round(1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
 
     //Select maximum speed
-    int maxSpeed = round(-1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
+    int maxSpeed = round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
 
     //Map the values to a value between 0 and the selected maximum speed
-    cursorOutput = map(cursorOutput, 0, (round(-1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); 
+    cursorOutput = map(cursorOutput, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); 
     
     //Set a constrain 
-    cursorOutput = constrain(cursorOutput,cursorMaxSpeed, 0);   
+    cursorOutput = constrain(cursorOutput,0, cursorMaxSpeed);   
   } //end FSR pressed
   
   return cursorOutput;
