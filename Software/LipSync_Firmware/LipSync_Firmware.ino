@@ -100,6 +100,8 @@ const int defaultButtonMapping[6] = {INPUT_1, INPUT_2, INPUT_3, INPUT_4, INPUT_5
 #define EEPROM_buttonMapping5 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
 
+
+
 //Cursor Speed Level structure 
 typedef struct {
   int _delay;
@@ -608,7 +610,7 @@ bool getDebugMode(bool responseEnabled) {
 void setDebugMode(bool debugState,bool responseEnabled) {
 
   debugModeEnabled=debugState;
-  //(debugModeEnabled) ? EEPROM.put(EEPROM_debugModeEnabled, 1) : EEPROM.put(EEPROM_debugIntValue, 0);
+  (debugModeEnabled) ? EEPROM.put(EEPROM_debugModeEnabled, 1) : EEPROM.put(EEPROM_debugModeEnabled, 0);
   delay(10);
   if(!API_ENABLED) { debugModeEnabled=DEBUG_MODE; }    
   delay(5);
@@ -678,7 +680,7 @@ bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   if(API_ENABLED) {
-    //EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
+    EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
     delay(5);
     if(rawIntValue!=0 && rawIntValue!=1) { 
       delay(5);
@@ -1205,13 +1207,13 @@ bool serialSettings(bool enabled) {
      {  
        commandString = Serial.readString();            //Check if serial has received or read input string and word "SETTINGS" is in input string.
        if (settingsFlag==false && commandString=="SETTINGS") {
-        printCommandResponse(true,0,commandString);
-        //Serial.println("SUCCESS,0:SETTINGS");
+        //printCommandResponse(true,0,commandString);
+        Serial.println("SUCCESS,0:SETTINGS");
        settingsFlag=true;                         //Set the return flag to true so settings actions can be performed in the next call to the function
        }
        else if (settingsFlag==true && commandString=="EXIT") {
-        printCommandResponse(true,0,commandString);
-        //Serial.println("SUCCESS,0:EXIT");
+        //printCommandResponse(true,0,commandString);
+        Serial.println("SUCCESS,0:EXIT");
        settingsFlag=false;                         //Set the return flag to false so settings actions can be exited
        }
        else if (settingsFlag==true && isValidCommandFormat(commandString)){ //Check if command's format is correct and it's in settings mode
@@ -1219,7 +1221,9 @@ bool serialSettings(bool enabled) {
         settingsFlag=false;   
        }
        else {
-        printCommandResponse(false,0,commandString);
+        //printCommandResponse(false,0,commandString);
+        Serial.print("FAIL,0:");
+        Serial.println(commandString);
         settingsFlag=false;      
        }
        Serial.flush();  
@@ -1265,21 +1269,23 @@ boolean isStrNumber(String str){
 }
 
 //***SERIAL PRINT OUT COMMAND RESPONSE FUNCTION***//
-
+/*
 void printCommandResponse(bool response, int responseNumber, String responseString) {
   (response) ? Serial.print("SUCCESS,") : Serial.print("FAIL,");
   Serial.print(responseNumber);
   Serial.print(":");
   Serial.println(responseString);
 }
+*/
+
 
 //***SERIAL PRINT OUT MANUAL RESPONSE FUNCTION***//
-
+/*
 void printManualResponse(String responseString) {
   Serial.print("MANUAL,0:");
   Serial.println(responseString);
 }
-
+*/
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 
@@ -1295,105 +1301,132 @@ void performCommand(String inputCommandString) {
 
     //Get Model number : "MN,0:0"
     if(commandChar[0]=='M' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getModelNumber(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? getModelNumber(true) : printCommandResponse(false,2,inputCommandString);
+      getModelNumber(true);
       delay(5);
     } 
     //Get version number : "VN,0:0"
     else if(commandChar[0]=='V' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getVersionNumber() : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? getVersionNumber() : printCommandResponse(false,2,inputCommandString);
+      getVersionNumber();
       delay(5);
     }   
     //Get cursor speed value if received "SS,0:0", decrease the cursor if received "SS,1:1" and increase the cursor speed if received "SS,1:2" , and set the cursor speed value if received "SS,2:{speed 0 to 10}"
     else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? (void)getCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? (void)getCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      getCursorSpeed(true);
       delay(5);
     } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      (isValidCommandParamter(paramterString)) ? setCursorSpeed(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setCursorSpeed(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      setCursorSpeed(paramterString.toInt(),true);
       delay(5);
-    } else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='1' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? decreaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+    } 
+    else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='1' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? decreaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      decreaseCursorSpeed(true);
       delay(5);
     } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='2' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? increaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+       //(isValidCommandParamter(paramterString)) ? increaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      increaseCursorSpeed(true);
       delay(5);
-    } 
-    //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
-    else if(commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getPressureThreshold(true) : printCommandResponse(false,2,inputCommandString);
+    }
+     //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
+      else if(commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? getPressureThreshold(true) : printCommandResponse(false,2,inputCommandString);
+      getPressureThreshold(true);
       delay(5);
     } else if (commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      (isValidCommandParamter(paramterString)) ? setPressureThreshold(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setPressureThreshold(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      setPressureThreshold(paramterString.toInt(),true);
       delay(5);
     } 
-    //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
-    else if(commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? (void)getRotationAngle(true) : printCommandResponse(false,2,inputCommandString);
+     //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
+      else if(commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? (void)getRotationAngle(true) : printCommandResponse(false,2,inputCommandString);
+      getRotationAngle(true);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5 || commandString.length()==6)) {
-      (isValidCommandParamter(paramterString)) ? setRotationAngle(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setRotationAngle(paramterString.toInt(),true) : printCommandResponse(false,2,inputCommandString);
+      setRotationAngle(paramterString.toInt(),true);
       delay(5);
     } 
-    //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
-    else if(commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? (void)getDebugMode(true) : printCommandResponse(false,2,inputCommandString);
+     //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
+     else if(commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? (void)getDebugMode(true) : printCommandResponse(false,2,inputCommandString);
+      getDebugMode(true);
       delay(5);
     } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setDebugMode(0,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setDebugMode(0,true) : printCommandResponse(false,2,inputCommandString);
+      setDebugMode(0,true);
       delay(5);
     } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setDebugMode(1,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setDebugMode(1,true) : printCommandResponse(false,2,inputCommandString);
+      setDebugMode(1,true);
       delay(5);
     } 
     //Get raw mode value if received "RM,0:0" , set raw mode value to 0 if received "RM,1:0" and set raw mode value to 1 if received "RM,1:1"
-    else if(commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? (void)getRawMode(true) : printCommandResponse(false,2,inputCommandString);
+     else if(commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? (void)getRawMode(true) : printCommandResponse(false,2,inputCommandString);
+      getRawMode(true);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setRawMode(0,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setRawMode(0,true) : printCommandResponse(false,2,inputCommandString);
+      setRawMode(0,true);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setRawMode(1,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setRawMode(1,true) : printCommandResponse(false,2,inputCommandString);
+      setRawMode(1,true);
       delay(5);
     } 
-    //Get cursor initialization values if received "IN,0:0" and perform cursor initialization if received "IN,1:1"
-    else if(commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getCursorInitialization() : printCommandResponse(false,2,inputCommandString);
+     //Get cursor initialization values if received "IN,0:0" and perform cursor initialization if received "IN,1:1"
+     else if(commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+     //(isValidCommandParamter(paramterString)) ? getCursorInitialization() : printCommandResponse(false,2,inputCommandString);
+      getCursorInitialization();
       delay(5);
     } else if (commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setCursorInitialization(2,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setCursorInitialization(2,true) : printCommandResponse(false,2,inputCommandString);
+      setCursorInitialization(2,true);
       delay(5);
     } 
-    //Get cursor calibration values if received "CA,0:0" and perform cursor calibration if received "CA,1:1"
-    else if(commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+     //Get cursor calibration values if received "CA,0:0" and perform cursor calibration if received "CA,1:1"
+      else if(commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? getCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+      getCursorCalibration(true);
       delay(5);
     } else if (commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? setCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+      setCursorCalibration(true);
       delay(5);
     } 
      //Get change tolerance values if received "CT,0:0" 
-    else if(commandChar[0]=='C' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,true) : printCommandResponse(false,2,inputCommandString);
+      else if(commandChar[0]=='C' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,true) : printCommandResponse(false,2,inputCommandString);
+      getChangeTolerance(CHANGE_DEFAULT_TOLERANCE,true);
       delay(5);
     }
     //Get Button mapping : "MP,0:0" , Set Button mapping : "MP,1:012345"
     else if (commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
+      getButtonMapping(true);
       delay(5);
     } else if(commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='1' && commandString.length()==9) {
       int tempButtonMapping[actionButtonSize];
       for(int i = 0; i< actionButtonSize; i++){
          tempButtonMapping[i]=commandChar[3+i] - '0';          //Convert char arrat to int array
       }
-      (isValidCommandParamter(paramterString)) ? setButtonMapping(tempButtonMapping,true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParamter(paramterString)) ? setButtonMapping(tempButtonMapping,true) : printCommandResponse(false,2,inputCommandString);
+      setButtonMapping(tempButtonMapping,true);
       delay(5);
     }
-    //Perform factory reset if received "FR,0:0"
-    else if(commandChar[0]=='F' && commandChar[1]=='R' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      (isValidCommandParamter(paramterString)) ? factoryReset(true) : printCommandResponse(false,2,inputCommandString);
+     //Perform factory reset if received "FR,0:0"
+     else if(commandChar[0]=='F' && commandChar[1]=='R' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
+      //(isValidCommandParamter(paramterString)) ? factoryReset(true) : printCommandResponse(false,2,inputCommandString);
+      factoryReset(true);
       delay(5);
     } else {
-      printCommandResponse(false,1,inputCommandString);
+      //printCommandResponse(false,1,inputCommandString);
+      Serial.print("FAIL,1:");            //Invalid command
+      Serial.println(commandString);
       delay(5);        
       }
 }
