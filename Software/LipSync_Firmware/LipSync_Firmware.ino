@@ -118,8 +118,8 @@ int xHighNeutral, xLowNeutral, yHighNeutral, yLowNeutral;                    //I
 
 int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set to the values from EEPROM
 
-int xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;  //Squared Distance from joytick center in each quadrant
-int xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius; // Squared deadband distance from center
+float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;  //Squared Distance from joytick center in each quadrant
+float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius; // Squared deadband distance from center
 
 int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
 
