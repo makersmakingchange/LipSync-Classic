@@ -302,9 +302,8 @@ void cursorHandler(void) {
     delay(20); 
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-    //if(!skipChange && pollCounter >= 3) { //todo temp disable drift reduction
-    if(pollCounter >= 3) {
-        if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1 (Upper left)
+    if(!skipChange && pollCounter >= 3) {
+      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1 (Upper left)
           xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
           yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
           
