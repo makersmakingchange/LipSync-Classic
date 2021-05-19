@@ -56,6 +56,7 @@
 #define CURSOR_DEADBAND 30                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+#define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
 
 //***PIN ASSIGNMENTS***//
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
@@ -297,6 +298,14 @@ void cursorHandler(void) {
 
   //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > xHighYHighRadius) || (xHighYLow > xHighYLowRadius) || (xLowYLow > xLowYLowRadius) || (xLowYHigh > xLowYHighRadius)) {
+
+    //Secondary check to see if joystick has moved by looking for low FSR values (e.g. joystick unloaded->high resistance-> low voltage)
+    if ( (xHigh < CURSOR_LIFT_THRESOLD) || 
+         (xLow  < CURSOR_LIFT_THRESOLD) || 
+         (yHigh < CURSOR_LIFT_THRESOLD) || 
+         (yLow  < CURSOR_LIFT_THRESOLD)){
+          skipChange = false; // Don't skip if joystick if moved and held
+         }
     
     pollCounter++;      //Add to the poll counter
     delay(20); 
