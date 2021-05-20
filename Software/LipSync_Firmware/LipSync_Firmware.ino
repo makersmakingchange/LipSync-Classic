@@ -131,7 +131,7 @@ _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibratio
 
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
-_functionList setButtonMappingFunction =        {"MP,1","",&setButtonMapping};
+_functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping};
 _functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
 
 /*
@@ -159,7 +159,7 @@ setButtonMappingFunction,
 factoryResetFunction
 };
  */
-_functionList apiFunction[20] = {getModelNumberFunction, 
+_functionList apiFunction[18] = {getModelNumberFunction, 
 getVersionNumberFunction,
 getCursorSpeedFunction,
 setCursorSpeedFunction,
@@ -175,10 +175,8 @@ getRawModeFunction,
 setRawModeFunction,
 getCursorInitializationFunction,
 setCursorInitializationFunction,
-getCursorCalibrationFunction,
-setCursorCalibrationFunction,
-getChangeToleranceFunction,
-getButtonMappingFunction
+getButtonMappingFunction,
+setButtonMappingFunction
 };
 
 //Cursor Speed Level structure 
@@ -220,9 +218,6 @@ float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius;
 float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;
 
 int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
-
-int cursorDeltaBox;                               //The delta value for the boundary range in all 4 directions about the x,y center
-int cursorDelta;                                  //The amount cursor moves in some single or combined direction
 
 unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
 int pollCounter = 0;                              //Cursor poll counter
@@ -1395,19 +1390,26 @@ void printManualResponse(String responseString) {
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 void performCommand(String inputString) {
   int inputCommandIndex = inputString.indexOf(':');
-  delay(5);
   String inputCommandString = inputString.substring(0, inputCommandIndex);
   String inputParameterString = inputString.substring(inputCommandIndex+1);
   int totalCommandNumber=sizeof(apiFunction)/sizeof(apiFunction[0]);
 
   for(int i = 0; i < totalCommandNumber; i++){
-
-    if(inputCommandString== apiFunction[i]._command && (inputParameterString == apiFunction[i]._parameter || apiFunction[i]._parameter=="")){
-      if(isValidCommandParamter(inputParameterString)) {   //wrong parameter
-        //Serial.println(inputParameterString);
-        //if(apiFunction[i]._parameter!="") {inputParameterString=apiFunction[i]._parameter; }
-        apiFunction[i]._function(true, inputParameterString.toInt());
-        delay(5);
+    if(inputCommandString == apiFunction[i]._command && (inputParameterString == apiFunction[i]._parameter || apiFunction[i]._parameter=="" || apiFunction[i]._parameter=="r")){
+      if(isValidCommandParamter(inputParameterString)) {   //Invalid parameter
+        if(apiFunction[i]._parameter=="r"){   //Array parameter 
+          int tempButtonMapping[inputParameterString.length() + 1];
+          for(int i=0;i<inputParameterString.length();i++)
+          {
+            tempButtonMapping[i]=inputParameterString.charAt(i)-'0';
+          }
+          apiFunction[i]._function(true, tempButtonMapping);
+          delay(5);     
+        }
+        else {
+          apiFunction[i]._function(true, inputParameterString.toInt());
+          delay(5);
+        }
       } else {
       Serial.print("FAIL,2:");
       Serial.println(inputString);
