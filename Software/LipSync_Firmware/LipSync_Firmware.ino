@@ -143,8 +143,6 @@ _functionList getModelNumberFunction =          {"MN,0","0",&getModelNumber};
 _functionList getVersionNumberFunction =        {"VN,0","0",&getVersionNumber};
 _functionList getCursorSpeedFunction =          {"SS,0","0",&getCursorSpeed};
 _functionList setCursorSpeedFunction =          {"SS,1","",&setCursorSpeed};
-_functionList decreaseCursorSpeedFunction =     {"SS,2","1",&decreaseCursorSpeed};
-_functionList increaseCursorSpeedFunction =     {"SS,2","2",&increaseCursorSpeed};
 
 _functionList getPressureThresholdFunction =    {"PT,0","0",&getPressureThreshold};
 _functionList setPressureThresholdFunction =    {"PT,1","",&setPressureThreshold};
@@ -165,13 +163,10 @@ _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
 _functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
 
-/*
-_functionList apiFunction[22] = {getModelNumberFunction, 
+_functionList apiFunction[20] = {getModelNumberFunction, 
 getVersionNumberFunction,
 getCursorSpeedFunction,
 setCursorSpeedFunction,
-decreaseCursorSpeedFunction,
-increaseCursorSpeedFunction,
 getPressureThresholdFunction,
 setPressureThresholdFunction,
 getRotationAngleFunction,
@@ -188,26 +183,6 @@ getChangeToleranceFunction,
 getButtonMappingFunction,
 setButtonMappingFunction,
 factoryResetFunction
-};
- */
-_functionList apiFunction[18] = {getModelNumberFunction, 
-getVersionNumberFunction,
-getCursorSpeedFunction,
-setCursorSpeedFunction,
-decreaseCursorSpeedFunction,
-increaseCursorSpeedFunction,
-getPressureThresholdFunction,
-setPressureThresholdFunction,
-getRotationAngleFunction,
-setRotationAngleFunction,
-getDebugModeFunction,
-setDebugModeFunction,
-getRawModeFunction,
-setRawModeFunction,
-getCursorInitializationFunction,
-setCursorInitializationFunction,
-getButtonMappingFunction,
-setButtonMappingFunction
 };
 
 //Cursor Speed Level structure 
@@ -553,17 +528,23 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
 
   bool isValidSpeed = true;
   if(inputSpeedCounter>=0 && inputSpeedCounter <=10){
+    ledBlink(inputSpeedCounter+1, 100, 1);
     cursorSpeedCounter = inputSpeedCounter;
     EEPROM.put(EEPROM_speedCounter, cursorSpeedCounter);
     delay(10);
     if(!API_ENABLED){ cursorSpeedCounter = SPEED_COUNTER; }
     isValidSpeed = true;
   } else {
+    ledBlink(6, 50, 3);
     EEPROM.get(EEPROM_speedCounter, cursorSpeedCounter);
     delay(10); 
     isValidSpeed = false;
   }
   delay(5); 
+
+  cursorDelay = cursorParams[cursorSpeedCounter]._delay;
+  cursorFactor = cursorParams[cursorSpeedCounter]._factor;
+  cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
   
  if(responseEnabled) {
     //(isValidSpeed) ? printCommandResponse(true,0,"SS,1:"+cursorSpeedCounter) : printCommandResponse(false,2,"SS,2:"+inputSpeedCounter);
@@ -575,7 +556,10 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
       Serial.println(inputSpeedCounter);      
     }
     delay(5);
-  } 
+  } else {
+      Serial.print("MANUAL,0:SS,1:");
+      Serial.println(cursorSpeedCounter);   
+  }
 }
 
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
@@ -583,6 +567,8 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
 void increaseCursorSpeed(bool responseEnabled) {
   cursorSpeedCounter++;
 
+  setCursorSpeed(responseEnabled, cursorSpeedCounter);
+  /*
   if (cursorSpeedCounter == 11) {
     ledBlink(6, 50, 3);
     cursorSpeedCounter = 10;
@@ -600,7 +586,7 @@ void increaseCursorSpeed(bool responseEnabled) {
   (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
   Serial.print("SS,2:");
   Serial.println(cursorSpeedCounter); 
-  
+  */
   delay(5);
 }
 
@@ -608,6 +594,10 @@ void increaseCursorSpeed(bool responseEnabled) {
 
 void decreaseCursorSpeed(bool responseEnabled) {
   cursorSpeedCounter--;
+
+  setCursorSpeed(responseEnabled, cursorSpeedCounter);
+
+  /*
   if (cursorSpeedCounter == -1) {
     ledBlink(6, 50, 3);
     cursorSpeedCounter = 0;
@@ -635,7 +625,7 @@ void decreaseCursorSpeed(bool responseEnabled) {
   (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
   Serial.print("SS,2:");
   Serial.println(cursorSpeedCounter);  
-  
+  */
   delay(5);
 }
 
