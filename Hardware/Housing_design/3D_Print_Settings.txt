@@ -1,0 +1,37 @@
+Print all components in orientation of STL file. Parts are designed to print with a 0.40 mm nozzle. Neutral, non-obtrusive filament colors (e.g. black, grey, white) are preferred for the rear housing and front housing unless the user requests otherwise. 
+
+----------------------------
+First print:
+LipSync_Rear_Housing
+
+Infill: 20%
+Layer Height: 0.2mm
+Support Material: No
+Raft: No
+Walls: 3
+----------------------------
+
+----------------------------
+Second print:
+1X LipSync_Front_Housing
+2X LipSync_Button 
+1X LipSync_Joystick_Stand (Optional; Recommended)
+
+Infill: 20%
+Layer Height: 0.2mm
+Support Material: No
+Raft: No
+----------------------------
+
+
+----------------------------
+Third print:
+1X LipSync_Joystick_Front_Plate
+1X LipSync_Joystick_Rocker
+1X LipSync_Joystick_Base
+
+Infill: 50%
+Layer Height: 0.2mm
+Support Material: Yes
+Raft: No
+----------------------------
