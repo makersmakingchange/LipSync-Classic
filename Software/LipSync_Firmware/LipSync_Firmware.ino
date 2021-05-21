@@ -1464,12 +1464,12 @@ void performCommand(String inputString) {
         //Handle parameters that are an array as a special case.
         if(apiFunction[apiIndex]._parameter=="r"){   //"r" denotes an array parameter 
           
-          int tempParameterArray[inputParameterString.length() + 1];
-          for(int array=0; arrayIndex<inputParameterString.length(); arrayIndex++)
+          int inputParameterArray[inputParameterString.length() + 1];
+          for(int arrayIndex=0; arrayIndex<inputParameterString.length(); arrayIndex++)
           {
-            tempParameterArray[arrayIndex]=inputParameterString.charAt(arrayIndex)-'0';
+            inputParameterArray[arrayIndex]=inputParameterString.charAt(arrayIndex)-'0';
           }
-          apiFunction[apiIndex]._function(true, tempParameterArray);
+          apiFunction[apiIndex]._function(true, inputParameterArray);
           delay(5);     
         }
         else {
