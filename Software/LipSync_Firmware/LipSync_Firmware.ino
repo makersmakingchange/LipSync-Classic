@@ -162,7 +162,7 @@ _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibratio
 
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
-_functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping};
+_functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
 _functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
 
 /*
@@ -1429,26 +1429,44 @@ void printManualResponse(String responseString) {
 */
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
+// This function takes processes an input string from the serial and calls the 
+// corresponding API function, or outputs an error.
 void performCommand(String inputString) {
   int inputCommandIndex = inputString.indexOf(':');
+  
+  //Extract command string from input string
   String inputCommandString = inputString.substring(0, inputCommandIndex);
+  
+  //Extract parameter string from input string
   String inputParameterString = inputString.substring(inputCommandIndex+1);
+  
+  // Determine total number of API commands
   int totalCommandNumber=sizeof(apiFunction)/sizeof(apiFunction[0]);
 
-  for(int i = 0; i < totalCommandNumber; i++){
-    if(inputCommandString == apiFunction[i]._command && (inputParameterString == apiFunction[i]._parameter || apiFunction[i]._parameter=="" || apiFunction[i]._parameter=="r")){
+  //Iterate through each API command
+  for(int apiIndex = 0; apiIndex < totalCommandNumber; apiIndex++){
+    
+    // Test if input command string matches API command and input parameter string matches API parameter string
+    if(inputCommandString == apiFunction[apiIndex]._command 
+    && (inputParameterString == apiFunction[apiIndex]._parameter 
+    || apiFunction[apiIndex]._parameter=="" || apiFunction[apiIndex]._parameter=="r")){
+      
+      // Matching Command String found
       if(isValidCommandParamter(inputParameterString)) {   //Invalid parameter
-        if(apiFunction[i]._parameter=="r"){   //Array parameter 
-          int tempButtonMapping[inputParameterString.length() + 1];
-          for(int i=0;i<inputParameterString.length();i++)
+
+        //Handle parameters that are an array as a special case.
+        if(apiFunction[apiIndex]._parameter=="r"){   //"r" denotes an array parameter 
+          
+          int tempParameterArray[inputParameterString.length() + 1];
+          for(int array=0; arrayIndex<inputParameterString.length(); arrayIndex++)
           {
-            tempButtonMapping[i]=inputParameterString.charAt(i)-'0';
+            tempParameterArray[arrayIndex]=inputParameterString.charAt(arrayIndex)-'0';
           }
-          apiFunction[i]._function(true, tempButtonMapping);
+          apiFunction[apiIndex]._function(true, tempParameterArray);
           delay(5);     
         }
         else {
-          apiFunction[i]._function(true, inputParameterString.toInt());
+          apiFunction[apiIndex]._function(true, inputParameterString.toInt());
           delay(5);
         }
       } else {
@@ -1458,13 +1476,13 @@ void performCommand(String inputString) {
       }
       break;
     }
-    if(i== (totalCommandNumber-1)) { // command doesn’t exist
+    else if(apiIndex== (totalCommandNumber-1)) { // command doesn’t exist
     Serial.print("FAIL,1:");
     Serial.println(inputString);
     delay(5);
     break;
     }
-  }
+  } //end iterate through API functions
 
 }
 
