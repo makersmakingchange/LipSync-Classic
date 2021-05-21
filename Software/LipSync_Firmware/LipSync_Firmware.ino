@@ -366,6 +366,8 @@ void loop() {
 
 void cursorHandler(void) {
 
+  bool outputMouse = false;
+  
   // Reset cursor values
   int xCursor = 0;
   int yCursor = 0;
@@ -410,40 +412,43 @@ void cursorHandler(void) {
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
     if(!skipChange && pollCounter >= 3) {
-      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {     //Quadrant 1 (Upper left)
-          xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
-          yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
-          
-          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
-          delay(cursorDelay);
-          pollCounter = 0;
-        } else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   //Quadrant 4 (Lower Left)
-          xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
-          yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
-          
-          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
-          delay(cursorDelay);
-          pollCounter = 0;
-        } else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  //Quadrant 3 (Lower Right)
-          xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
-          yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
-          
-          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
-          delay(cursorDelay);
-          pollCounter = 0;
-        } else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { //Quadrant 2 (Upper Right)
-          xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
-          yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
-          
-          (rawModeEnabled)? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0);
-          delay(cursorDelay);
-          pollCounter = 0;
-        }
-    }   
-  } else if(rawModeEnabled) {
+       //Quadrant 1 (Upper left)
+      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
+        xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+        yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
+        outputMouse = true;   
+      } 
+      //Quadrant 4 (Lower Left)
+      else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   
+        xCursor = XHIGH_DIRECTION*cursorModifier(xHigh, xHighNeutral, xHighMax, xHighComp);
+        yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
+        outputMouse = true;          
+      }
+      //Quadrant 3 (Lower Right)
+      else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  
+        xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+        yCursor = YLOW_DIRECTION*cursorModifier(yLow, yLowNeutral, yLowMax, yLowComp);
+        outputMouse = true;
+      } 
+      //Quadrant 2 (Upper Right)
+      else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { 
+        xCursor = XLOW_DIRECTION*cursorModifier(xLow, xLowNeutral, xLowMax, xLowComp);
+        yCursor = YHIGH_DIRECTION*cursorModifier(yHigh, yHighNeutral, yHighMax, yHighComp);
+        outputMouse = true;         
+      }
+        
+    } //end check skipchange and poll counter   
+  } //end check deadband 
+  
+  if (outputMouse){
+    moveCursor(xCursor, yCursor, 0);
+    delay(cursorDelay);
+    pollCounter = 0;
+  }
+  else if(rawModeEnabled) {
     sendRawData(0,0,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
     delay(cursorDelay);
-    }
+  }
 
   //Debug information 
   
@@ -460,6 +465,8 @@ void cursorHandler(void) {
   }
   
 }
+
+
 
 
 
