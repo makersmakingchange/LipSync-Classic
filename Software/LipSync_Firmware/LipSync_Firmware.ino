@@ -15,7 +15,7 @@
 
 //Developed by : MakersMakingChange
 //Firmware : LipSync_Firmware
-//VERSION: 2.71.1 (01 Apr 2021) 
+//VERSION: 3.0-beta (21 May Apr 2021) 
 //Copyright Neil Squire Society 2021.
 
 
