@@ -1454,13 +1454,14 @@ void performCommand(String inputString) {
   for(int apiIndex = 0; apiIndex < totalCommandNumber; apiIndex++){
     
     // Test if input command string matches API command and input parameter string matches API parameter string
-    if(inputCommandString == apiFunction[apiIndex]._command 
+    if( inputCommandString == apiFunction[apiIndex]._command 
     && (inputParameterString == apiFunction[apiIndex]._parameter 
-    || apiFunction[apiIndex]._parameter=="" || apiFunction[apiIndex]._parameter=="r")){
+    || apiFunction[apiIndex]._parameter == "" || apiFunction[apiIndex]._parameter == "r" )){
       
       // Matching Command String found
-      if(isValidCommandParamter(inputParameterString)) {   //Invalid parameter
-
+      if( isValidCommandParamter( inputParameterString )) {   //Check if parameter is valid
+        //Valid Parameter
+        
         //Handle parameters that are an array as a special case.
         if(apiFunction[apiIndex]._parameter=="r"){   //"r" denotes an array parameter 
           
@@ -1469,14 +1470,21 @@ void performCommand(String inputString) {
           {
             inputParameterArray[arrayIndex]=inputParameterString.charAt(arrayIndex)-'0';
           }
+          
+          // Call matching API function with input parameter array
           apiFunction[apiIndex]._function(true, inputParameterArray);
           delay(5);     
         }
         else {
+
+          // Call matching API function with input parameter string
           apiFunction[apiIndex]._function(true, inputParameterString.toInt());
           delay(5);
         }
-      } else {
+      } 
+      else { // Invalid input parameter
+      
+      // Outut error message
       Serial.print("FAIL,2:");
       Serial.println(inputString);
       delay(5);
@@ -1484,6 +1492,8 @@ void performCommand(String inputString) {
       break;
     }
     else if(apiIndex== (totalCommandNumber-1)) { // command doesn’t exist
+    
+    //Output error message
     Serial.print("FAIL,1:");
     Serial.println(inputString);
     delay(5);
