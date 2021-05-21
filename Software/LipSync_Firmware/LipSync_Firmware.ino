@@ -276,9 +276,6 @@ float puffThreshold;                                      //Puff pressure thresh
 
 float cursorPressure;                                     //Variable to hold pressure readings
 
-int xCursor = 0;                                          //Mouse cursor component
-int yCursor = 0;                                          //Mouse cursor component
-
 int modelNumber;                                        //Declare LipSync model number variable 
 
 bool debugModeEnabled;                                    //Declare raw and debug enable variable
@@ -370,8 +367,8 @@ void loop() {
 void cursorHandler(void) {
 
   // Reset cursor values
-  xCursor = 0;
-  yCursor = 0;
+  int xCursor = 0;
+  int yCursor = 0;
 
   // Measure force sensitive resitors
   xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
