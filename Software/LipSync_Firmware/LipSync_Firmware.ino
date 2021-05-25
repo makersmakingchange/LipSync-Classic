@@ -21,7 +21,7 @@
 
 #include <EEPROM.h>
 #include <Mouse.h>
-#include <math.h>
+//#include <math.h>
 
                                                  
 //***OUTPUT ACTIONS***// - DO NOT CHANGE 
