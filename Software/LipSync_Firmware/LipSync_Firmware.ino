@@ -244,9 +244,6 @@ float yLowComp = 1.0;
 float xHighComp = 1.0;
 float xLowComp = 1.0;
 
-float yHighDebug, yLowDebug, xHighDebug, xLowDebug;
-int yHighMaxDebug, yLowMaxDebug, xHighMaxDebug, xLowMaxDebug;
-
 bool debugModeEnabled;                                  //Declare raw and debug enable variable
 bool rawModeEnabled;
 bool settingsEnabled = false;                           //Serial input settings command mode enabled or disabled 
