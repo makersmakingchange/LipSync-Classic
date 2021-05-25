@@ -51,32 +51,27 @@
 
 
 //***CUSTOMIZABLE VARIABLES***//
-#define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  igin/v3.0
+#define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}
 
+#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
 #define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input in cycle counts
 #define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff in cycle counts
 #define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input in cycle counts
 #define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in cycle counts
 
-#define CURSOR_RADIUS 30                          //Joystick deadband
 #define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed     
 #define SPEED_COUNTER 5                           //Default cursor speed level
+#define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 
-//***DON'T CHANGE THESE VARIABLES***//            
 
-#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
+//*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
+#define CURSOR_DEADBAND 30                        //Joystick deadband
+#define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+
+//***DON'T CHANGE THESE CONSTANTS***//            
 #define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
-#define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}  
-#define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
-#define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
-                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown" 
-//***DON'T CHANGE THESE VARIABLES***//
-#define CURSOR_DEFAULT_SPEED 30                   //Maximum default USB cursor speed                  
-#define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-#define CURSOR_DEADBAND 30                        //Joystick deadband
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
-#define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
 #define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
 
@@ -85,12 +80,17 @@ const int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
    ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_SHORT_PUFF};     
 const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     //MMC default sip and puff buttons actions
 
-//***DON'T CHANGE THESE VARIABLES***//
+//***DON'T CHANGE THESE CONSTANTS***//
 #define XHIGH_DIRECTION 1                         //Mouthpiece right movements correspond to positive (i.e. right) mouse movement
 #define XLOW_DIRECTION -1                         //Mouthpiece left movements correspond to negative (i.e. left) mouse movement
 #define YHIGH_DIRECTION -1                        //Mouthpiece up movements correspond to negative (i.e. up) mouse movement
 #define YLOW_DIRECTION 1                          //Mouthpiece down movements correspond to positive (i.e. down) mouse movement
-      
+
+//*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.  
+#define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
+#define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
+                                                  //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown" 
+#define API_ENABLED true                          //Enable API Serial interface = true , Disable API serial interface = false      
 
 //***PIN ASSIGNMENTS***// - DO NOT CHANGE
 #define LED_GREEN_PIN 4                               // LipSync LED Color1 : GREEN - digital output pin 5
@@ -207,11 +207,7 @@ _cursor setting11 = {5, -1.1, CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 
 _cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, setting6, setting7, setting8, setting9, setting10, setting11};
   
-
-//***SERIAL SETTINGS VARIABLE***//
-#define API_ENABLED true                      //Enable API Serial interface = true , Disable API serial interface = false       
-
-//***VARIABLE DECLARATION***//
+//***GLOBAL VARIABLE DECLARATION***//
 
 //***Map Sip & Puff actions to cursor buttons for mode 1***//
 int actionButton[INPUT_ACTION_COUNT]; 
@@ -315,6 +311,7 @@ void setup() {
 }
 
 //-----------------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------------//
 
 //***START OF MAIN LOOP***//
 
@@ -332,8 +329,10 @@ void loop() {
   pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
 }
 
-//***END OF INFINITE LOOP***//
+//***END OF MAIN LOOP***//
 
+
+//-----------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------//
 
 
@@ -341,9 +340,9 @@ void loop() {
 
 void cursorHandler(void) {
 
-  bool outputMouse = false;
   
   // Reset cursor values
+  bool outputMouse = false;
   int xCursor = 0;
   int yCursor = 0;
 
@@ -353,7 +352,7 @@ void cursorHandler(void) {
   yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
   yLow  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10
 
-  //Check the FSR changes from previous reading and set the skip flag to true if the changes are in the change tolerance range
+  //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
   bool skipChange = abs(xHigh - xHighPrev) < xHighChangeTolerance 
                  && abs(xLow  - xLowPrev)  < xLowChangeTolerance 
                  && abs(yHigh - yHighPrev) < yHighChangeTolerance 
@@ -940,7 +939,7 @@ void getCursorInitialization(bool responseEnabled) {
 
 //***SET CURSOR INITIALIZATION FUNCTION***//
 
-void setCursorInitialization(bool responseEnabled,int mode) {
+void setCursorInitialization(bool responseEnabled, int mode) {
 
   ledOn(1); //Turn on Green LED
 
