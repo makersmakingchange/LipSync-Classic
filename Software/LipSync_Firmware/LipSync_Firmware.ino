@@ -93,8 +93,8 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
       
 
 //***PIN ASSIGNMENTS***// - DO NOT CHANGE
-#define LED_1_PIN 4                               // LipSync LED Color1 : GREEN - digital output pin 5
-#define LED_2_PIN 5                               // LipSync LED Color2 : RED - digital outputpin 4
+#define LED_GREEN_PIN 4                               // LipSync LED Color1 : GREEN - digital output pin 5
+#define LED_RED_PIN 5                               // LipSync LED Color2 : RED - digital outputpin 4
 #define BUTTON_DOWN_PIN 7                         // Cursor Control Button 2: DOWN - digital input pin 7 (internally pulled-up)
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
 #define TRANS_CONTROL_PIN A3                      // Bluetooth Transistor Control Pin - digital output pin A3
@@ -447,8 +447,8 @@ void cursorHandler(void) {
 
 //***INITIALIZE PINS FUNCTION ***//
 void initializePins(void) {
-  pinMode(LED_1_PIN, OUTPUT);                     //Set the LED pin 1 as output(GREEN LED)
-  pinMode(LED_2_PIN, OUTPUT);                     //Set the LED pin 2 as output(RED LED)
+  pinMode(LED_GREEN_PIN, OUTPUT);                     //Set the LED pin 1 as output(GREEN LED)
+  pinMode(LED_RED_PIN, OUTPUT);                     //Set the LED pin 2 as output(RED LED)
   pinMode(TRANS_CONTROL_PIN, OUTPUT);             //Set the transistor pin as output
   pinMode(PIO4_PIN, OUTPUT);                      //Set the bluetooth command mode pin as output
 
@@ -1833,15 +1833,15 @@ void performButtonAction(int outputAction) {
 void ledOn(int ledNumber) {
   switch (ledNumber) {
     case 1: { //Turn GREEN LED on
-        digitalWrite(LED_1_PIN, HIGH);
+        digitalWrite(LED_GREEN_PIN, HIGH);
         delay(5);
-        digitalWrite(LED_2_PIN, LOW);
+        digitalWrite(LED_RED_PIN, LOW);
         break;
       }
     case 2: { // Turn RED LED on
-        digitalWrite(LED_2_PIN, HIGH);
+        digitalWrite(LED_RED_PIN, HIGH);
         delay(5);
-        digitalWrite(LED_1_PIN, LOW);
+        digitalWrite(LED_GREEN_PIN, LOW);
         break;
       }
   }
@@ -1850,8 +1850,8 @@ void ledOn(int ledNumber) {
 //***LED CLEAR FUNCTION***//
 //Turns off both LEDs
 void ledClear(void) {
-  digitalWrite(LED_1_PIN, LOW);
-  digitalWrite(LED_2_PIN, LOW);
+  digitalWrite(LED_GREEN_PIN, LOW);
+  digitalWrite(LED_RED_PIN, LOW);
 }
 
 //***LED BLINK FUNCTION***//
@@ -1862,38 +1862,38 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
   switch (ledNumber) {
     case 1: {
         for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_1_PIN, HIGH);
+          digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
-          digitalWrite(LED_1_PIN, LOW);
+          digitalWrite(LED_GREEN_PIN, LOW);
           delay(delayBlinks);
         }
         break;
       }
     case 2: {
         for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_2_PIN, HIGH);
+          digitalWrite(LED_RED_PIN, HIGH);
           delay(delayBlinks);
-          digitalWrite(LED_2_PIN, LOW);
+          digitalWrite(LED_RED_PIN, LOW);
           delay(delayBlinks);
         }
         break;
       }
     case 3: {
         for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_1_PIN, HIGH);
+          digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
-          digitalWrite(LED_1_PIN, LOW);
+          digitalWrite(LED_GREEN_PIN, LOW);
           delay(delayBlinks);
-          digitalWrite(LED_2_PIN, HIGH);
+          digitalWrite(LED_RED_PIN, HIGH);
           delay(delayBlinks);
-          digitalWrite(LED_2_PIN, LOW);
+          digitalWrite(LED_RED_PIN, LOW);
           delay(delayBlinks);
         }
         break;
       }
     case 6: {
-        digitalWrite(LED_1_PIN, LOW);
-        digitalWrite(LED_2_PIN, LOW);
+        digitalWrite(LED_GREEN_PIN, LOW);
+        digitalWrite(LED_RED_PIN, LOW);
         break;
       }
   }
@@ -1918,7 +1918,7 @@ void secondaryAction(void) {
     yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A2
     yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
 
-    digitalWrite(LED_2_PIN, HIGH);                  //Turn red LED on
+    digitalWrite(LED_RED_PIN, HIGH);                  //Turn red LED on
 
     //todo implement angle code
 
@@ -1936,7 +1936,7 @@ void secondaryAction(void) {
       break;
     }
   }
-  digitalWrite(LED_2_PIN, LOW);
+  digitalWrite(LED_RED_PIN, LOW);
 }
 
 //***CURSOR MOVEMENT FUNCTION ***//
