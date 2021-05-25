@@ -266,12 +266,13 @@ void setup() {
   delay(10);
   
   setCursorInitialization(false,1);               //Set the Home joystick and generate movement threshold boundaries
-  delay(10);
+  delay(10);                                      //todo - may want to change to 2 so we trigger reset of comp values 
+                                                  //   based on new neutral position
   
   getCursorCalibration(false);                    //Get FSR Max calibration values 
   delay(10);
   
-  getChangeTolerance(false); // Get change tolerance using max FSR readings and default tolerance percentage 
+  getChangeTolerance(false);                      // Get change tolerance using max FSR readings and default tolerance percentage 
   delay(10);
   
   getPressureThreshold(false);                    //Get the pressure sensor threshold boundaries
@@ -900,9 +901,9 @@ void setCompFactor(void) {
   float finalMax = (xMax > yMax) ? (float)xMax : (float)yMax;
 
   yHighComp = (finalMax - yHighNeutral) / (yHighMax - yHighNeutral);
-  yLowComp = (finalMax - yLowNeutral) / (yLowMax - yLowNeutral);
+  yLowComp =  (finalMax - yLowNeutral)  / (yLowMax  - yLowNeutral);
   xHighComp = (finalMax - xHighNeutral) / (xHighMax - xHighNeutral);
-  xLowComp = (finalMax - xLowNeutral) / (xLowMax - xLowNeutral);
+  xLowComp =  (finalMax - xLowNeutral)  / (xLowMax  - xLowNeutral);
 
   EEPROM.put(EEPROM_yHighComp, yHighComp);
   delay(10);
@@ -2037,18 +2038,18 @@ void cursorScroll(void) {
 int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue) {
   int cursorOutput = 0;
   
-  if (rawValue > neutralValue) { //FSR pressed 
-    //Calculate X left factor ( 1.25 multiplied by X low comp multiplied by ratio of X value to X low Maximum value )
+  if (rawValue > neutralValue) { //FSR greater than neutral 
+    //Calculate X left factor ( 1.25 multiplied by fsr compensation multiplied by ratio of current value to maximum value )
     float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
 
     //Use the calculated X down factor to none linearize the maximum speeds
     cursorOutput = (int)(round(1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
 
     //Select maximum speed
-    int maxSpeed = round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
+    int maxSpeed =                       round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
 
     //Map the values to a value between 0 and the selected maximum speed
-    cursorOutput = map(cursorOutput, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); 
+    cursorOutput = map(cursorOutput, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); //TODO this seems to do nothing.
     
     //Set a constrain 
     cursorOutput = constrain(cursorOutput,0, cursorMaxSpeed);   
