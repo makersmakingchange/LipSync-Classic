@@ -18,11 +18,8 @@
 //VERSION: 3.0-beta (21 May Apr 2021) 
 //Copyright Neil Squire Society 2021.
 
-
 #include <EEPROM.h>
 #include <Mouse.h>
-//#include <math.h>
-
                                                  
 //***OUTPUT ACTIONS***// - DO NOT CHANGE 
 // These are the different actions the LipSync can perform based on different sip and puff inputs.
@@ -88,13 +85,13 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 
 //*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.  
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
-#define RAW_MODE false                             //Enable raw FSR readings to serial output (Default: false)
+#define RAW_MODE false                            //Enable raw FSR readings to serial output (Default: false)
                                                   //Output: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown" 
 #define API_ENABLED true                          //Enable API Serial interface = true , Disable API serial interface = false      
 
 //***PIN ASSIGNMENTS***// - DO NOT CHANGE
-#define LED_GREEN_PIN 4                               // LipSync LED Color1 : GREEN - digital output pin 5
-#define LED_RED_PIN 5                               // LipSync LED Color2 : RED - digital outputpin 4
+#define LED_GREEN_PIN 4                           // LipSync LED Color1 : GREEN - digital output pin 5
+#define LED_RED_PIN 5                             // LipSync LED Color2 : RED - digital outputpin 4
 #define BUTTON_DOWN_PIN 7                         // Cursor Control Button 2: DOWN - digital input pin 7 (internally pulled-up)
 #define BUTTON_UP_PIN 8                           // Cursor Control Button 1: UP - digital input pin 8 (internally pulled-up)
 #define TRANS_CONTROL_PIN A3                      // Bluetooth Transistor Control Pin - digital output pin A3
@@ -131,6 +128,7 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
 
+//***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,int);
 
 typedef struct {
@@ -209,8 +207,26 @@ _cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, se
   
 //***GLOBAL VARIABLE DECLARATION***//
 
-//***Map Sip & Puff actions to cursor buttons for mode 1***//
-int actionButton[INPUT_ACTION_COUNT]; 
+int modelNumber;                                  //Declare LipSync model number variable 
+int actionButton[INPUT_ACTION_COUNT];             //Sip & Puff action mapping
+
+int rotationAngle = ROTATION_ANGLE;               //Rotation angle variable (degrees)
+float rotationAngle11;                            //Rotation matrix
+float rotationAngle12;
+float rotationAngle21;
+float rotationAngle22;
+
+int cursorSpeedCounter;                           // Variable to track current cursor speed level
+int cursorDelay;                                  // Current cursor delay
+float cursorFactor;                               // Current cursor factor
+int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
+
+float cursorPressure;                             //Variable to hold pressure readings
+float sipThreshold;                               //Sip pressure threshold in volts
+float puffThreshold;                              //Puff pressure threshold in volts
+
+unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
+int pollCounter = 0;                              //Cursor poll counter
 
 int xHigh, yHigh, xLow, yLow;                                                //Current FSR reading variables
 int xHighPrev, yHighPrev, xLowPrev, yLowPrev;                                //Previous FSR reading variables                       
@@ -223,14 +239,6 @@ float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius; // Squ
 
 int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
 
-unsigned int puffCount, sipCount;                 //The puff and long sip incremental counter variables
-int pollCounter = 0;                              //Cursor poll counter
-
-int cursorSpeedCounter;                           // Variable to track current cursor speed level
-int cursorDelay;                                  // Current cursor delay
-float cursorFactor;                               // Current cursor factor
-int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
-
 float yHighComp = 1.0;
 float yLowComp = 1.0;
 float xHighComp = 1.0;
@@ -239,17 +247,7 @@ float xLowComp = 1.0;
 float yHighDebug, yLowDebug, xHighDebug, xLowDebug;
 int yHighMaxDebug, yLowMaxDebug, xHighMaxDebug, xLowMaxDebug;
 
-int rotationAngle = ROTATION_ANGLE;                       //Rotation angle variables
-float rotationAngle11, rotationAngle12, rotationAngle21, rotationAngle22;
-
-float sipThreshold;                                       //Sip pressure threshold in volts
-float puffThreshold;                                      //Puff pressure threshold in volts
-
-float cursorPressure;                                     //Variable to hold pressure readings
-
-int modelNumber;                                        //Declare LipSync model number variable 
-
-bool debugModeEnabled;                                    //Declare raw and debug enable variable
+bool debugModeEnabled;                                  //Declare raw and debug enable variable
 bool rawModeEnabled;
 bool settingsEnabled = false;                           //Serial input settings command mode enabled or disabled 
 
@@ -360,9 +358,9 @@ void cursorHandler(void) {
   
   // Set FSR values for next skip check
   xHighPrev = xHigh;
-  xLowPrev = xLow;
+  xLowPrev  = xLow;
   yHighPrev = yHigh;
-  yLowPrev = yLow;
+  yLowPrev  = yLow;
 
   // Calculate the magnitude of the movement for each direction / quadrant
   xHighYHigh = sq(((xHigh - xHighNeutral) > 0) ? (xHigh - xHighNeutral) : 0) + sq(((yHigh - yHighNeutral) > 0) ? (yHigh - yHighNeutral) : 0);     //The sq() function raises thr input to power of 2 and is returning the same data type int->int
