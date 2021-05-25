@@ -218,8 +218,8 @@ float rotationAngle22;
 
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
 int cursorDelay;                                  // Current cursor delay
-float cursorFactor;                               // Current cursor factor
 int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
+float cursorFactor;                               // Current cursor factor
 
 float cursorPressure;                             //Variable to hold pressure readings
 float sipThreshold;                               //Sip pressure threshold in volts
@@ -774,8 +774,7 @@ void sendDebugData() {
 
 //***SEND RAW DATA FUNCTION***//
 // Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
-
-void sendRawData(int x, int y, int action, int xUp, int xDown,int yUp,int yDown) {
+void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
   Serial.print("RAW:1:"); 
   Serial.print(x); 
