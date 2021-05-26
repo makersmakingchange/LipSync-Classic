@@ -2045,11 +2045,11 @@ int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue
     //Use the calculated X down factor to none linearize the maximum speeds
     cursorOutput = (int)(round(1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
 
-    //Select maximum speed
-    int maxSpeed =                       round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
+    //Determine value when FSR at max
+    int valueAtMax = round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
 
     //Map the values to a value between 0 and the selected maximum speed
-    cursorOutput = map(cursorOutput, 0, (round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0), 0, maxSpeed); //TODO this seems to do nothing.
+    cursorOutput = map(cursorOutput, 0, valueAtMax, 0, cursorMaxSpeed); 
     
     //Set a constrain 
     cursorOutput = constrain(cursorOutput,0, cursorMaxSpeed);   
