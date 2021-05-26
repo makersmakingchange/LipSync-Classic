@@ -1329,11 +1329,12 @@ void factoryReset(bool responseEnabled) {
 }
 
 //***SERIAL SETTINGS FUNCTION TO CHANGE SPEED AND COMMUNICATION MODE USING SOFTWARE***//
-
+//
 bool serialSettings(bool enabled) {
 
     String commandString = "";  
-    bool settingsFlag = enabled;                            //Set the input parameter to the flag returned. This will help to detect that the settings actions should be performed.
+    
+    bool settingsFlag = enabled;               //Set the input parameter to the flag returned. This will help to detect that the settings actions should be performed.
      if (Serial.available()>0)  
      {  
        commandString = Serial.readString();            //Check if serial has received or read input string and word "SETTINGS" is in input string.
@@ -1366,14 +1367,14 @@ bool serialSettings(bool enabled) {
 //***VALIDATE INPUT COMMAND FORMAT FUNCTION***//
 
 bool isValidCommandFormat (String inputCommandString) {
-  bool isValidFormart;
+  bool isValidFormat;
   if ((inputCommandString.length()==(6) || inputCommandString.length()==(7) || inputCommandString.length()==(8) || inputCommandString.length()==(11)) && inputCommandString.charAt(2)==',' && inputCommandString.charAt(4)==':'){ 
-    isValidFormart = true;
+    isValidFormat = true;
    }
    else {
-     isValidFormart = false;
+     isValidFormat = false;
    }
-  return isValidFormart;
+  return isValidFormat;
 }
 
 //***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
