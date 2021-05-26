@@ -2037,22 +2037,22 @@ void cursorScroll(void) {
 // Converts FSR voltage readings into mouse cursor movements
 int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue) {
   int cursorOutput = 0;
-  
+     
   if (rawValue > neutralValue) { //FSR greater than neutral 
     //Calculate X left factor ( 1.25 multiplied by fsr compensation multiplied by ratio of current value to maximum value )
     float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
 
     //Use the calculated X down factor to none linearize the maximum speeds
-    cursorOutput = (int)(round(1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0);
+    float cursorFloat = round(1.0 * pow(cursorMaxSpeed, neutralFactor)) - 1.0;   
 
     //Determine value when FSR at max
     int valueAtMax = round(1.0 * pow(cursorMaxSpeed, 1.25*compValue)) - 1.0;
 
     //Map the values to a value between 0 and the selected maximum speed
-    cursorOutput = map(cursorOutput, 0, valueAtMax, 0, cursorMaxSpeed); 
+    cursorFloat = map(cursorFloat, 0, valueAtMax, 0, cursorMaxSpeed); 
     
     //Set a constrain 
-    cursorOutput = constrain(cursorOutput,0, cursorMaxSpeed);   
+    cursorOutput = constrain(cursorFloat,0, cursorMaxSpeed);   
   } //end FSR pressed
   
   return cursorOutput;
