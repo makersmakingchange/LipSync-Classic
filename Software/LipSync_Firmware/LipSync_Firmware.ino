@@ -481,14 +481,14 @@ void getModelNumber(bool responseEnabled) {
     EEPROM.put(EEPROM_modelNumber, modelNumber);
     delay(10);
   }  
-  printResponseSingle(responseEnabled,false,true,0,"MN,0",true,LIPSYNC_MODEL);
+  printResponseSingle(responseEnabled,true,true,0,"MN,0",true,LIPSYNC_MODEL);
 
 }
 
 //***GET VERSION FUNCTION***//
 
-void getVersionNumber(void) {
-  printResponseSingle(true,false,true,0,"VN,0",true,LIPSYNC_VERSION);
+void getVersionNumber(bool responseEnabled) {
+  printResponseSingle(responseEnabled,true,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
 
 //***GET CURSOR SPEED FUNCTION***//
@@ -505,7 +505,7 @@ int getCursorSpeed(bool responseEnabled) {
     }
   } 
 
-  printResponseSingle(responseEnabled,false,true,0,"SS,0",true,speedCounter);
+  printResponseSingle(responseEnabled,true,true,0,"SS,0",true,speedCounter);
 
   return speedCounter;
 }
@@ -576,9 +576,10 @@ void getPressureThreshold(bool responseEnabled) {
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
 
-  int responseParameterArray[]={pressureThreshold,pressureNominal};
+  int pressureValue[]={pressureThreshold,pressureNominal};
+  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
 
-  printResponseMultiple(responseEnabled,false,true,0,"PT,0",":",responseParameterArray);
+  printResponseMultiple(responseEnabled,true,true,0,"PT,0","",2,":",pressureValue);
   
   delay(5); 
 }
@@ -605,10 +606,12 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
   }
   delay(5); 
 
-  int responseParameterArray[]={pressureThreshold,pressureNominal};
+  int pressureValue[]={pressureThreshold,pressureNominal};
+  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,false,isValidThreshold,responseCode,"PT,1",":",responseParameterArray);
+  printResponseMultiple(responseEnabled,true,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
 
   delay(5); 
 }
@@ -659,7 +662,7 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
   int responseCode=0;
   (isValidDebugState) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,false,isValidDebugState,responseCode,"DM,1",true,debugModeEnabled);
+  printResponseSingle(responseEnabled,true,isValidDebugState,responseCode,"DM,1",true,debugModeEnabled);
 
   if(responseEnabled &&debugModeEnabled){ sendDebugData();}
   
@@ -728,7 +731,7 @@ bool getRawMode(bool responseEnabled) {
     delay(5);   
   }
 
-  printResponseSingle(responseEnabled,false,true,0,"RM,0",true,rawState);
+  printResponseSingle(responseEnabled,true,true,0,"RM,0",true,rawState);
   
   delay(5); 
   return rawState;
@@ -753,7 +756,7 @@ void setRawMode(bool responseEnabled,bool inputRawState) {
   int responseCode=0;
   (isValidRawState) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,false,isValidRawState,responseCode,"RM,1",true,rawModeEnabled);
+  printResponseSingle(responseEnabled,true,isValidRawState,responseCode,"RM,1",true,rawModeEnabled);
   
   delay(5); 
 }
@@ -825,9 +828,10 @@ void setCompFactor(void) {
 //***GET CURSOR INITIALIZATION FUNCTION***//
 
 void getCursorInitialization(bool responseEnabled) {
-  int responseParameterArray[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
-  printResponseMultiple(responseEnabled,false,true,0,"IN,0",",",responseParameterArray);
-  
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
   delay(10);  
 }
 
@@ -873,9 +877,10 @@ void setCursorInitialization(bool responseEnabled, int mode) {
   EEPROM.get(EEPROM_xLowComp, xLowComp);
   delay(10);
 
-  int responseParameterArray[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
 
-  printResponseMultiple(true,responseEnabled,true,0,"IN,1",",",responseParameterArray);
+  printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
   
   delay(5); 
   ledClear();
@@ -900,9 +905,10 @@ void getCursorCalibration(bool responseEnable) {
   xLowYLowRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
   xLowYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
-  int responseParameterArray[]={xHighMax,xLowMax,yHighMax,yLowMax};
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
 
-  printResponseMultiple(responseEnable,false,true,0,"CA,0",",",responseParameterArray);
+  printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
 
   delay(10);
 }
@@ -950,9 +956,9 @@ void setCursorCalibration(bool responseEnabled) {
   delay(10);
 
   ledBlink(5, 250, 3);
-  int responseParameterArray[]={xHighMax,xLowMax,yHighMax,yLowMax};
-
-  printResponseMultiple(responseEnabled,false,true,0,"CA,0",",",responseParameterArray);
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
+  printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
 
   delay(10);
 }
@@ -960,14 +966,15 @@ void setCursorCalibration(bool responseEnabled) {
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
 
 void getChangeTolerance(bool responseEnabled) {
-  float changePercent = CHANGE_DEFAULT_TOLERANCE;
-  xHighChangeTolerance=(int)(xHighMax * (changePercent/100.0));
-  xLowChangeTolerance=(int)(xLowMax * (changePercent/100.0));
-  yHighChangeTolerance=(int)(yHighMax * (changePercent/100.0));
-  yLowChangeTolerance=(int)(yLowMax * (changePercent/100.0));
+  xHighChangeTolerance=(int)(xHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  xLowChangeTolerance=(int)(xLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  yHighChangeTolerance=(int)(yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  yLowChangeTolerance=(int)(yLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
 
-  int responseParameterArray[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
-  printResponseMultiple(responseEnabled,false,true,0,"CT,0",",",responseParameterArray);
+  int changeTolerance[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
+  //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
 
   delay(10);
 }
@@ -1000,8 +1007,9 @@ void getButtonMapping(bool responseEnabled) {
       }
     }   
   }
+  //int buttonMappingSize = sizeof(actionButton) / sizeof(actionButton[0]);
 
-  printResponseMultiple(responseEnabled,false,true,0,"MP,0","",actionButton);
+  printResponseMultiple(responseEnabled,true,true,0,"MP,0","",6 ,"",actionButton);
 
   delay(5); 
 }
@@ -1032,7 +1040,8 @@ void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
    delay(5);
   int responseCode=0;
   (isValidMapping) ? responseCode = 0 : responseCode = 2;
-   printResponseMultiple(responseEnabled,false,isValidMapping,responseCode,"MP,1","",inputButtonMapping);
+  //int buttonMappingSize = sizeof(inputButtonMapping) / sizeof(inputButtonMapping[0]);
+  printResponseMultiple(responseEnabled,true,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
 
   delay(5); 
 }
@@ -1049,7 +1058,7 @@ int getRotationAngle(bool responseEnabled) {
    } else {
       tempRotationAngle = ROTATION_ANGLE;
    }
-   printResponseSingle(responseEnabled,false,true,0,"RA,0",true,tempRotationAngle);
+   printResponseSingle(responseEnabled,true,true,0,"RA,0",true,tempRotationAngle);
 
    delay(5); 
     
@@ -1075,7 +1084,7 @@ void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
   int responseCode=0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,false,true,responseCode,"RA,1",true,rotationAngle); 
+  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,rotationAngle); 
   
   updateRotationAngle(); // Update rotation transform
 
@@ -1132,7 +1141,7 @@ void factoryReset(bool responseEnabled) {
   getCompFactor();                                          
   delay(10);
       
-  printResponseSingle(responseEnabled,false,true,0,"FR,0",true,0);
+  printResponseSingle(responseEnabled,true,true,0,"FR,0",true,0);
 
   delay(5); 
    
@@ -1150,11 +1159,11 @@ bool serialSettings(bool enabled) {
      {  
        commandString = Serial.readString();            //Check if serial has received or read input string and word "SETTINGS" is in input string.
        if (settingsFlag==false && commandString=="SETTINGS") {
-        printResponseSingle(true,false,true,0,commandString,false,0);
+        printResponseSingle(true,true,true,0,commandString,false,0);
        settingsFlag=true;                         //Set the return flag to true so settings actions can be performed in the next call to the function
        }
        else if (settingsFlag==true && commandString=="EXIT") {
-        printResponseSingle(true,false,true,0,commandString,false,0);
+        printResponseSingle(true,true,true,0,commandString,false,0);
        settingsFlag=false;                         //Set the return flag to false so settings actions can be exited
        }
        else if (settingsFlag==true && isValidCommandFormat(commandString)){ //Check if command's format is correct and it's in settings mode
@@ -1162,7 +1171,7 @@ bool serialSettings(bool enabled) {
         settingsFlag=false;   
        }
        else {
-        printResponseSingle(true,false,false,0,commandString,false,0);
+        printResponseSingle(true,true,false,0,commandString,false,0);
         settingsFlag=false;      
        }
        Serial.flush();  
@@ -1233,7 +1242,7 @@ void printResponseSingle(bool responseEnabled,bool apiEnabled, bool responseStat
 
 //***SERIAL PRINT OUT COMMAND RESPONSE WITH MULTIPLE PARAMETERS FUNCTION***//
 
-void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, char responseParameterDelimiter, int responseParameter[]) {
+void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, String responsePrefix, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
   if(responseEnabled) {
    
     if(responseStatus){
@@ -1246,10 +1255,10 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
     Serial.print(":");
     Serial.print(responseCommand);
     Serial.print(":");
-    int parameterSize = sizeof(responseParameter) / sizeof(responseParameter[0]);
-    for(int parameterIndex = 0; parameterIndex< parameterSize; parameterIndex++){
+    Serial.print(responsePrefix);
+    for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
        Serial.print(responseParameter[parameterIndex]);  
-       if(parameterIndex<parameterSize-1){Serial.print(responseParameterDelimiter);  };
+       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
     }   
     Serial.println("");  
   }
@@ -1307,7 +1316,7 @@ void performCommand(String inputString) {
       else { // Invalid input parameter
       
       // Outut error message
-      printResponseSingle(true,false,false,2,"FAIL",false,0);
+      printResponseSingle(true,true,false,2,"FAIL",false,0);
 
       delay(5);
       }
@@ -1316,7 +1325,7 @@ void performCommand(String inputString) {
     else if(apiIndex== (totalCommandNumber-1)) { // command doesn’t exist
     
     //Output error message
-    printResponseSingle(true,false,false,1,"FAIL",false,0);
+    printResponseSingle(true,true,false,1,"FAIL",false,0);
 
     delay(5);
     break;
