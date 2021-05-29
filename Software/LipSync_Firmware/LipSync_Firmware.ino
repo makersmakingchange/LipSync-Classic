@@ -59,7 +59,7 @@
 #define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed     
 #define SPEED_COUNTER 5                           //Default cursor speed level
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-
+#define CURSOR_DELAY 5                            //Current cursor delay
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
@@ -185,27 +185,17 @@ setButtonMappingFunction,
 factoryResetFunction
 };
 
-//Cursor Speed Level structure 
-typedef struct {
-  int _delay;
-  float _factor;
-  int _maxSpeed;
-} _cursor;
-
-//Define characteristics of each speed level ( Example: 5,-1.0,10)
-_cursor setting1 = {5, -1.1, CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED)};
-_cursor setting2 = {5, -1.1, CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED)};
-_cursor setting3 = {5, -1.1, CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED)};
-_cursor setting4 = {5, -1.1, CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED)};
-_cursor setting5 = {5, -1.1, CURSOR_DEFAULT_SPEED - (CURSOR_DELTA_SPEED)};
-_cursor setting6 = {5, -1.1, CURSOR_DEFAULT_SPEED};
-_cursor setting7 = {5, -1.1, CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED)};
-_cursor setting8 = {5, -1.1, CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED)};
-_cursor setting9 = {5, -1.1, CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED)};
-_cursor setting10 = {5, -1.1, CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED)};
-_cursor setting11 = {5, -1.1, CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
-
-_cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, setting6, setting7, setting8, setting9, setting10, setting11};
+int cursorParams[11] = {CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED),
+CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED),
+CURSOR_DEFAULT_SPEED - (1 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED, 
+CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
   
 //***GLOBAL VARIABLE DECLARATION***//
 
@@ -219,9 +209,7 @@ float rotationAngle21;
 float rotationAngle22;
 
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
-int cursorDelay;                                  // Current cursor delay
 int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
-float cursorFactor;                               // Current cursor factor
 
 float cursorPressure;                             //Variable to hold pressure readings
 float sipThreshold;                               //Sip pressure threshold in volts
@@ -290,9 +278,7 @@ void setup() {
   delay(10);
   
   cursorSpeedCounter = getCursorSpeed(false);     //Read the saved cursor speed parameter from EEPROM
-  cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-  cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-  cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
+  cursorMaxSpeed = cursorParams[cursorSpeedCounter];
   delay(10);
   
   getButtonMapping(false); 
@@ -414,12 +400,12 @@ void cursorHandler(void) {
   
   if (outputMouse){
     moveCursor(xCursor, yCursor, 0);
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
     pollCounter = 0;
   }
   else if(rawModeEnabled) {
     sendRawData(0,0,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
   }
 
   //Debug information 
@@ -530,9 +516,7 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
   }
   delay(5); 
 
-  cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-  cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-  cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
+  cursorMaxSpeed = cursorParams[cursorSpeedCounter];
   
   int responseCode=0;
   (isValidSpeed) ? responseCode = 0 : responseCode = 2;
@@ -1131,9 +1115,7 @@ void factoryReset(bool responseEnabled) {
   
   //Set the default values
   cursorSpeedCounter = SPEED_COUNTER; 
-  cursorDelay =     cursorParams[cursorSpeedCounter]._delay;
-  cursorFactor =    cursorParams[cursorSpeedCounter]._factor;
-  cursorMaxSpeed =  cursorParams[cursorSpeedCounter]._maxSpeed;
+  cursorMaxSpeed =  cursorParams[cursorSpeedCounter];
   
   debugModeEnabled = DEBUG_MODE;  
   rawModeEnabled = RAW_MODE;
@@ -1722,7 +1704,7 @@ void cursorScroll(void) {
         int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
         Mouse.move(0, 0, -1* vCursor); // Apply vertical direction to scroll 
-        delay(cursorDelay * 35);  // 5 x 35 = 175 ms
+        delay(CURSOR_DELAY * 35);  // 5 x 35 = 175 ms
         
     
     }
@@ -1730,7 +1712,7 @@ void cursorScroll(void) {
       break;
     }
         
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
   }
     if(debugModeEnabled) {
     Serial.println("cursorScroll Mode Ended");
