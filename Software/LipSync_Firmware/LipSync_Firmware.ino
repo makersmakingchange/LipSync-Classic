@@ -127,16 +127,18 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping5 50                  //int:50,51; 
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
+//#define EEPROM_compFactor 56                      //int:56,57
 
 //***API FUNCTIONS***// - DO NOT CHANGE
-typedef void (*FunctionPointer)(bool,int);
+typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
 
-typedef struct {
-  String _command;
-  String _parameter;
-  FunctionPointer _function;
-} _functionList;
+typedef struct {                                  //Type definition for API function list
+  String _command;                                //Unique two character command code
+  String _parameter;                              //Parameter that is passed to function
+  FunctionPointer _function;                      //API function pointer
+} _functionList;                                  
 
+// Declare individual API functions with command, parameter, and corresponding function
 _functionList getModelNumberFunction =          {"MN,0","0",&getModelNumber};
 _functionList getVersionNumberFunction =        {"VN,0","0",&getVersionNumber};
 _functionList getCursorSpeedFunction =          {"SS,0","0",&getCursorSpeed};
@@ -146,11 +148,14 @@ _functionList getPressureThresholdFunction =    {"PT,0","0",&getPressureThreshol
 _functionList setPressureThresholdFunction =    {"PT,1","",&setPressureThreshold};
 _functionList getRotationAngleFunction =        {"RA,0","0",&getRotationAngle};
 _functionList setRotationAngleFunction =        {"RA,1","",&setRotationAngle};
+_functionList getJoystickValueFunction =        {"JV,0","0",&getJoystickValue};
+_functionList getPressureValueFunction =        {"PV,0","0",&getPressureValue};
+
 _functionList getDebugModeFunction =            {"DM,0","0",&getDebugMode};
 _functionList setDebugModeFunction =            {"DM,1","",&setDebugMode};
-
 _functionList getRawModeFunction =              {"RM,0","0",&getRawMode};
 _functionList setRawModeFunction =              {"RM,1","",&setRawMode};
+
 _functionList getCursorInitializationFunction = {"IN,0","0",&getCursorInitialization};
 _functionList setCursorInitializationFunction = {"IN,1","1",&setCursorInitialization};
 _functionList getCursorCalibrationFunction =    {"CA,0","0",&getCursorCalibration};
@@ -161,27 +166,32 @@ _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
 _functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
 
-_functionList apiFunction[20] = {getModelNumberFunction, 
-getVersionNumberFunction,
-getCursorSpeedFunction,
-setCursorSpeedFunction,
-getPressureThresholdFunction,
-setPressureThresholdFunction,
-getRotationAngleFunction,
-setRotationAngleFunction,
-getDebugModeFunction,
-setDebugModeFunction,
-getRawModeFunction,
-setRawModeFunction,
-getCursorInitializationFunction,
-setCursorInitializationFunction,
-getCursorCalibrationFunction,
-setCursorCalibrationFunction,
-getChangeToleranceFunction,
-getButtonMappingFunction,
-setButtonMappingFunction,
-factoryResetFunction
-};
+
+// Declare array of API functions
+_functionList apiFunction[22] = {
+  getModelNumberFunction, 
+  getVersionNumberFunction,
+  getCursorSpeedFunction,
+  setCursorSpeedFunction,
+  getPressureThresholdFunction,
+  setPressureThresholdFunction,
+  getRotationAngleFunction,
+  setRotationAngleFunction,
+  getJoystickValueFunction,
+  getPressureValueFunction,
+  getDebugModeFunction,
+  setDebugModeFunction,
+  getRawModeFunction,
+  setRawModeFunction,
+  getCursorInitializationFunction,
+  setCursorInitializationFunction,
+  getCursorCalibrationFunction,
+  setCursorCalibrationFunction,
+  getChangeToleranceFunction,
+  getButtonMappingFunction,
+  setButtonMappingFunction,
+  factoryResetFunction
+  };
 
 //Cursor Speed Level structure 
 typedef struct {
@@ -203,7 +213,19 @@ _cursor setting9 = {5, -1.1, CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED)};
 _cursor setting10 = {5, -1.1, CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED)};
 _cursor setting11 = {5, -1.1, CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 
-_cursor cursorParams[11] = {setting1, setting2, setting3, setting4, setting5, setting6, setting7, setting8, setting9, setting10, setting11};
+_cursor cursorParams[11] = {
+                            setting1, 
+                            setting2, 
+                            setting3, 
+                            setting4, 
+                            setting5, 
+                            setting6, 
+                            setting7, 
+                            setting8, 
+                            setting9, 
+                            setting10, 
+                            setting11};
+
   
 //***GLOBAL VARIABLE DECLARATION***//
 
@@ -219,7 +241,7 @@ float rotationAngle22;
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
 int cursorDelay;                                  // Current cursor delay
 int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
-float cursorFactor;                               // Current cursor factor
+float cursorFactor;                               // Current cursor factor //todo not currently used.
 
 float cursorPressure;                             //Variable to hold pressure readings
 float sipThreshold;                               //Sip pressure threshold in volts
@@ -313,9 +335,9 @@ void setup() {
 
 void loop() {
   
-  settingsEnabled=serialSettings(settingsEnabled);       //Check to see if setting option is enabled in Lipsync
+  settingsEnabled=serialSettings(settingsEnabled); //Check to see if setting option is enabled in Lipsync
 
-  cursorHandler();                                //Read the joystick values and output mouse cursor movements.
+  cursorHandler();                                  //Read the joystick values and output mouse cursor movements.
 
   //Perform sip and puff actions raw mode is disabled 
   if(!rawModeEnabled) {
@@ -438,22 +460,17 @@ void cursorHandler(void) {
 
 
 
-
-
 //***INITIALIZE PINS FUNCTION ***//
 void initializePins(void) {
-  pinMode(LED_GREEN_PIN, OUTPUT);                     //Set the LED pin 1 as output(GREEN LED)
-  pinMode(LED_RED_PIN, OUTPUT);                     //Set the LED pin 2 as output(RED LED)
+  pinMode(LED_GREEN_PIN, OUTPUT);                 //Set the LED pin 1 as output(GREEN LED)
+  pinMode(LED_RED_PIN, OUTPUT);                   //Set the LED pin 2 as output(RED LED)
   pinMode(TRANS_CONTROL_PIN, OUTPUT);             //Set the transistor pin as output
   pinMode(PIO4_PIN, OUTPUT);                      //Set the bluetooth command mode pin as output
-
   pinMode(PRESSURE_PIN, INPUT);                   //Set the pressure sensor pin input
   pinMode(X_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Right FSR )
   pinMode(X_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Left FSR )
   pinMode(Y_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Up FSR )
   pinMode(Y_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Down FSR )
-
-
   pinMode(BUTTON_UP_PIN, INPUT_PULLUP);           //Set increase cursor speed button pin as input
   pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         //Set decrease cursor speed button pin as input
 
@@ -683,6 +700,40 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
     
     delay(5);
   }  
+}
+
+//***GET JOYSTICK VALUE FUNCTION***//
+//Return a set of single FSR measurements
+void getJoystickValue(bool responseEnabled) {
+  int xHighTemp = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+  int xLowTemp  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
+  int yHighTemp = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+  int yLowTemp  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10 
+ 
+  if(responseEnabled) {       
+    Serial.print("SUCCESS,0:JV,0:"); 
+    Serial.print(xHighTemp); 
+    Serial.print(","); 
+    Serial.print(xLowTemp); 
+    Serial.print(",");
+    Serial.print(yHighTemp); 
+    Serial.print(",");
+    Serial.println(yLowTemp);    
+    delay(5);
+  }
+}
+
+//***GET PRESSURE VALUE FUNCTION***//
+// Returns pressure value in volts
+void getPressureValue(bool responseEnabled) {
+  // Initial neutral pressure transducer analog value [0.0V - 5.0V]
+  float tempPressure = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; 
+  
+  if(responseEnabled) {        
+    Serial.print("SUCCESS,0:PV,0:");
+    Serial.print(tempPressure);
+    delay(5);
+  }
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -1365,33 +1416,29 @@ bool serialSettings(bool enabled) {
 }
 
 //***VALIDATE INPUT COMMAND FORMAT FUNCTION***//
-
+// This function confirms command string has correct format.
 bool isValidCommandFormat (String inputCommandString) {
-  bool isValidFormat;
-  if ((inputCommandString.length()==(6) || inputCommandString.length()==(7) || inputCommandString.length()==(8) || inputCommandString.length()==(11)) && inputCommandString.charAt(2)==',' && inputCommandString.charAt(4)==':'){ 
+  bool isValidFormat = false;;
+  if ((inputCommandString.length()==(6) || //XX,d:d
+       inputCommandString.length()==(7) || //XX,d:dd
+       inputCommandString.length()==(8) || //XX,d:ddd
+       inputCommandString.length()==(11)) && inputCommandString.charAt(2)==',' && inputCommandString.charAt(4)==':'){ 
     isValidFormat = true;
-   }
-   else {
-     isValidFormat = false;
    }
   return isValidFormat;
 }
 
 //***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
 
-bool isValidCommandParamter(String inputParamterString) {
-  bool isValidParamter;
+bool isValidCommandParameter(String inputParamterString) {
   if (isStrNumber(inputParamterString)){ 
-    isValidParamter = true;
+    return true;
    }
-   else {
-     isValidParamter = false;
-   }
-  return isValidParamter;
+  return false;
 }
 
 //***CHECK IF STRING IS A NUMBER FUNCTION***//
-
+// This function checks if the input string is a number. It returns 
 boolean isStrNumber(String str){
   
   for(byte i=0;i<str.length();i++)
@@ -1444,7 +1491,7 @@ void performCommand(String inputString) {
     || apiFunction[apiIndex]._parameter == "" || apiFunction[apiIndex]._parameter == "r" )){
       
       // Matching Command String found
-      if( isValidCommandParamter( inputParameterString )) {   //Check if parameter is valid
+      if( isValidCommandParameter( inputParameterString )) {   //Check if parameter is valid
         //Valid Parameter
         
         //Handle parameters that are an array as a special case.
@@ -1501,112 +1548,112 @@ void performCommand(String inputCommandString) {
 
     //Get Model number : "MN,0:0"
     if(commandChar[0]=='M' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getModelNumber(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getModelNumber(true) : printCommandResponse(false,2,inputCommandString);
       getModelNumber(true);
       delay(5);
     } 
     //Get version number : "VN,0:0"
     else if(commandChar[0]=='V' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getVersionNumber() : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getVersionNumber() : printCommandResponse(false,2,inputCommandString);
       getVersionNumber();
       delay(5);
     }   
     //Get cursor speed value if received "SS,0:0", decrease the cursor if received "SS,1:1" and increase the cursor speed if received "SS,1:2" , and set the cursor speed value if received "SS,2:{speed 0 to 10}"
     else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? (void)getCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? (void)getCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
       getCursorSpeed(true);
       delay(5);
     } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      //(isValidCommandParamter(paramterString)) ? setCursorSpeed(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setCursorSpeed(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
       setCursorSpeed(true,paramterString.toInt());
       delay(5);
     } 
     else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? decreaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? decreaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
       decreaseCursorSpeed(true);
       delay(5);
     } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='2' && commandString.length()==4) {
-       //(isValidCommandParamter(paramterString)) ? increaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
+       //(isValidCommandParameter(paramterString)) ? increaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
       increaseCursorSpeed(true);
       delay(5);
     }
      //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
       else if(commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getPressureThreshold(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getPressureThreshold(true) : printCommandResponse(false,2,inputCommandString);
       getPressureThreshold(true);
       delay(5);
     } else if (commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      //(isValidCommandParamter(paramterString)) ? setPressureThreshold(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setPressureThreshold(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
       setPressureThreshold(true,paramterString.toInt());
       delay(5);
     } 
      //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
       else if(commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? (void)getRotationAngle(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? (void)getRotationAngle(true) : printCommandResponse(false,2,inputCommandString);
       getRotationAngle(true);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5 || commandString.length()==6)) {
-      //(isValidCommandParamter(paramterString)) ? setRotationAngle(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setRotationAngle(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
       setRotationAngle(true,paramterString.toInt());
       delay(5);
     } 
      //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
      else if(commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? (void)getDebugMode(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? (void)getDebugMode(true) : printCommandResponse(false,2,inputCommandString);
       getDebugMode(true);
       delay(5);
     } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setDebugMode(true,0) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setDebugMode(true,0) : printCommandResponse(false,2,inputCommandString);
       setDebugMode(true,0);
       delay(5);
     } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setDebugMode(true,1) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setDebugMode(true,1) : printCommandResponse(false,2,inputCommandString);
       setDebugMode(true,1);
       delay(5);
     } 
     //Get raw mode value if received "RM,0:0" , set raw mode value to 0 if received "RM,1:0" and set raw mode value to 1 if received "RM,1:1"
      else if(commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? (void)getRawMode(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? (void)getRawMode(true) : printCommandResponse(false,2,inputCommandString);
       getRawMode(true);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setRawMode(true,0) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setRawMode(true,0) : printCommandResponse(false,2,inputCommandString);
       setRawMode(true,0);
       delay(5);
     } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setRawMode(true,1) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setRawMode(true,1) : printCommandResponse(false,2,inputCommandString);
       setRawMode(true,1);
       delay(5);
     } 
      //Get cursor initialization values if received "IN,0:0" and perform cursor initialization if received "IN,1:1"
      else if(commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-     //(isValidCommandParamter(paramterString)) ? getCursorInitialization(true) : printCommandResponse(false,2,inputCommandString);
+     //(isValidCommandParameter(paramterString)) ? getCursorInitialization(true) : printCommandResponse(false,2,inputCommandString);
       getCursorInitialization(true);
       delay(5);
     } else if (commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setCursorInitialization(true,2) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setCursorInitialization(true,2) : printCommandResponse(false,2,inputCommandString);
       setCursorInitialization(true,2);
       delay(5);
     } 
      //Get cursor calibration values if received "CA,0:0" and perform cursor calibration if received "CA,1:1"
       else if(commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
       getCursorCalibration(true);
       delay(5);
     } else if (commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? setCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
       setCursorCalibration(true);
       delay(5);
     } 
      //Get change tolerance values if received "CT,0:0" 
       else if(commandChar[0]=='C' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getChangeTolerance(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getChangeTolerance(true) : printCommandResponse(false,2,inputCommandString);
       getChangeTolerance(true);
       delay(5);
     }
     //Get Button mapping : "MP,0:0" , Set Button mapping : "MP,1:012345"
     else if (commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
       getButtonMapping(true);
       delay(5);
     } else if(commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='1' && commandString.length()==9) {
@@ -1614,13 +1661,13 @@ void performCommand(String inputCommandString) {
       for(int i = 0; i< INPUT_ACTION_COUNT; i++){
          tempButtonMapping[i]=commandChar[3+i] - '0';          //Convert char arrat to int array
       }
-      //(isValidCommandParamter(paramterString)) ? setButtonMapping(true,tempButtonMapping) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? setButtonMapping(true,tempButtonMapping) : printCommandResponse(false,2,inputCommandString);
       setButtonMapping(true,tempButtonMapping);
       delay(5);
     }
      //Perform factory reset if received "FR,0:0"
      else if(commandChar[0]=='F' && commandChar[1]=='R' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParamter(paramterString)) ? factoryReset(true) : printCommandResponse(false,2,inputCommandString);
+      //(isValidCommandParameter(paramterString)) ? factoryReset(true) : printCommandResponse(false,2,inputCommandString);
       factoryReset(true);
       delay(5);
     } else {
@@ -1824,7 +1871,9 @@ void performButtonAction(int outputAction) {
 }
 
 //***LED ON FUNCTION***//
-
+// This function is used to turn LEDs on
+// 1: Turn green on
+// 2: Turn red on
 void ledOn(int ledNumber) {
   switch (ledNumber) {
     case 1: { //Turn GREEN LED on
@@ -1850,12 +1899,15 @@ void ledClear(void) {
 }
 
 //***LED BLINK FUNCTION***//
-
+// This functions blinks the LEDs.
+//1 - flash green
+//2 - flash red
+//3 - alternate
 void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
-  if (numBlinks < 0) numBlinks *= -1;
+  if (numBlinks < 0) numBlinks *= -1; //todo is this error checking?
 
   switch (ledNumber) {
-    case 1: {
+    case 1: { //Flash green
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
@@ -1864,7 +1916,7 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 2: {
+    case 2: { //Flash red
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_RED_PIN, HIGH);
           delay(delayBlinks);
@@ -1873,7 +1925,7 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 3: {
+    case 3: { // Alternate flashing red and green
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
@@ -1886,26 +1938,26 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 6: {
-        digitalWrite(LED_GREEN_PIN, LOW);
-        digitalWrite(LED_RED_PIN, LOW);
-        break;
-      }
+//    case 6: { // Turn LEDs off.   //todo this does not appear to be used and is redundant with ledClear()
+//        digitalWrite(LED_GREEN_PIN, LOW);
+//        digitalWrite(LED_RED_PIN, LOW);
+//        break;
+//      }
   }
 }
 
 //***FORCE DISPLAY OF CURSOR***//
-
+// This function slighlty moves the cursor, which causes the cursor to appear on mobile 
+// devices. Called during initialization.
 void forceCursorDisplay(void) {
   Mouse.move(1, 0, 0);
-  delay(25);
+  delay(5);
   Mouse.move(-1, 0, 0);
-  delay(25);
+  delay(5);
 }
 
 
 //***SECONDARY ACTION FUNCTION SELECTION***//
-
 void secondaryAction(void) {
   while (1) {
     xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
@@ -1913,7 +1965,7 @@ void secondaryAction(void) {
     yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A2
     yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
 
-    digitalWrite(LED_RED_PIN, HIGH);                  //Turn red LED on
+    ledOn(2); //Turn red LED on
 
     //todo implement angle code
 
@@ -1935,18 +1987,20 @@ void secondaryAction(void) {
 }
 
 //***CURSOR MOVEMENT FUNCTION ***//
+// This function applies transforms the input cursor coordinates
+// to provide a rotation that matches the mounting angle.
 void moveCursor(int xCursor, int yCursor, int wheel){
   
   // Apply rotation transform to inputs
   int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
   int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
-  
-  Mouse.move(uCursor, vCursor, wheel);                //output transformed mouse movement
+
+  // Output transformed mouse movement
+  Mouse.move(uCursor, vCursor, wheel);                
 
 }
 
 //***SWIPE FUNCTION***//
-
 void cursorSwipe(void) {
   
   for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
@@ -1959,19 +2013,16 @@ void cursorSwipe(void) {
 }
 
 //***CURSOR MIDDLE CLICK FUNCTION***//
-
 void cursorMiddleClick(void) {
   Mouse.click(MOUSE_MIDDLE);
-  delay(125);
+  // delay(125); //todo unnecessary delay
 }
 
 //***CURSOR SCROLL FUNCTION***//
-
+// This function is an operating mode that converts vertical joystick movements into
+// mouse wheel scrolling.
 void cursorScroll(void) {
-  if(debugModeEnabled) {
-    Serial.println("cursorScroll Mode Started");
-  }
-  
+ 
   while (1) { //continue in scroll mode until released by a sip or a puff input
     
     int xCursor = 0;
@@ -2022,15 +2073,12 @@ void cursorScroll(void) {
         delay(cursorDelay * 35);  // 5 x 35 = 175 ms
         
     
-    }
+    } //end check joystick deadband
     else if ((scrollRelease > sipThreshold) || (scrollRelease < puffThreshold)) { // if sip or puff, stop scroll mode
       break;
     }
         
     delay(cursorDelay);
-  }
-    if(debugModeEnabled) {
-    Serial.println("cursorScroll Mode Ended");
   }
 }
 
@@ -2052,7 +2100,7 @@ int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue
     //Map the values to a value between 0 and the selected maximum speed
     cursorFloat = map(cursorFloat, 0, valueAtMax, 0, cursorMaxSpeed); 
     
-    //Set a constrain 
+    //Constrain the output to allowable limits 
     cursorOutput = constrain(cursorFloat,0, cursorMaxSpeed);   
   } //end FSR pressed
   
