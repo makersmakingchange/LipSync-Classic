@@ -59,13 +59,15 @@
 #define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed     
 #define SPEED_COUNTER 5                           //Default cursor speed level
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-
+#define CURSOR_DELAY 5                            //Current cursor delay
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
 #define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
 
-//***DON'T CHANGE THESE CONSTANTS***//            
+//***DON'T CHANGE THESE CONSTANTS***//       
+#define LIPSYNC_MODEL 1                           //LipSync Mouse
+#define LIPSYNC_VERSION 30                        //LipSync Version
 #define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
@@ -193,39 +195,19 @@ _functionList apiFunction[22] = {
   factoryResetFunction
   };
 
-//Cursor Speed Level structure 
-typedef struct {
-  int _delay;
-  float _factor;
-  int _maxSpeed;
-} _cursor;
 
-//Define characteristics of each speed level ( Example: 5,-1.0,10)
-_cursor setting1 = {5, -1.1, CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED)};
-_cursor setting2 = {5, -1.1, CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED)};
-_cursor setting3 = {5, -1.1, CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED)};
-_cursor setting4 = {5, -1.1, CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED)};
-_cursor setting5 = {5, -1.1, CURSOR_DEFAULT_SPEED - (CURSOR_DELTA_SPEED)};
-_cursor setting6 = {5, -1.1, CURSOR_DEFAULT_SPEED};
-_cursor setting7 = {5, -1.1, CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED)};
-_cursor setting8 = {5, -1.1, CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED)};
-_cursor setting9 = {5, -1.1, CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED)};
-_cursor setting10 = {5, -1.1, CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED)};
-_cursor setting11 = {5, -1.1, CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 
-_cursor cursorParams[11] = {
-                            setting1, 
-                            setting2, 
-                            setting3, 
-                            setting4, 
-                            setting5, 
-                            setting6, 
-                            setting7, 
-                            setting8, 
-                            setting9, 
-                            setting10, 
-                            setting11};
-
+int cursorParams[11] = {CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED),
+CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED),
+CURSOR_DEFAULT_SPEED - (1 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED, 
+CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED), 
+CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
   
 //***GLOBAL VARIABLE DECLARATION***//
 
@@ -239,9 +221,9 @@ float rotationAngle21;
 float rotationAngle22;
 
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
-int cursorDelay;                                  // Current cursor delay
 int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
 float cursorFactor;                               // Current cursor factor //todo not currently used.
+
 
 float cursorPressure;                             //Variable to hold pressure readings
 float sipThreshold;                               //Sip pressure threshold in volts
@@ -310,9 +292,7 @@ void setup() {
   delay(10);
   
   cursorSpeedCounter = getCursorSpeed(false);     //Read the saved cursor speed parameter from EEPROM
-  cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-  cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-  cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
+  cursorMaxSpeed = cursorParams[cursorSpeedCounter];
   delay(10);
   
   getButtonMapping(false); 
@@ -434,12 +414,12 @@ void cursorHandler(void) {
   
   if (outputMouse){
     moveCursor(xCursor, yCursor, 0);
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
     pollCounter = 0;
   }
   else if(rawModeEnabled) {
     sendRawData(0,0,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
   }
 
   //Debug information 
@@ -496,17 +476,14 @@ void getModelNumber(bool responseEnabled) {
     EEPROM.put(EEPROM_modelNumber, modelNumber);
     delay(10);
   }  
-  if(responseEnabled){
-    //printCommandResponse(true,0,"MN,0:1");
-    Serial.println("SUCCESS,0:MN,0:1");
-  }
+  printResponseSingle(responseEnabled,true,true,0,"MN,0",true,LIPSYNC_MODEL);
+
 }
 
 //***GET VERSION FUNCTION***//
 
-void getVersionNumber(void) {
-  //printCommandResponse(true,0,"VN,0:V2.71");
-  Serial.println("SUCCES,0:VN,0:V2.71");
+void getVersionNumber(bool responseEnabled) {
+  printResponseSingle(responseEnabled,true,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
 
 //***GET CURSOR SPEED FUNCTION***//
@@ -522,15 +499,9 @@ int getCursorSpeed(bool responseEnabled) {
       delay(5);
     }
   } 
-  
-  if(responseEnabled){
-    //printCommandResponse(true,0,"SS,0:"+speedCounter);
-    
-    Serial.print("SUCCESS,0:SS,0:");
-    Serial.println(speedCounter); 
-    
-    delay(5);     
-  } 
+
+  printResponseSingle(responseEnabled,true,true,0,"SS,0",true,speedCounter);
+
   return speedCounter;
 }
 
@@ -554,24 +525,12 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
   }
   delay(5); 
 
-  cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-  cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-  cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
+  cursorMaxSpeed = cursorParams[cursorSpeedCounter];
   
- if(responseEnabled) {
-    //(isValidSpeed) ? printCommandResponse(true,0,"SS,1:"+cursorSpeedCounter) : printCommandResponse(false,2,"SS,2:"+inputSpeedCounter);
-    if(isValidSpeed) {
-      Serial.print("SUCCESS,0:SS,1:");
-      Serial.println(cursorSpeedCounter);
-    } else {
-      Serial.print("FAIL,2:SS,1:");
-      Serial.println(inputSpeedCounter);      
-    }
-    delay(5);
-  } else {
-      Serial.print("MANUAL,0:SS,1:");
-      Serial.println(cursorSpeedCounter);   
-  }
+  int responseCode=0;
+  (isValidSpeed) ? responseCode = 0 : responseCode = 2;
+  printResponseSingle(true,responseEnabled,isValidSpeed,responseCode,"SS,1",true,cursorSpeedCounter);
+  delay(5); 
 }
 
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
@@ -580,25 +539,6 @@ void increaseCursorSpeed(bool responseEnabled) {
   cursorSpeedCounter++;
 
   setCursorSpeed(responseEnabled, cursorSpeedCounter);
-  /*
-  if (cursorSpeedCounter == 11) {
-    ledBlink(6, 50, 3);
-    cursorSpeedCounter = 10;
-  } else {
-    ledBlink(cursorSpeedCounter+1, 100, 1);
-    cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-    cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-    cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
-
-    EEPROM.put(EEPROM_speedCounter, cursorSpeedCounter);
-    delay(25);
-  }
-  //(responseEnabled) ? printCommandResponse(true,0,"SS,2:"+cursorSpeedCounter) : printManualResponse("SS,2:"+cursorSpeedCounter);
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
-  Serial.print("SS,2:");
-  Serial.println(cursorSpeedCounter); 
-  */
   delay(5);
 }
 
@@ -609,35 +549,6 @@ void decreaseCursorSpeed(bool responseEnabled) {
 
   setCursorSpeed(responseEnabled, cursorSpeedCounter);
 
-  /*
-  if (cursorSpeedCounter == -1) {
-    ledBlink(6, 50, 3);
-    cursorSpeedCounter = 0;
-  } else if (cursorSpeedCounter == 0) {
-    ledBlink(1, 350, 1);
-    cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-    cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-    cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
-
-    EEPROM.put(EEPROM_speedCounter, cursorSpeedCounter);
-    delay(25);
- 
-  } else {
-    ledBlink(cursorSpeedCounter+1, 100, 1);
-
-    cursorDelay = cursorParams[cursorSpeedCounter]._delay;
-    cursorFactor = cursorParams[cursorSpeedCounter]._factor;
-    cursorMaxSpeed = cursorParams[cursorSpeedCounter]._maxSpeed;
-
-    EEPROM.put(EEPROM_speedCounter, cursorSpeedCounter);
-    delay(25);
-  }
-  //(responseEnabled) ? printCommandResponse(true,0,"SS,2:"+cursorSpeedCounter) : printManualResponse("SS,2:"+cursorSpeedCounter);
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:"); 
-  Serial.print("SS,2:");
-  Serial.println(cursorSpeedCounter);  
-  */
   delay(5);
 }
 
@@ -657,16 +568,13 @@ void getPressureThreshold(bool responseEnabled) {
   
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"PT,0:"+(String)pressureThreshold+":"+(String)pressureNominal);
-    
-    Serial.print("SUCCESS,0:PT,0:");
-    Serial.print(pressureThreshold);
-    Serial.print(":");
-    Serial.println(pressureNominal);
-    
-    delay(5);
-  }
+
+  int pressureValue[]={pressureThreshold,pressureNominal};
+  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0,"PT,0","",2,":",pressureValue);
+  
+  delay(5); 
 }
 
 //***SET PRESSURE THRESHOLD FUNCTION***//
@@ -690,16 +598,15 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
     isValidThreshold = false;
   }
   delay(5); 
-  
- if(responseEnabled) {
-    //(isValidThreshold) ? printCommandResponse(true,0,"PT,1:"+(String)pressureThreshold+":"+(String)pressureNominal): printCommandResponse(false,2,"PT,1:"+(String)inputPressureThreshold+":"+(String)pressureNominal);
-    
-    (isValidThreshold) ? Serial.print("SUCCESS,0:PT,1:"+pressureThreshold):Serial.print("FAIL,2:PT,1:"+inputPressureThreshold);
-    Serial.print(":");
-    Serial.println(pressureNominal); 
-    
-    delay(5);
-  }  
+
+  int pressureValue[]={pressureThreshold,pressureNominal};
+  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+
+  int responseCode=0;
+  (isValidThreshold) ? responseCode = 0 : responseCode = 2;
+  printResponseMultiple(responseEnabled,true,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
+
+  delay(5); 
 }
 
 //***GET JOYSTICK VALUE FUNCTION***//
@@ -729,6 +636,7 @@ void getPressureValue(bool responseEnabled) {
   // Initial neutral pressure transducer analog value [0.0V - 5.0V]
   float tempPressure = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; 
   
+  
   if(responseEnabled) {        
     Serial.print("SUCCESS,0:PV,0:");
     Serial.print(tempPressure);
@@ -754,17 +662,12 @@ bool getDebugMode(bool responseEnabled) {
     delay(5);   
   }
 
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"DM,0:"+debugState);
-    
-    Serial.print("SUCCESS,0:DM,0:");
-    Serial.println(debugState); 
-    
-    delay(5);
-    if(debugState){
-      sendDebugData();
-    }
-   }
+
+  printResponseSingle(responseEnabled,false,true,0,"DM,0",true,debugState);
+
+  if(responseEnabled && debugState){ sendDebugData();}
+
+  delay(5); 
   return debugState;
 }
 
@@ -783,21 +686,15 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
     isValidDebugState = false;
   }
   delay(5);
+
+  int responseCode=0;
+  (isValidDebugState) ? responseCode = 0 : responseCode = 2;
   
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"DM,1:"+debugModeEnabled);
-    if(isValidDebugState){
-      Serial.print("SUCCESS,0:DM,1:");
-      Serial.println(debugModeEnabled);       
-    } else {
-      Serial.print("FAIL,2:DM,1:");
-      Serial.println(inpuDebugState);       
-    }
-    delay(5);
-    
-    if(debugModeEnabled){ sendDebugData();}
-    delay(5);
-   }
+  printResponseSingle(responseEnabled,true,isValidDebugState,responseCode,"DM,1",true,debugModeEnabled);
+
+  if(responseEnabled &&debugModeEnabled){ sendDebugData();}
+  
+  delay(5); 
 }
 
 //***SEND DEBUG DATA FUNCTION***//
@@ -862,14 +759,9 @@ bool getRawMode(bool responseEnabled) {
     delay(5);   
   }
 
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"RM,0:"+rawState);
-    
-    Serial.print("SUCCESS,0:RM,0:");
-    Serial.println(rawState); 
-    
-    delay(5);
-   }
+  printResponseSingle(responseEnabled,true,true,0,"RM,0",true,rawState);
+  
+  delay(5); 
   return rawState;
 }
 
@@ -888,18 +780,13 @@ void setRawMode(bool responseEnabled,bool inputRawState) {
     isValidRawState = false;
   }
   delay(5);
-    
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"RM,1:"+rawModeEnabled);
-    if(isValidRawState){
-      Serial.print("SUCCESS,0:RM,1:");
-      Serial.println(rawModeEnabled);    
-    } else {
-      Serial.print("FAIL,2:RM,1:");
-      Serial.println(inputRawState);       
-    }
-    delay(5);   
-   }
+
+  int responseCode=0;
+  (isValidRawState) ? responseCode = 0 : responseCode = 2;
+  
+  printResponseSingle(responseEnabled,true,isValidRawState,responseCode,"RM,1",true,rawModeEnabled);
+  
+  delay(5); 
 }
 
 //***GET COMP FACTOR VALUES FUNCTION***///
@@ -969,17 +856,10 @@ void setCompFactor(void) {
 //***GET CURSOR INITIALIZATION FUNCTION***//
 
 void getCursorInitialization(bool responseEnabled) {
-  //printCommandResponse(true,0,"IN,0:"+(String)xHighNeutral+","+(String)xLowNeutral+","+(String)yHighNeutral+","+(String)yLowNeutral);
-  
-  Serial.print("SUCCESS,0:IN,0:"); 
-  Serial.print(xHighNeutral); 
-  Serial.print(","); 
-  Serial.print(xLowNeutral); 
-  Serial.print(",");
-  Serial.print(yHighNeutral); 
-  Serial.print(",");
-  Serial.println(yLowNeutral); 
-  
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
   delay(10);  
 }
 
@@ -1025,18 +905,12 @@ void setCursorInitialization(bool responseEnabled, int mode) {
   EEPROM.get(EEPROM_xLowComp, xLowComp);
   delay(10);
 
-  //(responseEnabled) ? printCommandResponse(true,0,"IN,1:"+(String)xHighNeutral+","+(String)xLowNeutral+","+(String)yHighNeutral+","+(String)yLowNeutral) : printManualResponse("IN,1:"+(String)xHighNeutral+","+(String)xLowNeutral+","+(String)yHighNeutral+","+(String)yLowNeutral);
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
+
+  printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
   
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.print("IN,1:"); 
-  Serial.print(xHighNeutral); 
-  Serial.print(","); 
-  Serial.print(xLowNeutral); 
-  Serial.print(",");
-  Serial.print(yHighNeutral); 
-  Serial.print(",");
-  Serial.println(yLowNeutral); 
-  
+  delay(5); 
   ledClear();
 }
 
@@ -1059,62 +933,40 @@ void getCursorCalibration(bool responseEnable) {
   xLowYLowRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
   xLowYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
-  if(responseEnable){
-    //printCommandResponse(true,0,"CA,0:"+(String)xHighMax+","+(String)xLowMax+","+(String)yHighMax+","+(String)yLowMax);
-    
-    Serial.print("SUCCESS,0:CA,0:"); 
-    Serial.print(xHighMax); 
-    Serial.print(","); 
-    Serial.print(xLowMax); 
-    Serial.print(",");
-    Serial.print(yHighMax); 
-    Serial.print(",");
-    Serial.println(yLowMax); 
-    
-  }
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
+
+  printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
+
   delay(10);
 }
 
 //*** SET CURSOR CALIBRATION FUNCTION***//
 
 void setCursorCalibration(bool responseEnabled) {
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:0"): printManualResponse("CA,1:0");
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.println("CA,1:0");                                                   //Start the joystick calibration sequence 
+
+  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,0);  
   
   ledBlink(4, 300, 3);
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:1"): printManualResponse("CA,1:1");
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.println("CA,1:1"); 
+  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,1);  
   
   ledBlink(6, 500, 1);
   yHighMax = analogRead(Y_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:2"): printManualResponse("CA,1:2");
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.println("CA,1:2"); 
+  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,2);
   
   ledBlink(6, 500, 1);
   xHighMax = analogRead(X_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:3"): printManualResponse("CA,1:3");
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.println("CA,1:3"); 
+  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,3);  
   
   ledBlink(6, 500, 1);
   yLowMax = analogRead(Y_DIR_LOW_PIN);
   ledBlink(1, 1000, 2);
   
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:4"): printManualResponse("CA,1:4");
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.println("CA,1:4"); 
+  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,4);
   
   ledBlink(6, 500, 1);
   xLowMax = analogRead(X_DIR_LOW_PIN);
@@ -1132,44 +984,26 @@ void setCursorCalibration(bool responseEnabled) {
   delay(10);
 
   ledBlink(5, 250, 3);
-  //(responseEnabled) ? printCommandResponse(true,0,"CA,1:5:"+(String)xHighMax+","+(String)xLowMax+","+(String)yHighMax+","+(String)yLowMax): printManualResponse("CA,1:5:"+(String)xHighMax+","+(String)xLowMax+","+(String)yHighMax+","+(String)yLowMax);
-  
-  (responseEnabled) ? Serial.print("SUCCESS,0:") : Serial.print("MANUAL,0:");
-  Serial.print("CA,1:5:"); 
-  Serial.print(xHighMax); 
-  Serial.print(","); 
-  Serial.print(xLowMax); 
-  Serial.print(",");
-  Serial.print(yHighMax); 
-  Serial.print(",");
-  Serial.println(yLowMax); 
-  
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
+  printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
+
   delay(10);
 }
 
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
 
 void getChangeTolerance(bool responseEnabled) {
-  float changePercent = CHANGE_DEFAULT_TOLERANCE;
-  xHighChangeTolerance=(int)(xHighMax * (changePercent/100.0));
-  xLowChangeTolerance=(int)(xLowMax * (changePercent/100.0));
-  yHighChangeTolerance=(int)(yHighMax * (changePercent/100.0));
-  yLowChangeTolerance=(int)(yLowMax * (changePercent/100.0));
-  if(responseEnabled){
-    //printCommandResponse(true,0,"CT,0:"+(String)changePercent+","+xHighChangeTolerance+","+xLowChangeTolerance+","+yHighChangeTolerance+","+yLowChangeTolerance);
-    
-    Serial.print("SUCCESS,0:CT,0:"); 
-    Serial.print(changePercent); 
-    Serial.print(","); 
-    Serial.print(xHighChangeTolerance); 
-    Serial.print(","); 
-    Serial.print(xLowChangeTolerance); 
-    Serial.print(","); 
-    Serial.print(yHighChangeTolerance); 
-    Serial.print(",");
-    Serial.println(yLowChangeTolerance); 
-    
-  }
+  xHighChangeTolerance=(int)(xHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  xLowChangeTolerance=(int)(xLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  yHighChangeTolerance=(int)(yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+  yLowChangeTolerance=(int)(yLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
+
+  int changeTolerance[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
+  //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
+
   delay(10);
 }
 
@@ -1201,19 +1035,11 @@ void getButtonMapping(bool responseEnabled) {
       }
     }   
   }
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"MP,0:"+actionButton[0]+actionButton[1]+actionButton[2]+actionButton[3]+actionButton[4]+actionButton[5]);
-    
-    Serial.print("SUCCESS,0:MP,0:");
-    Serial.print(actionButton[0]); 
-    Serial.print(actionButton[1]); 
-    Serial.print(actionButton[2]); 
-    Serial.print(actionButton[3]); 
-    Serial.print(actionButton[4]); 
-    Serial.println(actionButton[5]); 
-    
-    delay(5);
-   }
+  //int buttonMappingSize = sizeof(actionButton) / sizeof(actionButton[0]);
+
+  printResponseMultiple(responseEnabled,true,true,0,"MP,0","",6 ,"",actionButton);
+
+  delay(5); 
 }
 
 //***SET BUTTON MAPPING FUNCTION***//
@@ -1240,33 +1066,12 @@ void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
     if(!API_ENABLED) { memcpy(actionButton, BUTTON_MAPPING, INPUT_ACTION_COUNT);  } 
    } 
    delay(5);
+  int responseCode=0;
+  (isValidMapping) ? responseCode = 0 : responseCode = 2;
+  //int buttonMappingSize = sizeof(inputButtonMapping) / sizeof(inputButtonMapping[0]);
+  printResponseMultiple(responseEnabled,true,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
 
-  if(responseEnabled) {
-    if(isValidMapping) {
-      //printCommandResponse(true,0,"MP,1:"+actionButton[0]+actionButton[1]+actionButton[2]+actionButton[3]+actionButton[4]+actionButton[5]);
-      
-      Serial.print("SUCCESS,0:MP,1:");
-      Serial.print(actionButton[0]); 
-      Serial.print(actionButton[1]); 
-      Serial.print(actionButton[2]); 
-      Serial.print(actionButton[3]); 
-      Serial.print(actionButton[4]); 
-      Serial.println(actionButton[5]); 
-      
-    } else {
-      //printCommandResponse(false,2,"MP,1:"+inputButtonMapping[0]+inputButtonMapping[1]+inputButtonMapping[2]+inputButtonMapping[3]+inputButtonMapping[4]+inputButtonMapping[5]);
-      
-      Serial.print("FAIL,2:MP,1:");
-      Serial.print(inputButtonMapping[0]); 
-      Serial.print(inputButtonMapping[1]); 
-      Serial.print(inputButtonMapping[2]); 
-      Serial.print(inputButtonMapping[3]); 
-      Serial.print(inputButtonMapping[4]); 
-      Serial.println(inputButtonMapping[5]); 
-      
-    }
-    delay(5);
-   }
+  delay(5); 
 }
 
 //***GET ROTATION ANGLE FUNCTION***///
@@ -1281,14 +1086,10 @@ int getRotationAngle(bool responseEnabled) {
    } else {
       tempRotationAngle = ROTATION_ANGLE;
    }
+   printResponseSingle(responseEnabled,true,true,0,"RA,0",true,tempRotationAngle);
 
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"RA,0:");
-    Serial.print("SUCCESS,0:RA,0:");
-    Serial.println(tempRotationAngle); 
-    delay(5);
-   }
-
+   delay(5); 
+    
    return tempRotationAngle;
 }
 
@@ -1308,13 +1109,11 @@ void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
     isValidRotationAngle = false;
   }
   delay(5);
+  int responseCode=0;
+  (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
   
-  if(responseEnabled) {
-    //(isValidRotationAngle) ? printCommandResponse(true,0,"RA,1:"+rotationAngle): printCommandResponse(true,2,"RA,1:"+inputRotationAngle);    
-    (isValidRotationAngle) ? Serial.println("SUCCESS,0:RA,1:"+rotationAngle):Serial.println("FAIL,2:RA,1:"+inputRotationAngle);
-    delay(5);
-  }
-
+  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,rotationAngle); 
+  
   updateRotationAngle(); // Update rotation transform
 
 }
@@ -1340,74 +1139,65 @@ void updateRotationAngle(void){
 
 void factoryReset(bool responseEnabled) { 
            
-    setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
-    delay(10);
-    
-    setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
-    delay(10);
-    
-    setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
-    delay(10);
-    
-    setDebugMode(false,DEBUG_MODE);                                       //set default debug mode
-    delay(10);  
-    
-    setRawMode(false,RAW_MODE);                                           //set default button mapping
-    delay(10);  
-    
-    setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
-    delay(10);
-
-    //Set the default values
-    cursorSpeedCounter = SPEED_COUNTER; 
-    cursorDelay =     cursorParams[cursorSpeedCounter]._delay;
-    cursorFactor =    cursorParams[cursorSpeedCounter]._factor;
-    cursorMaxSpeed =  cursorParams[cursorSpeedCounter]._maxSpeed;
-    
-    debugModeEnabled = DEBUG_MODE;  
-    rawModeEnabled = RAW_MODE;
-
-    getCompFactor();                                          
-    delay(10);
+  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
+  delay(10);
+  
+  setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
+  delay(10);
+  
+  setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
+  delay(10);
+  
+  setDebugMode(false,DEBUG_MODE);                                       //set default debug mode
+  delay(10);  
+  
+  setRawMode(false,RAW_MODE);                                           //set default button mapping
+  delay(10);  
+  
+  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
+  delay(10);
+  
+  //Set the default values
+  cursorSpeedCounter = SPEED_COUNTER; 
+  cursorMaxSpeed =  cursorParams[cursorSpeedCounter];
+  
+  debugModeEnabled = DEBUG_MODE;  
+  rawModeEnabled = RAW_MODE;
+  
+  getCompFactor();                                          
+  delay(10);
       
+  printResponseSingle(responseEnabled,true,true,0,"FR,0",true,0);
 
-  if(responseEnabled) {
-    //printCommandResponse(true,0,"FR,0:0");
-    Serial.println("SUCCESS,0:FR,0:0");
-    delay(5);
-   }
-   ledBlink(2, 250, 1);
+  delay(5); 
+   
+  ledBlink(2, 250, 1);
 }
 
 //***SERIAL SETTINGS FUNCTION TO CHANGE SPEED AND COMMUNICATION MODE USING SOFTWARE***//
-//
+
 bool serialSettings(bool enabled) {
 
     String commandString = "";  
-    
-    bool settingsFlag = enabled;               //Set the input parameter to the flag returned. This will help to detect that the settings actions should be performed.
+    bool settingsFlag = enabled;  
+    //Set the input parameter to the flag returned. This will help to detect that the settings actions should be performed.
      if (Serial.available()>0)  
      {  
        commandString = Serial.readString();            //Check if serial has received or read input string and word "SETTINGS" is in input string.
        if (settingsFlag==false && commandString=="SETTINGS") {
-        //printCommandResponse(true,0,commandString);
-        Serial.println("SUCCESS,0:SETTINGS");
+        printResponseSingle(true,true,true,0,commandString,false,0);
        settingsFlag=true;                         //Set the return flag to true so settings actions can be performed in the next call to the function
        }
        else if (settingsFlag==true && commandString=="EXIT") {
-        //printCommandResponse(true,0,commandString);
-        Serial.println("SUCCESS,0:EXIT");
+        printResponseSingle(true,true,true,0,commandString,false,0);
        settingsFlag=false;                         //Set the return flag to false so settings actions can be exited
        }
-       else if (settingsFlag==true){
-       //else if (settingsFlag==true && isValidCommandFormat(commandString)){ //Check if command's format is correct and it's in settings mode
+       else if (settingsFlag==true && isValidCommandFormat(commandString)){ //Check if command's format is correct and it's in settings mode
         performCommand(commandString);                  //Sub function to process valid strings
         settingsFlag=false;   
        }
        else {
-        //printCommandResponse(false,0,commandString);
-        Serial.print("FAIL,0:");
-        Serial.println(commandString);
+        printResponseSingle(true,true,false,0,commandString,false,0);
         settingsFlag=false;      
        }
        Serial.flush();  
@@ -1448,24 +1238,55 @@ boolean isStrNumber(String str){
   return true;
 }
 
-//***SERIAL PRINT OUT COMMAND RESPONSE FUNCTION***//
-/*
-void printCommandResponse(bool response, int responseNumber, String responseString) {
-  (response) ? Serial.print("SUCCESS,") : Serial.print("FAIL,");
-  Serial.print(responseNumber);
-  Serial.print(":");
-  Serial.println(responseString);
+//***SERIAL PRINT OUT COMMAND RESPONSE WITH SINGLE PARAMETER FUNCTION***//
+
+void printResponseSingle(bool responseEnabled,bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand,bool responseParameterEnabled,int responseParameter) {
+  if(responseEnabled) {
+    
+    if(responseStatus){
+      (apiEnabled) ? Serial.print("SUCCESS") : Serial.print("MANUAL");
+    }else{
+      Serial.print("FAIL");
+    } 
+    Serial.print(",");
+    Serial.print(responseNumber);
+    Serial.print(":");
+    Serial.print(responseCommand);
+    
+    if(responseParameterEnabled){
+      Serial.print(":");
+      Serial.println(responseParameter);    
+    } else {
+      Serial.println("");  
+    } 
+  }
 }
-*/
+
+//***SERIAL PRINT OUT COMMAND RESPONSE WITH MULTIPLE PARAMETERS FUNCTION***//
+
+void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, String responsePrefix, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
+  if(responseEnabled) {
+   
+    if(responseStatus){
+      (apiEnabled) ? Serial.print("SUCCESS") : Serial.print("MANUAL");
+    }else{
+      Serial.print("FAIL");
+    } 
+    Serial.print(",");
+    Serial.print(responseNumber);
+    Serial.print(":");
+    Serial.print(responseCommand);
+    Serial.print(":");
+    Serial.print(responsePrefix);
+    for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
+       Serial.print(responseParameter[parameterIndex]);  
+       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
+    }   
+    Serial.println("");  
+  }
+}
 
 
-//***SERIAL PRINT OUT MANUAL RESPONSE FUNCTION***//
-/*
-void printManualResponse(String responseString) {
-  Serial.print("MANUAL,0:");
-  Serial.println(responseString);
-}
-*/
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 // This function takes processes an input string from the serial and calls the 
@@ -1517,8 +1338,8 @@ void performCommand(String inputString) {
       else { // Invalid input parameter
       
       // Outut error message
-      Serial.print("FAIL,2:");
-      Serial.println(inputString);
+      printResponseSingle(true,true,false,2,"FAIL",false,0);
+
       delay(5);
       }
       break;
@@ -1526,8 +1347,8 @@ void performCommand(String inputString) {
     else if(apiIndex== (totalCommandNumber-1)) { // command doesn’t exist
     
     //Output error message
-    Serial.print("FAIL,1:");
-    Serial.println(inputString);
+    printResponseSingle(true,true,false,1,"FAIL",false,0);
+
     delay(5);
     break;
     }
@@ -1535,150 +1356,6 @@ void performCommand(String inputString) {
 
 }
 
-/*
-void performCommand(String inputCommandString) {
-  
-    String commandString = inputCommandString;
-    commandString.replace(",","");                 //Remove commas 
-    commandString.replace(":","");                 //Remove :
-    
-    String paramterString = commandString.substring(3);
-    char commandChar[commandString.length()+1];
-    commandString.toCharArray(commandChar, commandString.length()+1);
-
-    //Get Model number : "MN,0:0"
-    if(commandChar[0]=='M' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getModelNumber(true) : printCommandResponse(false,2,inputCommandString);
-      getModelNumber(true);
-      delay(5);
-    } 
-    //Get version number : "VN,0:0"
-    else if(commandChar[0]=='V' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getVersionNumber() : printCommandResponse(false,2,inputCommandString);
-      getVersionNumber();
-      delay(5);
-    }   
-    //Get cursor speed value if received "SS,0:0", decrease the cursor if received "SS,1:1" and increase the cursor speed if received "SS,1:2" , and set the cursor speed value if received "SS,2:{speed 0 to 10}"
-    else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? (void)getCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
-      getCursorSpeed(true);
-      delay(5);
-    } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      //(isValidCommandParameter(paramterString)) ? setCursorSpeed(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
-      setCursorSpeed(true,paramterString.toInt());
-      delay(5);
-    } 
-    else if(commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? decreaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
-      decreaseCursorSpeed(true);
-      delay(5);
-    } else if (commandChar[0]=='S' && commandChar[1]=='S' && commandChar[2]=='2' && commandChar[3]=='2' && commandString.length()==4) {
-       //(isValidCommandParameter(paramterString)) ? increaseCursorSpeed(true) : printCommandResponse(false,2,inputCommandString);
-      increaseCursorSpeed(true);
-      delay(5);
-    }
-     //Get pressure threshold values if received "PT,0:0" and set pressure threshold values if received "PT,1:{threshold 1% to 50%}"
-      else if(commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getPressureThreshold(true) : printCommandResponse(false,2,inputCommandString);
-      getPressureThreshold(true);
-      delay(5);
-    } else if (commandChar[0]=='P' && commandChar[1]=='T' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5)) {
-      //(isValidCommandParameter(paramterString)) ? setPressureThreshold(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
-      setPressureThreshold(true,paramterString.toInt());
-      delay(5);
-    } 
-     //Get rotation angle values if received "RA,0:0" and set rotation angle values if received "RA,1:{0,90,180,270}"
-      else if(commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? (void)getRotationAngle(true) : printCommandResponse(false,2,inputCommandString);
-      getRotationAngle(true);
-      delay(5);
-    } else if (commandChar[0]=='R' && commandChar[1]=='A' && commandChar[2]=='1' && ( commandString.length()==4 || commandString.length()==5 || commandString.length()==6)) {
-      //(isValidCommandParameter(paramterString)) ? setRotationAngle(true,paramterString.toInt()) : printCommandResponse(false,2,inputCommandString);
-      setRotationAngle(true,paramterString.toInt());
-      delay(5);
-    } 
-     //Get debug mode value if received "DM,0:0" , set debug mode value to 0 if received "DM,1:0" and set debug mode value to 1 if received "DM,1:1"
-     else if(commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? (void)getDebugMode(true) : printCommandResponse(false,2,inputCommandString);
-      getDebugMode(true);
-      delay(5);
-    } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setDebugMode(true,0) : printCommandResponse(false,2,inputCommandString);
-      setDebugMode(true,0);
-      delay(5);
-    } else if (commandChar[0]=='D' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setDebugMode(true,1) : printCommandResponse(false,2,inputCommandString);
-      setDebugMode(true,1);
-      delay(5);
-    } 
-    //Get raw mode value if received "RM,0:0" , set raw mode value to 0 if received "RM,1:0" and set raw mode value to 1 if received "RM,1:1"
-     else if(commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? (void)getRawMode(true) : printCommandResponse(false,2,inputCommandString);
-      getRawMode(true);
-      delay(5);
-    } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setRawMode(true,0) : printCommandResponse(false,2,inputCommandString);
-      setRawMode(true,0);
-      delay(5);
-    } else if (commandChar[0]=='R' && commandChar[1]=='M' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setRawMode(true,1) : printCommandResponse(false,2,inputCommandString);
-      setRawMode(true,1);
-      delay(5);
-    } 
-     //Get cursor initialization values if received "IN,0:0" and perform cursor initialization if received "IN,1:1"
-     else if(commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-     //(isValidCommandParameter(paramterString)) ? getCursorInitialization(true) : printCommandResponse(false,2,inputCommandString);
-      getCursorInitialization(true);
-      delay(5);
-    } else if (commandChar[0]=='I' && commandChar[1]=='N' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setCursorInitialization(true,2) : printCommandResponse(false,2,inputCommandString);
-      setCursorInitialization(true,2);
-      delay(5);
-    } 
-     //Get cursor calibration values if received "CA,0:0" and perform cursor calibration if received "CA,1:1"
-      else if(commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
-      getCursorCalibration(true);
-      delay(5);
-    } else if (commandChar[0]=='C' && commandChar[1]=='A' && commandChar[2]=='1' && commandChar[3]=='1' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? setCursorCalibration(true) : printCommandResponse(false,2,inputCommandString);
-      setCursorCalibration(true);
-      delay(5);
-    } 
-     //Get change tolerance values if received "CT,0:0" 
-      else if(commandChar[0]=='C' && commandChar[1]=='T' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getChangeTolerance(true) : printCommandResponse(false,2,inputCommandString);
-      getChangeTolerance(true);
-      delay(5);
-    }
-    //Get Button mapping : "MP,0:0" , Set Button mapping : "MP,1:012345"
-    else if (commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? getButtonMapping(true) : printCommandResponse(false,2,inputCommandString);
-      getButtonMapping(true);
-      delay(5);
-    } else if(commandChar[0]=='M' && commandChar[1]=='P' && commandChar[2]=='1' && commandString.length()==9) {
-      int tempButtonMapping[INPUT_ACTION_COUNT];
-      for(int i = 0; i< INPUT_ACTION_COUNT; i++){
-         tempButtonMapping[i]=commandChar[3+i] - '0';          //Convert char arrat to int array
-      }
-      //(isValidCommandParameter(paramterString)) ? setButtonMapping(true,tempButtonMapping) : printCommandResponse(false,2,inputCommandString);
-      setButtonMapping(true,tempButtonMapping);
-      delay(5);
-    }
-     //Perform factory reset if received "FR,0:0"
-     else if(commandChar[0]=='F' && commandChar[1]=='R' && commandChar[2]=='0' && commandChar[3]=='0' && commandString.length()==4) {
-      //(isValidCommandParameter(paramterString)) ? factoryReset(true) : printCommandResponse(false,2,inputCommandString);
-      factoryReset(true);
-      delay(5);
-    } else {
-      //printCommandResponse(false,1,inputCommandString);
-      Serial.print("FAIL,1:");            //Invalid command
-      Serial.println(commandString);
-      delay(5);        
-    }
-    
-}
-*/
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
 
 void pushButtonHandler(int switchUpPin, int switchDownPin) {
@@ -2070,7 +1747,7 @@ void cursorScroll(void) {
         int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
         Mouse.move(0, 0, -1* vCursor); // Apply vertical direction to scroll 
-        delay(cursorDelay * 35);  // 5 x 35 = 175 ms
+        delay(CURSOR_DELAY * 35);  // 5 x 35 = 175 ms
         
     
     } //end check joystick deadband
@@ -2078,7 +1755,7 @@ void cursorScroll(void) {
       break;
     }
         
-    delay(cursorDelay);
+    delay(CURSOR_DELAY);
   }
 }
 
