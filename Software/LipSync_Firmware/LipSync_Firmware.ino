@@ -1,4 +1,52 @@
 /*
+//                            `-:/+o-                    ....``                                                                                                                                                                                                                                                
+//                       `-/osssss+` `                  .--------..`                                                                                                                                                                                                                                           
+//                     -sssssssss-  .--.`            `.--------------.                                                                                                                                                                                                                                         
+//                      :ssssss+` `.------..``````..-----------------                                                                                                                                                                                                                                          
+//                       sssss/  `----------------------------------.                            `````            `````                     .://-                                                          `````            `````                     .://-           `/++/`                                   
+//                      `ssss-  .-----------------------------------.                           sssssss:        `sssssss-                   ssss/                                                        `sssssss-        `sssssss-                  `ssss/           ossss+                                   
+//                      +sss.  --------------------------------------`                          ssssssss`       +sssssss-                   ssss/                                                        `ssssssss`       +sssssss-                  `ssss/           -osso.                                   
+//                    .osss. `----------------....```````       ``````                          ssss:sss+      .sss/ssss-                   ssss/                                                        `ssss/sss/      -sss/ssss-                  `ssss/                                                    
+//      -.         .:ossss. `----------..```      ``.....----.........````          ``          ssss.osss-     osss`ssss-   :+ossssso+:`    ssss/    -++++-   -/osssso/-    /+o+ :osss. -/osssso+-       `ssss.osss.     osss`ssss-   :+ossssso+:`   `ssss/    -++++- .+++/`  -++o`./ossso+-     -/osssso+////-
+//     /sssoo+++oosssssss:  -------.``                 ``.------------------......----.         ssss.-ssso    :sss/ ssss-  .ssssssssssss`   ssss/   /ssss:  -sssso++sssso`  ssss+sssss//ssssooosss`      `ssss.-ssso    :sss/ ssss-  -ssssssssssss`  `ssss/   /ssss:  -ssss.  +sss+sssssssss+  `ossss++osssssso
+//   `osssssssssssssssss+  .---.``                         ``.-------------------------.        ssss. +sss/  `ssss` ssss-  .:-``  `:ssss/   ssss/ .ossso.  -ssss.    /sss+  ssssss:----ssss+`   `-`      `ssss. +sss/  `ssso  ssss-  .:.`   `:ssss/  `ssss/ .ossso`   -ssss.  +ssss+-``-ossss` +sss+    -ssso  
+//  `ossssssssssssssssss` .--.`                               `.------------------------.       ssss. `ssss. /sss-  ssss-   `-:////:ssss+   ssssssssss/    sssso/////+ssss  sssso`     +ssssso+:.        `ssss. `ssss` /sss-  ssss-   `-://///ssss+  `ssssssssss:     -ssss.  +ssss     :ssss. +sss+    :ssss  
+//  +ssssssssssssssssss/  -.                                     `-----------------------.      ssss.  :sss/`sss+   ssss-  :sssssoosssss+   ssssssssss/    ssssssssssssss+  ssss/       -+ssssssso.      `ssss.  :sss/`sss+   ssss-  /sssssoosssss+  `ssssssssss/     -ssss.  +ssss     :ssss. .sssss++ossss-  
+// :sssssssssssssssssss. ``                                        `----------------------`     ssss.   osss:sss`   ssss- .ssss:    osss+   ssss/ -sssso`  ossss`           ssss/          `.:sssso      `ssss.   osss:sss`   ssss- -ssss:    ssss+  `ssss/ -ssss+`   -ssss.  +ssss     :ssss.  :ssssssso+:`   
+// `.-/osssssssssssssss                                              .----------------.``       ssss.   .ssssss:    ssss- -ssss+-.-/sssss::`ssss/  .sssss- .sssss/:----:/:  ssss/     :+:-...-ssss+      `ssss.   .ssssss:    ssss- -ssss+-.-/sssso::.ssss/  .sssss.  -ssss.  +ssss     :ssss. :ssss.````      
+//      .+sssssssssssso                                               `.------------.           ssss.    /sssso     ssss-  /ssssssss/ssssso`ssss/   `+ssss/``/sssssssssss.  ssss/     .ssssssssss+`      `ssss.    /sssso     ssss-  /ssssssso/ssssso`ssss/   `+ssss/ -ssss.  +ssss     :ssss. .ssssssssssso+- 
+//        :sssssssssss+                                              `  .---------.             .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.`   .-:///:-.    .--.`      `-:://::-`         .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.``.--.   `.-..     `.--. `/oss+++++oossss/
+//         /sssssssssss                                              `.  .--------`                                                                                                                                                                                                           /sss+       :ssss
+//         :sssssssssss.                                             `--  .-------                                                                                                                                                                                                            /ssss/:----/ssss/
+//         .+ssssssssss/                                             `--.  .------`                                                                                                                                                                                                            :ossssssssssso- 
+//        `` `/sssssssss`                                            ----.  .------`                                                                                                                                                                                                             `.-::::--.    
+//      `---.`  -+ssssss+                                           .-----` `-------.`              `.:/++++//-`  .+oos.                                                                                                                                                                                       
+// ``..--------.` `:ossss+`                                        .-------  .---------.```       -+ssssssssssso  :ssss.                                                                                                                                                                                       
+// `--------------.` `-+sso.                                      .--------`  ------------`     .osssss+/:--::/o` :ssss.                                                                                                                                                                                       
+//  .----------------.`  .:++.                                  `----------.  .----------.     .sssss:`           :ssss` `....`       ``.....`         `    ....`        `.....`           `....`                                                                                                              
+//   .-------------------.`` ``                                .------------` `---------.      ossss-             :ssss-osssssso-   -ssssssssss/`   .sss/.+sssssso-   `:ossssssssssss` `:ossssssso:                                                                                                            
+//    .----------------------..``                            .--------------`  --------.      `sssso              :ssssssooosssss-  +sso+++osssso   -ssssssoossssss. `osss+:-:+ssss++`.ssss+:::ossso                                                                                                           
+//     `--....`....----------------...``````      ```...`  .---------------.`  `...---`       .ssss+              :ssss/`   -ssss/  .`      /ssss.  -ssss/`   -ssss/ -ssso     osss- `ssss:     osss-                                                                                                          
+//                  `.-------------------------------.  `.-------------.``           `        `sssss`             :ssss.     ssss/  `:+osssoossss.  -ssss-    `ssss/ .ssss:` `-ssss. :ssssssssssssss:                                                                                                          
+//                     .-------------------------.`` `.---------------`                        +ssss+             :ssss.     ssss/ -sssso///ossss.  -ssss-    `ssss/  :sssssssssss-  :sssso+++++++++`                                                                                                          
+//                      .---------------------.`  `.-----------------`                         `osssso:.       .` :ssss.     ssss/ ossso    -ssss.  -ssss-    `ssss/  :oss+////:.    .ssss+`                                                                                                                   
+//                       ----------------..`  ``.-------------------.                           `+sssssssoooosss- :ssss.     ssss/ /sssso//+sssssso/-ssss-    `ssss/ `ssss+:-----.`   -ssssso+///+os`                                                                                                          
+//                       -----------..``  ``.-----------------------.                             `:ossssssssss:  -ssss`     ssss/  /sssssso-/sssss..ssss.    `ssss:  :sssssssssssso-  `:osssssssso-                                                                                                           
+//                      .-----..``   ``....``    ``..----------------`                                `..--..`                        `...`   `...                   +sss/-::::/+ssss.     `....`                                                                                                              
+//                     `.```   ``...--.`              `.-------------.                                                                                              -ssss`      `ssss.                                                                                                                         
+//                          `.-------.                  .-------..``                                                                                                `osssso+//+ossss+                                                                                                                          
+//                              ```..                    ..```                                                                                                       `:+ssssssssso/.                                                                                                                           
+//                                                                                                                                                                        `````                                                                                                                                
+//                                                                                                                                                                                                                                                                                                             
+//                                                                                                                          `:. `-`     `.`                   --                  ``                                                                                                                           
+//                                                                                               /Nmh      mNm/  /Ns        +my dN-   -dmhhdo                `dm-               sNmdmmy-                                                                                                                       
+//                                                                                              .mhoNo     mNyN+ /Ns  :oso: .+: dN-   yNy.  `  :oso+- /o  -+- ++`.+-os.-+so/`   sNo  /Nm.+:+s.-+so+. `/oso++`+:+s:+oso/  /+-os+./so:                                                                           
+//                                                                                              hN-`dN-    mN.hNo/Ns hN+:sN+/Ny dN-   .sdNmy/`dN+-sNs`NN` oNo mN`+Nmo+yNy:+Nh   sNy/+hNs:Nmo+sNh:/mm-hN:.hN+-Nms+/+//hN+ hNy/sNm+/mN-                                                                          
+//                                                                                             oNmddmNd`   mN``yNyNs.NNyyys:/Ny dN-       :NN+Nd  /Ns`NN` oNo mN`+Ns  hNhyyyo   sNhoo/- :Nh  sNo  hN/+Nhymy`.Nd  /mhshNo hN- :Nh  hN-                                                                          
+//                                                                                            -Nm`   sNo   mN`  sNNs +mdssy-/Ny hNh+  hhyyhNs`hNhydNs hNdhdNo mN`+Ns  :dmyss+   sNo     :Nh  -dmyyNy`sNyso/..Nd  oNhshNd/hN- :Nh  hN-                                                                          
+//                                                                                            `.`     ``   ``    `.`   .--`  .`  --    .---`   .-./Ns  .-. .  ``  .`    .--.    `.       ``    .--` .md::/mN.``   .-. .- ``   ``  ``                                                                           
+//                                                                                                                                                :do                                               `sddhdh+                                                                                                                                                                                                                                                                                                                          
+//
 //                                                                                                  
 //  +++         .+++:    /++++++++/:.     .:/+++++/: .+++/`     .+++/  ++++.      ++++.     `-/++++++/:
 //  oooo         .ooo:    +ooo:--:+ooo/   :ooo/:::/+/  -ooo+`   .ooo+`  ooooo:     .o-o`   `/ooo+//://+:
@@ -129,16 +177,19 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping5 50                  //int:50,51; 
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
+//#define EEPROM_compFactor 56                    //int:56,57
+#define EEPROM_versionNumber 58                   //int:58,59; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
-typedef void (*FunctionPointer)(bool,int);
+typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
 
-typedef struct {
-  String _command;
-  String _parameter;
-  FunctionPointer _function;
-} _functionList;
+typedef struct {                                  //Type definition for API function list
+  String _command;                                //Unique two character command code
+  String _parameter;                              //Parameter that is passed to function
+  FunctionPointer _function;                      //API function pointer
+} _functionList;                                  
 
+// Declare individual API functions with command, parameter, and corresponding function
 _functionList getModelNumberFunction =          {"MN,0","0",&getModelNumber};
 _functionList getVersionNumberFunction =        {"VN,0","0",&getVersionNumber};
 _functionList getCursorSpeedFunction =          {"SS,0","0",&getCursorSpeed};
@@ -146,13 +197,16 @@ _functionList setCursorSpeedFunction =          {"SS,1","",&setCursorSpeed};
 
 _functionList getPressureThresholdFunction =    {"PT,0","0",&getPressureThreshold};
 _functionList setPressureThresholdFunction =    {"PT,1","",&setPressureThreshold};
+_functionList getPressureValueFunction =        {"PV,0","0",&getPressureValue};
 _functionList getRotationAngleFunction =        {"RA,0","0",&getRotationAngle};
 _functionList setRotationAngleFunction =        {"RA,1","",&setRotationAngle};
+_functionList getJoystickValueFunction =        {"JV,0","0",&getJoystickValue};
+
 _functionList getDebugModeFunction =            {"DM,0","0",&getDebugMode};
 _functionList setDebugModeFunction =            {"DM,1","",&setDebugMode};
-
 _functionList getRawModeFunction =              {"RM,0","0",&getRawMode};
 _functionList setRawModeFunction =              {"RM,1","",&setRawMode};
+
 _functionList getCursorInitializationFunction = {"IN,0","0",&getCursorInitialization};
 _functionList setCursorInitializationFunction = {"IN,1","1",&setCursorInitialization};
 _functionList getCursorCalibrationFunction =    {"CA,0","0",&getCursorCalibration};
@@ -161,29 +215,36 @@ _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibratio
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
-_functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
+_functionList factoryResetFunction =            {"FR,1","",&factoryReset};
 
-_functionList apiFunction[20] = {getModelNumberFunction, 
-getVersionNumberFunction,
-getCursorSpeedFunction,
-setCursorSpeedFunction,
-getPressureThresholdFunction,
-setPressureThresholdFunction,
-getRotationAngleFunction,
-setRotationAngleFunction,
-getDebugModeFunction,
-setDebugModeFunction,
-getRawModeFunction,
-setRawModeFunction,
-getCursorInitializationFunction,
-setCursorInitializationFunction,
-getCursorCalibrationFunction,
-setCursorCalibrationFunction,
-getChangeToleranceFunction,
-getButtonMappingFunction,
-setButtonMappingFunction,
-factoryResetFunction
-};
+
+// Declare array of API functions
+_functionList apiFunction[22] = {
+  getModelNumberFunction, 
+  getVersionNumberFunction,
+  getCursorSpeedFunction,
+  setCursorSpeedFunction,
+  getPressureThresholdFunction,
+  setPressureThresholdFunction,
+  getPressureValueFunction,
+  getRotationAngleFunction,
+  setRotationAngleFunction,
+  getJoystickValueFunction,
+  getDebugModeFunction,
+  setDebugModeFunction,
+  getRawModeFunction,
+  setRawModeFunction,
+  getCursorInitializationFunction,
+  setCursorInitializationFunction,
+  getCursorCalibrationFunction,
+  setCursorCalibrationFunction,
+  //getChangeToleranceFunction,
+  getButtonMappingFunction,
+  setButtonMappingFunction,
+  factoryResetFunction
+  };
+
+
 
 int cursorParams[11] = {CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED),
 CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
@@ -200,6 +261,7 @@ CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 //***GLOBAL VARIABLE DECLARATION***//
 
 int modelNumber;                                  //Declare LipSync model number variable 
+int versionNumber;
 int actionButton[INPUT_ACTION_COUNT];             //Sip & Puff action mapping
 
 int rotationAngle = ROTATION_ANGLE;               //Rotation angle variable (degrees)
@@ -210,6 +272,8 @@ float rotationAngle22;
 
 int cursorSpeedCounter;                           // Variable to track current cursor speed level
 int cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
+float cursorFactor;                               // Current cursor factor //todo not currently used.
+
 
 float cursorPressure;                             //Variable to hold pressure readings
 float sipThreshold;                               //Sip pressure threshold in volts
@@ -301,9 +365,9 @@ void setup() {
 
 void loop() {
   
-  settingsEnabled=serialSettings(settingsEnabled);       //Check to see if setting option is enabled in Lipsync
+  settingsEnabled=serialSettings(settingsEnabled); //Check to see if setting option is enabled in Lipsync
 
-  cursorHandler();                                //Read the joystick values and output mouse cursor movements.
+  cursorHandler();                                  //Read the joystick values and output mouse cursor movements.
 
   //Perform sip and puff actions raw mode is disabled 
   if(!rawModeEnabled) {
@@ -411,7 +475,11 @@ void cursorHandler(void) {
   //Debug information 
   
   if(debugModeEnabled) {
-    Serial.print("LOG:3:");
+    /*
+    int debugDataValue[]={xHigh,xLow,yHigh,yLow};
+    printResponseMultiple(true,true,true,0,"LOG,3","",4,",",debugDataValue);
+    */
+    Serial.print("LOG,3:");
     Serial.print(xHigh);
     Serial.print(",");
     Serial.print(xLow);
@@ -419,6 +487,7 @@ void cursorHandler(void) {
     Serial.print(yHigh);
     Serial.print(",");
     Serial.println(yLow); 
+    
     delay(150);
   }
   
@@ -426,22 +495,17 @@ void cursorHandler(void) {
 
 
 
-
-
 //***INITIALIZE PINS FUNCTION ***//
 void initializePins(void) {
-  pinMode(LED_GREEN_PIN, OUTPUT);                     //Set the LED pin 1 as output(GREEN LED)
-  pinMode(LED_RED_PIN, OUTPUT);                     //Set the LED pin 2 as output(RED LED)
+  pinMode(LED_GREEN_PIN, OUTPUT);                 //Set the LED pin 1 as output(GREEN LED)
+  pinMode(LED_RED_PIN, OUTPUT);                   //Set the LED pin 2 as output(RED LED)
   pinMode(TRANS_CONTROL_PIN, OUTPUT);             //Set the transistor pin as output
   pinMode(PIO4_PIN, OUTPUT);                      //Set the bluetooth command mode pin as output
-
   pinMode(PRESSURE_PIN, INPUT);                   //Set the pressure sensor pin input
   pinMode(X_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Right FSR )
   pinMode(X_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Left FSR )
   pinMode(Y_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Up FSR )
   pinMode(Y_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Down FSR )
-
-
   pinMode(BUTTON_UP_PIN, INPUT_PULLUP);           //Set increase cursor speed button pin as input
   pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         //Set decrease cursor speed button pin as input
 
@@ -459,14 +523,22 @@ void initializePins(void) {
 
 void getModelNumber(bool responseEnabled) {
   EEPROM.get(EEPROM_modelNumber, modelNumber);
-  if (modelNumber != 1) {                          //If the previous firmware was different model then factory reset the settings 
-    factoryReset(false);
+  EEPROM.get(EEPROM_versionNumber, versionNumber);
+  if (modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
+    factoryReset(false,0);
     delay(10);
     
-    modelNumber = 1;                               //And store the model number in EEPROM 
+    modelNumber = LIPSYNC_MODEL;                               //And store the model number in EEPROM 
     EEPROM.put(EEPROM_modelNumber, modelNumber);
     delay(10);
-  }  
+  } else if (versionNumber != LIPSYNC_VERSION) {                   //If the previous firmware was same model but different version then soft reset the settings 
+    factoryReset(false,1);
+    delay(10);
+    
+    versionNumber = LIPSYNC_VERSION;                               //And store the version number in EEPROM 
+    EEPROM.put(EEPROM_versionNumber, versionNumber);
+    delay(10);
+  } 
   printResponseSingle(responseEnabled,true,true,0,"MN,0",true,LIPSYNC_MODEL);
 
 }
@@ -474,6 +546,12 @@ void getModelNumber(bool responseEnabled) {
 //***GET VERSION FUNCTION***//
 
 void getVersionNumber(bool responseEnabled) {
+  EEPROM.get(EEPROM_versionNumber, versionNumber);
+    if (versionNumber != LIPSYNC_VERSION) {                          //If the previous firmware was different model then factory reset the settings 
+    versionNumber = LIPSYNC_VERSION;                               //And store the model number in EEPROM 
+    EEPROM.put(EEPROM_versionNumber, versionNumber);
+    delay(10);
+  }  
   printResponseSingle(responseEnabled,true,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
 
@@ -560,8 +638,7 @@ void getPressureThreshold(bool responseEnabled) {
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
 
-  int pressureValue[]={pressureThreshold,pressureNominal};
-  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+  int pressureValue[]={pressureThreshold,pressureNominal*100};
 
   printResponseMultiple(responseEnabled,true,true,0,"PT,0","",2,":",pressureValue);
   
@@ -590,14 +667,38 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
   }
   delay(5); 
 
-  int pressureValue[]={pressureThreshold,pressureNominal};
-  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+  int pressureValue[]={pressureThreshold,pressureNominal*100};
 
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
   printResponseMultiple(responseEnabled,true,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
 
   delay(5); 
+}
+
+//***GET JOYSTICK VALUE FUNCTION***//
+//Return a set of single FSR measurements
+void getJoystickValue(bool responseEnabled) {
+  int xHighTemp = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+  int xLowTemp  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
+  int yHighTemp = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
+  int yLowTemp  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10 
+
+  int joystickTempValue[]={xHighTemp,xLowTemp,yHighTemp,yLowTemp};
+
+  printResponseMultiple(responseEnabled,true,true,0,"JV,0","",4,",",joystickTempValue);
+
+}
+
+//***GET PRESSURE VALUE FUNCTION***//
+// Returns pressure value in volts
+
+void getPressureValue(bool responseEnabled) {
+  // Initial neutral pressure transducer analog value [0.0V - 5.0V]
+  int tempPressureValue = ((((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0) * 100; 
+
+  printResponseSingle(responseEnabled,true,true,0,"PV,0",true,tempPressureValue);
+
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -619,7 +720,7 @@ bool getDebugMode(bool responseEnabled) {
   }
 
 
-  printResponseSingle(responseEnabled,false,true,0,"DM,0",true,debugState);
+  printResponseSingle(responseEnabled,true,true,0,"DM,0",true,debugState);
 
   if(responseEnabled && debugState){ sendDebugData();}
 
@@ -656,8 +757,18 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
 //***SEND DEBUG DATA FUNCTION***//
 
 void sendDebugData() {
+  /*
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+
   delay(100);
-  Serial.print("LOG:1:"); 
+  printResponseMultiple(true,true,true,0,"LOG,1","",4,",",neutralValue);
+  delay(100);
+  printResponseMultiple(true,true,true,0,"LOG,2","",4,",",maxValue);
+  delay(100);
+  */
+  delay(100);
+  Serial.print("LOG,1:"); 
   Serial.print(xHighNeutral); 
   Serial.print(","); 
   Serial.print(xLowNeutral); 
@@ -666,7 +777,7 @@ void sendDebugData() {
   Serial.print(",");
   Serial.println(yLowNeutral); 
   delay(100);
-  Serial.print("LOG:2:"); 
+  Serial.print("LOG,2:"); 
   Serial.print(xHighMax); 
   Serial.print(","); 
   Serial.print(xLowMax); 
@@ -675,13 +786,18 @@ void sendDebugData() {
   Serial.print(",");
   Serial.println(xHighMax); 
   delay(100);
+  
 }
 
 //***SEND RAW DATA FUNCTION***//
 // Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
-  Serial.print("RAW:1:"); 
+  /*int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
+  printResponseMultiple(true,true,true,0,"RAW,1","",7,",",rawDataValue);
+  */
+  
+  Serial.print("RAW,1:"); 
   Serial.print(x); 
   Serial.print(","); 
   Serial.print(y); 
@@ -813,7 +929,6 @@ void setCompFactor(void) {
 
 void getCursorInitialization(bool responseEnabled) {
   int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
-  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
 
   printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
   delay(10);  
@@ -862,7 +977,6 @@ void setCursorInitialization(bool responseEnabled, int mode) {
   delay(10);
 
   int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
-  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
 
   printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
   
@@ -890,7 +1004,6 @@ void getCursorCalibration(bool responseEnable) {
   xLowYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
   int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
-  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
 
   printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
 
@@ -941,7 +1054,7 @@ void setCursorCalibration(bool responseEnabled) {
 
   ledBlink(5, 250, 3);
   int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
-  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
+
   printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
 
   delay(10);
@@ -954,12 +1067,12 @@ void getChangeTolerance(bool responseEnabled) {
   xLowChangeTolerance=(int)(xLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yHighChangeTolerance=(int)(yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yLowChangeTolerance=(int)(yLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
-
+/*
   int changeTolerance[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
   //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
 
   printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
-
+*/
   delay(10);
 }
 
@@ -1093,12 +1206,28 @@ void updateRotationAngle(void){
 
 //***FACTORY RESET FUNCTION***//
 
-void factoryReset(bool responseEnabled) { 
-           
-  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
+void factoryReset(bool responseEnabled, int resetType) { 
+
+  bool isValidResetType = true;
+  int responseCode = 0;
+  
+  if (resetType == 0 || resetType == 1) {
+    isValidResetType = true;
+    responseCode = 0;
+  } else {
+     isValidResetType = false;
+     responseCode = 2;
+  }
+  
+  if (resetType==0){                                                    //Reset following settings only if a factory reset is performed 
+  setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
   delay(10);
   
-  setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
+  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
+  delay(10);
+  }
+  
+  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
   delay(10);
   
   setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
@@ -1110,9 +1239,6 @@ void factoryReset(bool responseEnabled) {
   setRawMode(false,RAW_MODE);                                           //set default button mapping
   delay(10);  
   
-  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
-  delay(10);
-  
   //Set the default values
   cursorSpeedCounter = SPEED_COUNTER; 
   cursorMaxSpeed =  cursorParams[cursorSpeedCounter];
@@ -1123,7 +1249,7 @@ void factoryReset(bool responseEnabled) {
   getCompFactor();                                          
   delay(10);
       
-  printResponseSingle(responseEnabled,true,true,0,"FR,0",true,0);
+  printResponseSingle(responseEnabled,true,true,responseCode,"FR,1",true,resetType);
 
   delay(5); 
    
@@ -1162,33 +1288,29 @@ bool serialSettings(bool enabled) {
 }
 
 //***VALIDATE INPUT COMMAND FORMAT FUNCTION***//
-
+// This function confirms command string has correct format.
 bool isValidCommandFormat (String inputCommandString) {
-  bool isValidFormat;
-  if ((inputCommandString.length()==(6) || inputCommandString.length()==(7) || inputCommandString.length()==(8) || inputCommandString.length()==(11)) && inputCommandString.charAt(2)==',' && inputCommandString.charAt(4)==':'){ 
+  bool isValidFormat = false;;
+  if ((inputCommandString.length()==(6) || //XX,d:d
+       inputCommandString.length()==(7) || //XX,d:dd
+       inputCommandString.length()==(8) || //XX,d:ddd
+       inputCommandString.length()==(11)) && inputCommandString.charAt(2)==',' && inputCommandString.charAt(4)==':'){ 
     isValidFormat = true;
-   }
-   else {
-     isValidFormat = false;
    }
   return isValidFormat;
 }
 
 //***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
 
-bool isValidCommandParamter(String inputParamterString) {
-  bool isValidParamter;
+bool isValidCommandParameter(String inputParamterString) {
   if (isStrNumber(inputParamterString)){ 
-    isValidParamter = true;
+    return true;
    }
-   else {
-     isValidParamter = false;
-   }
-  return isValidParamter;
+  return false;
 }
 
 //***CHECK IF STRING IS A NUMBER FUNCTION***//
-
+// This function checks if the input string is a number. It returns 
 boolean isStrNumber(String str){
   
   for(byte i=0;i<str.length();i++)
@@ -1272,7 +1394,7 @@ void performCommand(String inputString) {
     || apiFunction[apiIndex]._parameter == "" || apiFunction[apiIndex]._parameter == "r" )){
       
       // Matching Command String found
-      if( isValidCommandParamter( inputParameterString )) {   //Check if parameter is valid
+      if( isValidCommandParameter( inputParameterString )) {   //Check if parameter is valid
         //Valid Parameter
         
         //Handle parameters that are an array as a special case.
@@ -1315,7 +1437,6 @@ void performCommand(String inputString) {
   } //end iterate through API functions
 
 }
-
 
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
 
@@ -1509,7 +1630,9 @@ void performButtonAction(int outputAction) {
 }
 
 //***LED ON FUNCTION***//
-
+// This function is used to turn LEDs on
+// 1: Turn green on
+// 2: Turn red on
 void ledOn(int ledNumber) {
   switch (ledNumber) {
     case 1: { //Turn GREEN LED on
@@ -1535,12 +1658,15 @@ void ledClear(void) {
 }
 
 //***LED BLINK FUNCTION***//
-
+// This functions blinks the LEDs.
+//1 - flash green
+//2 - flash red
+//3 - alternate
 void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
-  if (numBlinks < 0) numBlinks *= -1;
+  if (numBlinks < 0) numBlinks *= -1; //todo is this error checking?
 
   switch (ledNumber) {
-    case 1: {
+    case 1: { //Flash green
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
@@ -1549,7 +1675,7 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 2: {
+    case 2: { //Flash red
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_RED_PIN, HIGH);
           delay(delayBlinks);
@@ -1558,7 +1684,7 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 3: {
+    case 3: { // Alternate flashing red and green
         for (int i = 0; i < numBlinks; i++) {
           digitalWrite(LED_GREEN_PIN, HIGH);
           delay(delayBlinks);
@@ -1571,26 +1697,26 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
-    case 6: {
-        digitalWrite(LED_GREEN_PIN, LOW);
-        digitalWrite(LED_RED_PIN, LOW);
-        break;
-      }
+//    case 6: { // Turn LEDs off.   //todo this does not appear to be used and is redundant with ledClear()
+//        digitalWrite(LED_GREEN_PIN, LOW);
+//        digitalWrite(LED_RED_PIN, LOW);
+//        break;
+//      }
   }
 }
 
 //***FORCE DISPLAY OF CURSOR***//
-
+// This function slighlty moves the cursor, which causes the cursor to appear on mobile 
+// devices. Called during initialization.
 void forceCursorDisplay(void) {
   Mouse.move(1, 0, 0);
-  delay(25);
+  delay(5);
   Mouse.move(-1, 0, 0);
-  delay(25);
+  delay(5);
 }
 
 
 //***SECONDARY ACTION FUNCTION SELECTION***//
-
 void secondaryAction(void) {
   while (1) {
     xHigh = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
@@ -1598,7 +1724,7 @@ void secondaryAction(void) {
     yHigh = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A2
     yLow = analogRead(Y_DIR_LOW_PIN);               //Read analog values of FSR's : A10
 
-    digitalWrite(LED_RED_PIN, HIGH);                  //Turn red LED on
+    ledOn(2); //Turn red LED on
 
     //todo implement angle code
 
@@ -1620,18 +1746,20 @@ void secondaryAction(void) {
 }
 
 //***CURSOR MOVEMENT FUNCTION ***//
+// This function applies transforms the input cursor coordinates
+// to provide a rotation that matches the mounting angle.
 void moveCursor(int xCursor, int yCursor, int wheel){
   
   // Apply rotation transform to inputs
   int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
   int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
-  
-  Mouse.move(uCursor, vCursor, wheel);                //output transformed mouse movement
+
+  // Output transformed mouse movement
+  Mouse.move(uCursor, vCursor, wheel);                
 
 }
 
 //***SWIPE FUNCTION***//
-
 void cursorSwipe(void) {
   
   for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
@@ -1644,19 +1772,16 @@ void cursorSwipe(void) {
 }
 
 //***CURSOR MIDDLE CLICK FUNCTION***//
-
 void cursorMiddleClick(void) {
   Mouse.click(MOUSE_MIDDLE);
-  delay(125);
+  // delay(125); //todo unnecessary delay
 }
 
 //***CURSOR SCROLL FUNCTION***//
-
+// This function is an operating mode that converts vertical joystick movements into
+// mouse wheel scrolling.
 void cursorScroll(void) {
-  if(debugModeEnabled) {
-    Serial.println("cursorScroll Mode Started");
-  }
-  
+ 
   while (1) { //continue in scroll mode until released by a sip or a puff input
     
     int xCursor = 0;
@@ -1707,15 +1832,12 @@ void cursorScroll(void) {
         delay(CURSOR_DELAY * 35);  // 5 x 35 = 175 ms
         
     
-    }
+    } //end check joystick deadband
     else if ((scrollRelease > sipThreshold) || (scrollRelease < puffThreshold)) { // if sip or puff, stop scroll mode
       break;
     }
         
     delay(CURSOR_DELAY);
-  }
-    if(debugModeEnabled) {
-    Serial.println("cursorScroll Mode Ended");
   }
 }
 
@@ -1737,7 +1859,7 @@ int cursorModifier(int rawValue, int neutralValue, int maxValue, float compValue
     //Map the values to a value between 0 and the selected maximum speed
     cursorFloat = map(cursorFloat, 0, valueAtMax, 0, cursorMaxSpeed); 
     
-    //Set a constrain 
+    //Constrain the output to allowable limits 
     cursorOutput = constrain(cursorFloat,0, cursorMaxSpeed);   
   } //end FSR pressed
   
