@@ -214,7 +214,7 @@ _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibratio
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
-_functionList factoryResetFunction =            {"FR,1","1",&factoryReset};
+_functionList factoryResetFunction =            {"FR,1","0",&factoryReset};
 
 
 // Declare array of API functions
@@ -1220,7 +1220,7 @@ void factoryReset(bool responseEnabled) {
   getCompFactor();                                          
   delay(10);
       
-  printResponseSingle(responseEnabled,true,true,0,"FR,0",true,0);
+  printResponseSingle(responseEnabled,true,true,0,"FR,1",true,0);
 
   delay(5); 
    
