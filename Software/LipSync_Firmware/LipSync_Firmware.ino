@@ -569,8 +569,7 @@ void getPressureThreshold(bool responseEnabled) {
   sipThreshold = pressureNominal + ((pressureThreshold * 5.0)/100.0);    //Create sip pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
 
-  int pressureValue[]={pressureThreshold,pressureNominal};
-  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+  int pressureValue[]={pressureThreshold,pressureNominal*100};
 
   printResponseMultiple(responseEnabled,true,true,0,"PT,0","",2,":",pressureValue);
   
@@ -599,8 +598,7 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
   }
   delay(5); 
 
-  int pressureValue[]={pressureThreshold,pressureNominal};
-  //int pressureValueSize = sizeof(pressureValue) / sizeof(pressureValue[0]);
+  int pressureValue[]={pressureThreshold,pressureNominal*100};
 
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
@@ -616,18 +614,11 @@ void getJoystickValue(bool responseEnabled) {
   int xLowTemp  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
   int yHighTemp = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
   int yLowTemp  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10 
- 
-  if(responseEnabled) {       
-    Serial.print("SUCCESS,0:JV,0:"); 
-    Serial.print(xHighTemp); 
-    Serial.print(","); 
-    Serial.print(xLowTemp); 
-    Serial.print(",");
-    Serial.print(yHighTemp); 
-    Serial.print(",");
-    Serial.println(yLowTemp);    
-    delay(5);
-  }
+
+  int joystickTempValue[]={xHighTemp,xLowTemp,yHighTemp,yLowTemp};
+
+  printResponseMultiple(responseEnabled,true,true,0,"JV,0","",4,",",joystickTempValue);
+
 }
 
 //***GET PRESSURE VALUE FUNCTION***//
@@ -636,10 +627,10 @@ void getPressureValue(bool responseEnabled) {
   // Initial neutral pressure transducer analog value [0.0V - 5.0V]
   float tempPressure = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; 
   
-  
+
   if(responseEnabled) {        
     Serial.print("SUCCESS,0:PV,0:");
-    Serial.print(tempPressure);
+    Serial.println(tempPressure);
     delay(5);
   }
 }
