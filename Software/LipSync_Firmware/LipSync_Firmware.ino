@@ -1,4 +1,52 @@
 /*
+//                            `-:/+o-                    ....``                                                                                                                                                                                                                                                
+//                       `-/osssss+` `                  .--------..`                                                                                                                                                                                                                                           
+//                     -sssssssss-  .--.`            `.--------------.                                                                                                                                                                                                                                         
+//                      :ssssss+` `.------..``````..-----------------                                                                                                                                                                                                                                          
+//                       sssss/  `----------------------------------.                            `````            `````                     .://-                                                          `````            `````                     .://-           `/++/`                                   
+//                      `ssss-  .-----------------------------------.                           sssssss:        `sssssss-                   ssss/                                                        `sssssss-        `sssssss-                  `ssss/           ossss+                                   
+//                      +sss.  --------------------------------------`                          ssssssss`       +sssssss-                   ssss/                                                        `ssssssss`       +sssssss-                  `ssss/           -osso.                                   
+//                    .osss. `----------------....```````       ``````                          ssss:sss+      .sss/ssss-                   ssss/                                                        `ssss/sss/      -sss/ssss-                  `ssss/                                                    
+//      -.         .:ossss. `----------..```      ``.....----.........````          ``          ssss.osss-     osss`ssss-   :+ossssso+:`    ssss/    -++++-   -/osssso/-    /+o+ :osss. -/osssso+-       `ssss.osss.     osss`ssss-   :+ossssso+:`   `ssss/    -++++- .+++/`  -++o`./ossso+-     -/osssso+////-
+//     /sssoo+++oosssssss:  -------.``                 ``.------------------......----.         ssss.-ssso    :sss/ ssss-  .ssssssssssss`   ssss/   /ssss:  -sssso++sssso`  ssss+sssss//ssssooosss`      `ssss.-ssso    :sss/ ssss-  -ssssssssssss`  `ssss/   /ssss:  -ssss.  +sss+sssssssss+  `ossss++osssssso
+//   `osssssssssssssssss+  .---.``                         ``.-------------------------.        ssss. +sss/  `ssss` ssss-  .:-``  `:ssss/   ssss/ .ossso.  -ssss.    /sss+  ssssss:----ssss+`   `-`      `ssss. +sss/  `ssso  ssss-  .:.`   `:ssss/  `ssss/ .ossso`   -ssss.  +ssss+-``-ossss` +sss+    -ssso  
+//  `ossssssssssssssssss` .--.`                               `.------------------------.       ssss. `ssss. /sss-  ssss-   `-:////:ssss+   ssssssssss/    sssso/////+ssss  sssso`     +ssssso+:.        `ssss. `ssss` /sss-  ssss-   `-://///ssss+  `ssssssssss:     -ssss.  +ssss     :ssss. +sss+    :ssss  
+//  +ssssssssssssssssss/  -.                                     `-----------------------.      ssss.  :sss/`sss+   ssss-  :sssssoosssss+   ssssssssss/    ssssssssssssss+  ssss/       -+ssssssso.      `ssss.  :sss/`sss+   ssss-  /sssssoosssss+  `ssssssssss/     -ssss.  +ssss     :ssss. .sssss++ossss-  
+// :sssssssssssssssssss. ``                                        `----------------------`     ssss.   osss:sss`   ssss- .ssss:    osss+   ssss/ -sssso`  ossss`           ssss/          `.:sssso      `ssss.   osss:sss`   ssss- -ssss:    ssss+  `ssss/ -ssss+`   -ssss.  +ssss     :ssss.  :ssssssso+:`   
+// `.-/osssssssssssssss                                              .----------------.``       ssss.   .ssssss:    ssss- -ssss+-.-/sssss::`ssss/  .sssss- .sssss/:----:/:  ssss/     :+:-...-ssss+      `ssss.   .ssssss:    ssss- -ssss+-.-/sssso::.ssss/  .sssss.  -ssss.  +ssss     :ssss. :ssss.````      
+//      .+sssssssssssso                                               `.------------.           ssss.    /sssso     ssss-  /ssssssss/ssssso`ssss/   `+ssss/``/sssssssssss.  ssss/     .ssssssssss+`      `ssss.    /sssso     ssss-  /ssssssso/ssssso`ssss/   `+ssss/ -ssss.  +ssss     :ssss. .ssssssssssso+- 
+//        :sssssssssss+                                              `  .---------.             .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.`   .-:///:-.    .--.`      `-:://::-`         .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.``.--.   `.-..     `.--. `/oss+++++oossss/
+//         /sssssssssss                                              `.  .--------`                                                                                                                                                                                                           /sss+       :ssss
+//         :sssssssssss.                                             `--  .-------                                                                                                                                                                                                            /ssss/:----/ssss/
+//         .+ssssssssss/                                             `--.  .------`                                                                                                                                                                                                            :ossssssssssso- 
+//        `` `/sssssssss`                                            ----.  .------`                                                                                                                                                                                                             `.-::::--.    
+//      `---.`  -+ssssss+                                           .-----` `-------.`              `.:/++++//-`  .+oos.                                                                                                                                                                                       
+// ``..--------.` `:ossss+`                                        .-------  .---------.```       -+ssssssssssso  :ssss.                                                                                                                                                                                       
+// `--------------.` `-+sso.                                      .--------`  ------------`     .osssss+/:--::/o` :ssss.                                                                                                                                                                                       
+//  .----------------.`  .:++.                                  `----------.  .----------.     .sssss:`           :ssss` `....`       ``.....`         `    ....`        `.....`           `....`                                                                                                              
+//   .-------------------.`` ``                                .------------` `---------.      ossss-             :ssss-osssssso-   -ssssssssss/`   .sss/.+sssssso-   `:ossssssssssss` `:ossssssso:                                                                                                            
+//    .----------------------..``                            .--------------`  --------.      `sssso              :ssssssooosssss-  +sso+++osssso   -ssssssoossssss. `osss+:-:+ssss++`.ssss+:::ossso                                                                                                           
+//     `--....`....----------------...``````      ```...`  .---------------.`  `...---`       .ssss+              :ssss/`   -ssss/  .`      /ssss.  -ssss/`   -ssss/ -ssso     osss- `ssss:     osss-                                                                                                          
+//                  `.-------------------------------.  `.-------------.``           `        `sssss`             :ssss.     ssss/  `:+osssoossss.  -ssss-    `ssss/ .ssss:` `-ssss. :ssssssssssssss:                                                                                                          
+//                     .-------------------------.`` `.---------------`                        +ssss+             :ssss.     ssss/ -sssso///ossss.  -ssss-    `ssss/  :sssssssssss-  :sssso+++++++++`                                                                                                          
+//                      .---------------------.`  `.-----------------`                         `osssso:.       .` :ssss.     ssss/ ossso    -ssss.  -ssss-    `ssss/  :oss+////:.    .ssss+`                                                                                                                   
+//                       ----------------..`  ``.-------------------.                           `+sssssssoooosss- :ssss.     ssss/ /sssso//+sssssso/-ssss-    `ssss/ `ssss+:-----.`   -ssssso+///+os`                                                                                                          
+//                       -----------..``  ``.-----------------------.                             `:ossssssssss:  -ssss`     ssss/  /sssssso-/sssss..ssss.    `ssss:  :sssssssssssso-  `:osssssssso-                                                                                                           
+//                      .-----..``   ``....``    ``..----------------`                                `..--..`                        `...`   `...                   +sss/-::::/+ssss.     `....`                                                                                                              
+//                     `.```   ``...--.`              `.-------------.                                                                                              -ssss`      `ssss.                                                                                                                         
+//                          `.-------.                  .-------..``                                                                                                `osssso+//+ossss+                                                                                                                          
+//                              ```..                    ..```                                                                                                       `:+ssssssssso/.                                                                                                                           
+//                                                                                                                                                                        `````                                                                                                                                
+//                                                                                                                                                                                                                                                                                                             
+//                                                                                                                          `:. `-`     `.`                   --                  ``                                                                                                                           
+//                                                                                               /Nmh      mNm/  /Ns        +my dN-   -dmhhdo                `dm-               sNmdmmy-                                                                                                                       
+//                                                                                              .mhoNo     mNyN+ /Ns  :oso: .+: dN-   yNy.  `  :oso+- /o  -+- ++`.+-os.-+so/`   sNo  /Nm.+:+s.-+so+. `/oso++`+:+s:+oso/  /+-os+./so:                                                                           
+//                                                                                              hN-`dN-    mN.hNo/Ns hN+:sN+/Ny dN-   .sdNmy/`dN+-sNs`NN` oNo mN`+Nmo+yNy:+Nh   sNy/+hNs:Nmo+sNh:/mm-hN:.hN+-Nms+/+//hN+ hNy/sNm+/mN-                                                                          
+//                                                                                             oNmddmNd`   mN``yNyNs.NNyyys:/Ny dN-       :NN+Nd  /Ns`NN` oNo mN`+Ns  hNhyyyo   sNhoo/- :Nh  sNo  hN/+Nhymy`.Nd  /mhshNo hN- :Nh  hN-                                                                          
+//                                                                                            -Nm`   sNo   mN`  sNNs +mdssy-/Ny hNh+  hhyyhNs`hNhydNs hNdhdNo mN`+Ns  :dmyss+   sNo     :Nh  -dmyyNy`sNyso/..Nd  oNhshNd/hN- :Nh  hN-                                                                          
+//                                                                                            `.`     ``   ``    `.`   .--`  .`  --    .---`   .-./Ns  .-. .  ``  .`    .--.    `.       ``    .--` .md::/mN.``   .-. .- ``   ``  ``                                                                           
+//                                                                                                                                                :do                                               `sddhdh+                                                                                                                                                                                                                                                                                                                          
+//
 //                                                                                                  
 //  +++         .+++:    /++++++++/:.     .:/+++++/: .+++/`     .+++/  ++++.      ++++.     `-/++++++/:
 //  oooo         .ooo:    +ooo:--:+ooo/   :ooo/:::/+/  -ooo+`   .ooo+`  ooooo:     .o-o`   `/ooo+//://+:
@@ -129,7 +177,7 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping5 50                  //int:50,51; 
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
-//#define EEPROM_compFactor 56                      //int:56,57
+//#define EEPROM_compFactor 56                    //int:56,57
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
@@ -148,10 +196,10 @@ _functionList setCursorSpeedFunction =          {"SS,1","",&setCursorSpeed};
 
 _functionList getPressureThresholdFunction =    {"PT,0","0",&getPressureThreshold};
 _functionList setPressureThresholdFunction =    {"PT,1","",&setPressureThreshold};
+_functionList getPressureValueFunction =        {"PV,0","0",&getPressureValue};
 _functionList getRotationAngleFunction =        {"RA,0","0",&getRotationAngle};
 _functionList setRotationAngleFunction =        {"RA,1","",&setRotationAngle};
 _functionList getJoystickValueFunction =        {"JV,0","0",&getJoystickValue};
-_functionList getPressureValueFunction =        {"PV,0","0",&getPressureValue};
 
 _functionList getDebugModeFunction =            {"DM,0","0",&getDebugMode};
 _functionList setDebugModeFunction =            {"DM,1","",&setDebugMode};
@@ -177,10 +225,10 @@ _functionList apiFunction[22] = {
   setCursorSpeedFunction,
   getPressureThresholdFunction,
   setPressureThresholdFunction,
+  getPressureValueFunction,
   getRotationAngleFunction,
   setRotationAngleFunction,
   getJoystickValueFunction,
-  getPressureValueFunction,
   getDebugModeFunction,
   setDebugModeFunction,
   getRawModeFunction,
@@ -189,7 +237,7 @@ _functionList apiFunction[22] = {
   setCursorInitializationFunction,
   getCursorCalibrationFunction,
   setCursorCalibrationFunction,
-  getChangeToleranceFunction,
+  //getChangeToleranceFunction,
   getButtonMappingFunction,
   setButtonMappingFunction,
   factoryResetFunction
@@ -425,7 +473,11 @@ void cursorHandler(void) {
   //Debug information 
   
   if(debugModeEnabled) {
-    Serial.print("LOG:3:");
+    /*
+    int debugDataValue[]={xHigh,xLow,yHigh,yLow};
+    printResponseMultiple(true,true,true,0,"LOG,3","",4,",",debugDataValue);
+    */
+    Serial.print("LOG,3:");
     Serial.print(xHigh);
     Serial.print(",");
     Serial.print(xLow);
@@ -433,6 +485,7 @@ void cursorHandler(void) {
     Serial.print(yHigh);
     Serial.print(",");
     Serial.println(yLow); 
+    
     delay(150);
   }
   
@@ -623,16 +676,13 @@ void getJoystickValue(bool responseEnabled) {
 
 //***GET PRESSURE VALUE FUNCTION***//
 // Returns pressure value in volts
+
 void getPressureValue(bool responseEnabled) {
   // Initial neutral pressure transducer analog value [0.0V - 5.0V]
-  float tempPressure = (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; 
-  
+  int tempPressureValue = ((((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0) * 100; 
 
-  if(responseEnabled) {        
-    Serial.print("SUCCESS,0:PV,0:");
-    Serial.println(tempPressure);
-    delay(5);
-  }
+  printResponseSingle(responseEnabled,true,true,0,"PV,0",true,tempPressureValue);
+
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -654,7 +704,7 @@ bool getDebugMode(bool responseEnabled) {
   }
 
 
-  printResponseSingle(responseEnabled,false,true,0,"DM,0",true,debugState);
+  printResponseSingle(responseEnabled,true,true,0,"DM,0",true,debugState);
 
   if(responseEnabled && debugState){ sendDebugData();}
 
@@ -691,8 +741,18 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
 //***SEND DEBUG DATA FUNCTION***//
 
 void sendDebugData() {
+  /*
+  int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
+  int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
+
   delay(100);
-  Serial.print("LOG:1:"); 
+  printResponseMultiple(true,true,true,0,"LOG,1","",4,",",neutralValue);
+  delay(100);
+  printResponseMultiple(true,true,true,0,"LOG,2","",4,",",maxValue);
+  delay(100);
+  */
+  delay(100);
+  Serial.print("LOG,1:"); 
   Serial.print(xHighNeutral); 
   Serial.print(","); 
   Serial.print(xLowNeutral); 
@@ -701,7 +761,7 @@ void sendDebugData() {
   Serial.print(",");
   Serial.println(yLowNeutral); 
   delay(100);
-  Serial.print("LOG:2:"); 
+  Serial.print("LOG,2:"); 
   Serial.print(xHighMax); 
   Serial.print(","); 
   Serial.print(xLowMax); 
@@ -710,13 +770,18 @@ void sendDebugData() {
   Serial.print(",");
   Serial.println(xHighMax); 
   delay(100);
+  
 }
 
 //***SEND RAW DATA FUNCTION***//
 // Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
-  Serial.print("RAW:1:"); 
+  /*int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
+  printResponseMultiple(true,true,true,0,"RAW,1","",7,",",rawDataValue);
+  */
+  
+  Serial.print("RAW,1:"); 
   Serial.print(x); 
   Serial.print(","); 
   Serial.print(y); 
@@ -848,7 +913,6 @@ void setCompFactor(void) {
 
 void getCursorInitialization(bool responseEnabled) {
   int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
-  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
 
   printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
   delay(10);  
@@ -897,7 +961,6 @@ void setCursorInitialization(bool responseEnabled, int mode) {
   delay(10);
 
   int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
-  //int neutralValueSize = sizeof(neutralValue) / sizeof(neutralValue[0]);
 
   printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
   
@@ -925,7 +988,6 @@ void getCursorCalibration(bool responseEnable) {
   xLowYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
   int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
-  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
 
   printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
 
@@ -976,7 +1038,7 @@ void setCursorCalibration(bool responseEnabled) {
 
   ledBlink(5, 250, 3);
   int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
-  //int maxValueSize = sizeof(maxValue) / sizeof(maxValue[0]);
+
   printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
 
   delay(10);
@@ -989,12 +1051,12 @@ void getChangeTolerance(bool responseEnabled) {
   xLowChangeTolerance=(int)(xLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yHighChangeTolerance=(int)(yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yLowChangeTolerance=(int)(yLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
-
+/*
   int changeTolerance[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
   //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
 
   printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
-
+*/
   delay(10);
 }
 
