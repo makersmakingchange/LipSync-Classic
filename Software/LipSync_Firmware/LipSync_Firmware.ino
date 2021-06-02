@@ -111,7 +111,7 @@
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
-#define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+#define CHANGE_DEFAULT_TOLERANCE 3              //The tolerance in changes between current reading and previous reading
 
 //***DON'T CHANGE THESE CONSTANTS***//       
 #define LIPSYNC_MODEL 1                           //LipSync Mouse
@@ -178,7 +178,8 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
 //#define EEPROM_compFactor 56                    //int:56,57
-#define EEPROM_versionNumber 58                   //int:58,59; 
+#define EEPROM_changeTolerance 58                   //int:58,59;
+#define EEPROM_versionNumber 60                   //int:60,61; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
@@ -213,13 +214,14 @@ _functionList getCursorCalibrationFunction =    {"CA,0","0",&getCursorCalibratio
 _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibration};
 
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
+_functionList setChangeToleranceFunction =      {"CT,1","",&setChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
 _functionList factoryResetFunction =            {"FR,1","",&factoryReset};
 
 
 // Declare array of API functions
-_functionList apiFunction[22] = {
+_functionList apiFunction[23] = {
   getModelNumberFunction, 
   getVersionNumberFunction,
   getCursorSpeedFunction,
@@ -238,7 +240,8 @@ _functionList apiFunction[22] = {
   setCursorInitializationFunction,
   getCursorCalibrationFunction,
   setCursorCalibrationFunction,
-  //getChangeToleranceFunction,
+  getChangeToleranceFunction,
+  setChangeToleranceFunction,
   getButtonMappingFunction,
   setButtonMappingFunction,
   factoryResetFunction
@@ -291,7 +294,7 @@ int xHighMax, xLowMax, yHighMax, yLowMax;         //Max FSR values which are set
 float xHighYHigh, xHighYLow, xLowYLow, xLowYHigh;  //Squared Distance from joytick center in each quadrant
 float xHighYHighRadius, xHighYLowRadius, xLowYLowRadius, xLowYHighRadius; // Squared deadband distance from center
 
-int xHighChangeTolerance, yHighChangeTolerance, xLowChangeTolerance, yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
+int changeTolerance;                                  //The tolerance of changes in FSRs readings 
 
 float yHighComp = 1.0;
 float yLowComp = 1.0;
@@ -326,7 +329,7 @@ void setup() {
   getCursorCalibration(false);                    //Get FSR Max calibration values 
   delay(10);
   
-  getChangeTolerance(false);                      // Get change tolerance using max FSR readings and default tolerance percentage 
+  changeTolerance = getChangeTolerance(false);    // Get change tolerance using max FSR readings and default tolerance 
   delay(10);
   
   getPressureThreshold(false);                    //Get the pressure sensor threshold boundaries
@@ -401,10 +404,10 @@ void cursorHandler(void) {
   yLow  = analogRead(Y_DIR_LOW_PIN);              //Read analog values of FSR's : A10
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
-  bool skipChange = abs(xHigh - xHighPrev) < xHighChangeTolerance 
-                 && abs(xLow  - xLowPrev)  < xLowChangeTolerance 
-                 && abs(yHigh - yHighPrev) < yHighChangeTolerance 
-                 && abs(yLow  - yLowPrev)  < yLowChangeTolerance;
+  bool skipChange = abs(xHigh - xHighPrev) < changeTolerance 
+                 && abs(xLow  - xLowPrev)  < changeTolerance 
+                 && abs(yHigh - yHighPrev) < changeTolerance 
+                 && abs(yLow  - yLowPrev)  < changeTolerance;
   
   // Set FSR values for next skip check
   xHighPrev = xHigh;
@@ -522,8 +525,12 @@ void initializePins(void) {
 //***GET MODEL NUMBER FUNCTION***//
 
 void getModelNumber(bool responseEnabled) {
+  
   EEPROM.get(EEPROM_modelNumber, modelNumber);
+  delay(10);
   EEPROM.get(EEPROM_versionNumber, versionNumber);
+  delay(10);
+
   if (modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
     factoryReset(false,0);
     delay(10);
@@ -1062,18 +1069,56 @@ void setCursorCalibration(bool responseEnabled) {
 
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
 
-void getChangeTolerance(bool responseEnabled) {
+int getChangeTolerance(bool responseEnabled) {
+  int tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
+   
+  if(API_ENABLED) {
+    //Get the change tolerance from memory 
+    EEPROM.get(EEPROM_changeTolerance, tempChangeTolerance);
+    delay(10);
+  } else {
+    tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
+  }
+  printResponseSingle(responseEnabled,true,true,0,"CT,0",true,tempChangeTolerance);
+
+  delay(5); 
+  /*
   xHighChangeTolerance=(int)(xHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   xLowChangeTolerance=(int)(xLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yHighChangeTolerance=(int)(yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
   yLowChangeTolerance=(int)(yLowMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
-/*
+
   int changeTolerance[]={xHighChangeTolerance,xLowChangeTolerance,yHighChangeTolerance,yLowChangeTolerance};
   //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
 
   printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
-*/
+
   delay(10);
+  */
+  return tempChangeTolerance;
+}
+
+//***SET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***///  
+
+void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
+
+  bool isValidChangeTolerance = true;
+  
+  if(inputChangeTolerance >= 0 && inputChangeTolerance <=CURSOR_DEADBAND) {
+    changeTolerance = inputChangeTolerance;                           //update value to global variable
+    EEPROM.put(EEPROM_rotationAngle, changeTolerance);                // Update value to memory from serial input
+    delay(10);
+    if(!API_ENABLED) {changeTolerance = CHANGE_DEFAULT_TOLERANCE; }    //Use default change tolerance if bad serial input
+    isValidChangeTolerance = true;
+  } else {
+    isValidChangeTolerance = false;
+  }
+  delay(5);
+  int responseCode=0;
+  (isValidChangeTolerance) ? responseCode = 0 : responseCode = 2;
+  
+  printResponseSingle(responseEnabled,true,true,responseCode,"CT,1",true,inputChangeTolerance); 
+
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
@@ -1169,8 +1214,8 @@ void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
   bool isValidRotationAngle = true;
   
   if(inputRotationAngle >= 0 && inputRotationAngle <=360) {
-    rotationAngle = inputRotationAngle; //update value to global variable
-    EEPROM.put(EEPROM_rotationAngle, rotationAngle); // Update value to memory from serial input
+    rotationAngle = inputRotationAngle;                     //update value to global variable
+    EEPROM.put(EEPROM_rotationAngle, rotationAngle);        // Update value to memory from serial input
     delay(10);
     if(!API_ENABLED) {rotationAngle = ROTATION_ANGLE; }    //Use default rotation angle if bad serial input
     isValidRotationAngle = true;
@@ -1181,7 +1226,7 @@ void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
   int responseCode=0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,rotationAngle); 
+  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,inputRotationAngle); 
   
   updateRotationAngle(); // Update rotation transform
 
