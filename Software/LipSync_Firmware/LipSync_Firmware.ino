@@ -61,10 +61,11 @@
 //An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
 */
 
-//Developed by : MakersMakingChange
 //Firmware : LipSync_Firmware
+//Developed by : MakersMakingChange
 //VERSION: 3.0-beta (21 May Apr 2021) 
-//Copyright Neil Squire Society 2021.
+//Copyright Neil Squire Society 2016-2021. 
+//LICENSE: This work is licensed under the CC BY SA 4.0 License: http://creativecommons.org/licenses/by-sa/4.0 .
 
 #include <EEPROM.h>
 #include <Mouse.h>
