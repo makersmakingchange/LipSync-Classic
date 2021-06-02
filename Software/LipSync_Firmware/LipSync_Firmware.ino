@@ -629,7 +629,7 @@ void decreaseCursorSpeed(bool responseEnabled) {
 float readPressure(void){
   
   // Measure pressure transducer analog value [0.0V - 5.0V]
-  return (((float)analogRead(PRESSURE_PIN)) / 1024.0) * 5.0; 
+  return (((float)analogRead(PRESSURE_PIN)) / 1023.0) * 5.0; 
   
 }
 
