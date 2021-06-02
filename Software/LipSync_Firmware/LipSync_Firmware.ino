@@ -177,7 +177,6 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping5 50                  //int:50,51; 
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
-//#define EEPROM_compFactor 56                    //int:56,57
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
@@ -386,16 +385,22 @@ void cursorHandler(void) {
   bool outputMouse = false;
   int xCursor = 0;
   int yCursor = 0;
+  int xHigh = 0;
+  int xLow = 0;
+  int yHigh = 0;
+  int yLow = 0;
 
-  outputMouse = readJoystick(xCursor, yCursor);
+  // Measure FSR joystick and determine whether to output mouse commands
+  outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
+  rotateCursor(xCursor, yCursor); //apply transform for mounting angle
  
   if (outputMouse){
-    rotateCursor(xCursor, yCursor); //apply transform for mounting angle
+    
     moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
   } else if(g_rawModeEnabled) {
-    sendRawData(0,0,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
+    sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
     delay(CURSOR_DELAY);
   }
 
@@ -423,15 +428,15 @@ void cursorHandler(void) {
 //***READ JOYSTICK FUNCTION**//
 // Reads FSR values, checks if values exceed deadband, and calculates 
 // cursor movements. Outputs true if mouse should be moved.
-bool readJoystick(int &xCursor, int &yCursor){
+bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh, int &yLow){
 
   bool outputMouse = false;
   
   // Measure force sensitive resistors
-  int xHigh = analogRead(X_DIR_HIGH_PIN);           
-  int xLow  = analogRead(X_DIR_LOW_PIN);              
-  int yHigh = analogRead(Y_DIR_HIGH_PIN);             
-  int yLow  = analogRead(Y_DIR_LOW_PIN);              
+  xHigh = analogRead(X_DIR_HIGH_PIN);           
+  xLow  = analogRead(X_DIR_LOW_PIN);              
+  yHigh = analogRead(Y_DIR_HIGH_PIN);             
+  yLow  = analogRead(Y_DIR_LOW_PIN);              
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
   bool skipChange = abs(xHigh - g_xHighPrev) < g_xHighChangeTolerance 
@@ -473,7 +478,8 @@ bool readJoystick(int &xCursor, int &yCursor){
     delay(20); 
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-    if(!skipChange && pollCounter >= 3) {
+   // if(!skipChange && g_pollCounter >= 3) {
+    if(!skipChange) {
       outputMouse = true;  
        //Quadrant 1 (Upper left)
       if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
@@ -957,16 +963,16 @@ void setCursorInitialization(bool responseEnabled, int mode) {
 
   ledOn(1); //Turn on Green LED
 
-  xHigh = analogRead(X_DIR_HIGH_PIN);               //Set the initial neutral x-high value of joystick
+  int xHigh = analogRead(X_DIR_HIGH_PIN);               //Set the initial neutral x-high value of joystick
   delay(10);
 
-  xLow = analogRead(X_DIR_LOW_PIN);                 //Set the initial neutral x-low value of joystick
+  int xLow = analogRead(X_DIR_LOW_PIN);                 //Set the initial neutral x-low value of joystick
   delay(10);
 
-  yHigh = analogRead(Y_DIR_HIGH_PIN);               //Set the initial neutral y-high value of joystick
+  int yHigh = analogRead(Y_DIR_HIGH_PIN);               //Set the initial neutral y-high value of joystick
   delay(10);
 
-  yLow = analogRead(Y_DIR_LOW_PIN);                 //Set the initial Initial neutral y-low value of joystick
+  int yLow = analogRead(Y_DIR_LOW_PIN);                 //Set the initial Initial neutral y-low value of joystick
   delay(10);
 
   //Set the neutral values 
@@ -1059,11 +1065,11 @@ void setCursorCalibration(bool responseEnabled) {
 
   EEPROM.put(EEPROM_xHighMax, g_xHighMax);
   delay(10);
-  EEPROM.put(EEPROM_xLowMax, g_xLowMax);
+  EEPROM.put(EEPROM_xLowMax,  g_xLowMax);
   delay(10);
   EEPROM.put(EEPROM_yHighMax, g_yHighMax);
   delay(10);
-  EEPROM.put(EEPROM_yLowMax, g_ yLowMax);
+  EEPROM.put(EEPROM_yLowMax,  g_yLowMax);
   delay(10);
 
   ledBlink(5, 250, 3);
@@ -1724,13 +1730,17 @@ void secondaryAction(void) {
     bool outputMouse = false;
     int xCursor = 0;
     int yCursor = 0;
+    int xHigh = 0;
+    int xLow = 0;
+    int yHigh = 0;
+    int yLow = 0;
 
-    outputMouse = readJoystick(xCursor, yCursor);
+    outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
     rotateCursor(xCursor,yCursor);
     
     ledOn(2); //Turn red LED on
 
-    
+    /* //TODO Needs to be worked on
     if (xHigh > (g_xHighNeutral + CURSOR_DEADBAND)) {
       cursorMiddleClick();
       break;
@@ -1744,6 +1754,7 @@ void secondaryAction(void) {
       cursorSwipe();
       break;
     }
+    */
   }
   digitalWrite(LED_RED_PIN, LOW);
 }
@@ -1808,8 +1819,12 @@ void cursorScroll(void) {
     bool outputMouse = false;
     int xCursor = 0;
     int yCursor = 0;
+    int xHigh = 0;
+    int xLow = 0;
+    int yHigh = 0;
+    int yLow = 0;
    
-    outputMouse = readJoystick(xCursor, yCursor);
+    outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
     rotateCursor(xCursor, yCursor);
     
     // Apply rotation transform to inputs
