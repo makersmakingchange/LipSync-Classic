@@ -478,10 +478,11 @@ void cursorHandler(void) {
   //Debug information 
   
   if(debugModeEnabled) {
-    /*
+    
     int debugDataValue[]={xHigh,xLow,yHigh,yLow};
-    printResponseMultiple(true,true,true,0,"LOG,3","",4,",",debugDataValue);
-    */
+    //printResponseMultiple(true,true,true,0,"LOG,3","",4,",",debugDataValue);
+    printResponseContinuous("LOG",3,4,",",debugDataValue);
+    /*
     Serial.print("LOG,3:");
     Serial.print(xHigh);
     Serial.print(",");
@@ -490,7 +491,7 @@ void cursorHandler(void) {
     Serial.print(yHigh);
     Serial.print(",");
     Serial.println(yLow); 
-    
+    */
     delay(150);
   }
   
@@ -764,16 +765,18 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
 //***SEND DEBUG DATA FUNCTION***//
 
 void sendDebugData() {
-  /*
+  
   int neutralValue[]={xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral};
   int maxValue[]={xHighMax,xLowMax,yHighMax,yLowMax};
 
   delay(100);
-  printResponseMultiple(true,true,true,0,"LOG,1","",4,",",neutralValue);
+  //printResponseMultiple(true,true,true,0,"LOG,1","",4,",",neutralValue);
+  printResponseContinuous("LOG",1,4,",",neutralValue);
   delay(100);
-  printResponseMultiple(true,true,true,0,"LOG,2","",4,",",maxValue);
+  //printResponseMultiple(true,true,true,0,"LOG,2","",4,",",maxValue);
+  printResponseContinuous("LOG",2,4,",",maxValue);
   delay(100);
-  */
+  /*
   delay(100);
   Serial.print("LOG,1:"); 
   Serial.print(xHighNeutral); 
@@ -793,17 +796,18 @@ void sendDebugData() {
   Serial.print(",");
   Serial.println(xHighMax); 
   delay(100);
-  
+  */
 }
 
 //***SEND RAW DATA FUNCTION***//
 // Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
-  /*int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
-  printResponseMultiple(true,true,true,0,"RAW,1","",7,",",rawDataValue);
-  */
+  int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
+  //printResponseMultiple(true,true,true,0,"RAW,1","",7,",",rawDataValue);
+  printResponseContinuous("RAW",1,7,",",rawDataValue);
   
+  /*
   Serial.print("RAW,1:"); 
   Serial.print(x); 
   Serial.print(","); 
@@ -818,7 +822,7 @@ void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDow
   Serial.print(yUp); 
   Serial.print(",");
   Serial.println(yDown); 
-  
+  */
 }
 
 //***GET RAW MODE STATE FUNCTION***//
@@ -1277,6 +1281,9 @@ void factoryReset(bool responseEnabled, int resetType) {
   
   setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
   delay(10);
+
+  setChangeTolerance(false, CHANGE_DEFAULT_TOLERANCE);                  //set default change tolerance 
+  delay(10);
   
   setDebugMode(false,DEBUG_MODE);                                       //set default debug mode
   delay(10);  
@@ -1413,7 +1420,20 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
   }
 }
 
+//***SERIAL PRINT OUT COMMAND RESPONSE WITH MULTIPLE PARAMETERS FUNCTION***//
 
+void printResponseContinuous(String responseStatus, int responseNumber, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
+   
+    Serial.print(responseStatus);
+    Serial.print(",");
+    Serial.print(responseNumber);
+    Serial.print(":");
+    for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
+       Serial.print(responseParameter[parameterIndex]);  
+       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
+    }   
+    Serial.println("");  
+}
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
 // This function takes processes an input string from the serial and calls the 
