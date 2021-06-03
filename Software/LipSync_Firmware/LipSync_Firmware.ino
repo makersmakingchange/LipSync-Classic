@@ -462,14 +462,14 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   // Calculate the magnitude of the movement for each direction / quadrant
   // These are the squared vector magnitudes of each quadrant 1-4 when the 
   // FSR measures a greater force than the neutral force
-  float xHighYHigh = sq(((xHigh - g_xHighNeutral) > 0) ? (xHigh - g_xHighNeutral) : 0) 
-                   + sq(((yHigh - g_yHighNeutral) > 0) ? (yHigh - g_yHighNeutral) : 0);    
-  float xHighYLow  = sq(((xHigh - g_xHighNeutral) > 0) ? (xHigh - g_xHighNeutral) : 0) 
-                   + sq(((yLow  - g_yLowNeutral)  > 0) ? (yLow  - g_yLowNeutral)  : 0);    
-  float xLowYHigh  = sq(((xLow  - g_xLowNeutral)  > 0) ? (xLow  - g_xLowNeutral)  : 0) 
-                   + sq(((yHigh - g_yHighNeutral) > 0) ? (yHigh - g_yHighNeutral) : 0);
-  float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? (xLow  - g_xLowNeutral)  : 0)
-                   + sq(((yLow  - g_yLowNeutral)  > 0) ? (yLow  - g_yLowNeutral)  : 0);    
+  float xHighYHigh = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0) 
+                   + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);    
+  float xHighYLow  = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0) 
+                   + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
+  float xLowYHigh  = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0) 
+                   + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
+  float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
+                   + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
 
   //Check to see if the joystick has moved outside the deadband
   if ((xHighYHigh > g_xHighYHighRadius) || (xHighYLow > g_xHighYLowRadius) || (xLowYLow > g_xLowYLowRadius) || (xLowYHigh > g_xLowYHighRadius)) {
