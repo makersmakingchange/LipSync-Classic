@@ -1,51 +1,30 @@
 /*
-//                            `-:/+o-                    ....``                                                                                                                                                                                                                                                
-//                       `-/osssss+` `                  .--------..`                                                                                                                                                                                                                                           
-//                     -sssssssss-  .--.`            `.--------------.                                                                                                                                                                                                                                         
-//                      :ssssss+` `.------..``````..-----------------                                                                                                                                                                                                                                          
-//                       sssss/  `----------------------------------.                            `````            `````                     .://-                                                          `````            `````                     .://-           `/++/`                                   
-//                      `ssss-  .-----------------------------------.                           sssssss:        `sssssss-                   ssss/                                                        `sssssss-        `sssssss-                  `ssss/           ossss+                                   
-//                      +sss.  --------------------------------------`                          ssssssss`       +sssssss-                   ssss/                                                        `ssssssss`       +sssssss-                  `ssss/           -osso.                                   
-//                    .osss. `----------------....```````       ``````                          ssss:sss+      .sss/ssss-                   ssss/                                                        `ssss/sss/      -sss/ssss-                  `ssss/                                                    
-//      -.         .:ossss. `----------..```      ``.....----.........````          ``          ssss.osss-     osss`ssss-   :+ossssso+:`    ssss/    -++++-   -/osssso/-    /+o+ :osss. -/osssso+-       `ssss.osss.     osss`ssss-   :+ossssso+:`   `ssss/    -++++- .+++/`  -++o`./ossso+-     -/osssso+////-
-//     /sssoo+++oosssssss:  -------.``                 ``.------------------......----.         ssss.-ssso    :sss/ ssss-  .ssssssssssss`   ssss/   /ssss:  -sssso++sssso`  ssss+sssss//ssssooosss`      `ssss.-ssso    :sss/ ssss-  -ssssssssssss`  `ssss/   /ssss:  -ssss.  +sss+sssssssss+  `ossss++osssssso
-//   `osssssssssssssssss+  .---.``                         ``.-------------------------.        ssss. +sss/  `ssss` ssss-  .:-``  `:ssss/   ssss/ .ossso.  -ssss.    /sss+  ssssss:----ssss+`   `-`      `ssss. +sss/  `ssso  ssss-  .:.`   `:ssss/  `ssss/ .ossso`   -ssss.  +ssss+-``-ossss` +sss+    -ssso  
-//  `ossssssssssssssssss` .--.`                               `.------------------------.       ssss. `ssss. /sss-  ssss-   `-:////:ssss+   ssssssssss/    sssso/////+ssss  sssso`     +ssssso+:.        `ssss. `ssss` /sss-  ssss-   `-://///ssss+  `ssssssssss:     -ssss.  +ssss     :ssss. +sss+    :ssss  
-//  +ssssssssssssssssss/  -.                                     `-----------------------.      ssss.  :sss/`sss+   ssss-  :sssssoosssss+   ssssssssss/    ssssssssssssss+  ssss/       -+ssssssso.      `ssss.  :sss/`sss+   ssss-  /sssssoosssss+  `ssssssssss/     -ssss.  +ssss     :ssss. .sssss++ossss-  
-// :sssssssssssssssssss. ``                                        `----------------------`     ssss.   osss:sss`   ssss- .ssss:    osss+   ssss/ -sssso`  ossss`           ssss/          `.:sssso      `ssss.   osss:sss`   ssss- -ssss:    ssss+  `ssss/ -ssss+`   -ssss.  +ssss     :ssss.  :ssssssso+:`   
-// `.-/osssssssssssssss                                              .----------------.``       ssss.   .ssssss:    ssss- -ssss+-.-/sssss::`ssss/  .sssss- .sssss/:----:/:  ssss/     :+:-...-ssss+      `ssss.   .ssssss:    ssss- -ssss+-.-/sssso::.ssss/  .sssss.  -ssss.  +ssss     :ssss. :ssss.````      
-//      .+sssssssssssso                                               `.------------.           ssss.    /sssso     ssss-  /ssssssss/ssssso`ssss/   `+ssss/``/sssssssssss.  ssss/     .ssssssssss+`      `ssss.    /sssso     ssss-  /ssssssso/ssssso`ssss/   `+ssss/ -ssss.  +ssss     :ssss. .ssssssssssso+- 
-//        :sssssssssss+                                              `  .---------.             .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.`   .-:///:-.    .--.`      `-:://::-`         .--.      .---`     .--.`   `-://:.  .://-` .--.`     ..--.``.--.   `.-..     `.--. `/oss+++++oossss/
-//         /sssssssssss                                              `.  .--------`                                                                                                                                                                                                           /sss+       :ssss
-//         :sssssssssss.                                             `--  .-------                                                                                                                                                                                                            /ssss/:----/ssss/
-//         .+ssssssssss/                                             `--.  .------`                                                                                                                                                                                                            :ossssssssssso- 
-//        `` `/sssssssss`                                            ----.  .------`                                                                                                                                                                                                             `.-::::--.    
-//      `---.`  -+ssssss+                                           .-----` `-------.`              `.:/++++//-`  .+oos.                                                                                                                                                                                       
-// ``..--------.` `:ossss+`                                        .-------  .---------.```       -+ssssssssssso  :ssss.                                                                                                                                                                                       
-// `--------------.` `-+sso.                                      .--------`  ------------`     .osssss+/:--::/o` :ssss.                                                                                                                                                                                       
-//  .----------------.`  .:++.                                  `----------.  .----------.     .sssss:`           :ssss` `....`       ``.....`         `    ....`        `.....`           `....`                                                                                                              
-//   .-------------------.`` ``                                .------------` `---------.      ossss-             :ssss-osssssso-   -ssssssssss/`   .sss/.+sssssso-   `:ossssssssssss` `:ossssssso:                                                                                                            
-//    .----------------------..``                            .--------------`  --------.      `sssso              :ssssssooosssss-  +sso+++osssso   -ssssssoossssss. `osss+:-:+ssss++`.ssss+:::ossso                                                                                                           
-//     `--....`....----------------...``````      ```...`  .---------------.`  `...---`       .ssss+              :ssss/`   -ssss/  .`      /ssss.  -ssss/`   -ssss/ -ssso     osss- `ssss:     osss-                                                                                                          
-//                  `.-------------------------------.  `.-------------.``           `        `sssss`             :ssss.     ssss/  `:+osssoossss.  -ssss-    `ssss/ .ssss:` `-ssss. :ssssssssssssss:                                                                                                          
-//                     .-------------------------.`` `.---------------`                        +ssss+             :ssss.     ssss/ -sssso///ossss.  -ssss-    `ssss/  :sssssssssss-  :sssso+++++++++`                                                                                                          
-//                      .---------------------.`  `.-----------------`                         `osssso:.       .` :ssss.     ssss/ ossso    -ssss.  -ssss-    `ssss/  :oss+////:.    .ssss+`                                                                                                                   
-//                       ----------------..`  ``.-------------------.                           `+sssssssoooosss- :ssss.     ssss/ /sssso//+sssssso/-ssss-    `ssss/ `ssss+:-----.`   -ssssso+///+os`                                                                                                          
-//                       -----------..``  ``.-----------------------.                             `:ossssssssss:  -ssss`     ssss/  /sssssso-/sssss..ssss.    `ssss:  :sssssssssssso-  `:osssssssso-                                                                                                           
-//                      .-----..``   ``....``    ``..----------------`                                `..--..`                        `...`   `...                   +sss/-::::/+ssss.     `....`                                                                                                              
-//                     `.```   ``...--.`              `.-------------.                                                                                              -ssss`      `ssss.                                                                                                                         
-//                          `.-------.                  .-------..``                                                                                                `osssso+//+ossss+                                                                                                                          
-//                              ```..                    ..```                                                                                                       `:+ssssssssso/.                                                                                                                           
-//                                                                                                                                                                        `````                                                                                                                                
-//                                                                                                                                                                                                                                                                                                             
-//                                                                                                                          `:. `-`     `.`                   --                  ``                                                                                                                           
-//                                                                                               /Nmh      mNm/  /Ns        +my dN-   -dmhhdo                `dm-               sNmdmmy-                                                                                                                       
-//                                                                                              .mhoNo     mNyN+ /Ns  :oso: .+: dN-   yNy.  `  :oso+- /o  -+- ++`.+-os.-+so/`   sNo  /Nm.+:+s.-+so+. `/oso++`+:+s:+oso/  /+-os+./so:                                                                           
-//                                                                                              hN-`dN-    mN.hNo/Ns hN+:sN+/Ny dN-   .sdNmy/`dN+-sNs`NN` oNo mN`+Nmo+yNy:+Nh   sNy/+hNs:Nmo+sNh:/mm-hN:.hN+-Nms+/+//hN+ hNy/sNm+/mN-                                                                          
-//                                                                                             oNmddmNd`   mN``yNyNs.NNyyys:/Ny dN-       :NN+Nd  /Ns`NN` oNo mN`+Ns  hNhyyyo   sNhoo/- :Nh  sNo  hN/+Nhymy`.Nd  /mhshNo hN- :Nh  hN-                                                                          
-//                                                                                            -Nm`   sNo   mN`  sNNs +mdssy-/Ny hNh+  hhyyhNs`hNhydNs hNdhdNo mN`+Ns  :dmyss+   sNo     :Nh  -dmyyNy`sNyso/..Nd  oNhshNd/hN- :Nh  hN-                                                                          
-//                                                                                            `.`     ``   ``    `.`   .--`  .`  --    .---`   .-./Ns  .-. .  ``  .`    .--.    `.       ``    .--` .md::/mN.``   .-. .- ``   ``  ``                                                                           
-//                                                                                                                                                :do                                               `sddhdh+                                                                                                                                                                                                                                                                                                                          
+//                 `.:/++`             ....``                                                                                                                                                              
+//              `/ossss: `.`         `--------.`                                                                                                                                                           
+//               /ssso. .----..```..-----------                                                                                                                                  ``                        
+//               -ss+``-----------------------.                  ssss       -/++/`              /ss-                                     ./++/-      //+//             oss       `oss-                       
+//              `os+ `----------------.......--`                 sssss:    `sssss.              +ss-                                     -sssss`    :sssss             sss        /++`                       
+//    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +ss-  `---  `-::::.  `-:`.::. .::::-     -ss/ss+   `ss:sss  `-::::-`   sss   .--. ---  .-- -:::-    .::::---.
+//   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +ss- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -ss:/ss-  +ss`sss  ooo+osss-  sss  :ss+` oss. ossooosss+ `oso//osso/
+//  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +ss+/ss+` :ss+-.-+ss.-sss-```sss/-.`     -ss:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+ 
+// .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +ssooss:  +sso+++ooo`-ss+    ./+osso:    -ss: -ss-+so  sss `+ss++oss+  sss+sss.   oss. oss.   sss``oss++oso. 
+// :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +ss:`+ss/`-sso-.`..- -ss+   `.```:sso    -ss:  +soss.  sss /ss+``:sso.`sss`-sss-  oss. oss.   sss``oso:::.`  
+//   `-+ssssssss.                               .--------`       ss+   +sso`  /ss.  +ssso++sss: /ss- `/ss+.-+sssooo+ .ss+   .osoosso-    -ss:  `sss/   oso .ossoo+osso.sss  .+ss/ oss` +ss.   oss`.sssoooo+:`
+//    `+sssssss.                              ` .------`        ```   ````   ```   `...` ... ```     ````  `....`   ```    `....``      ```   ```    ```  `...` `..` ```    ``` ```  ```    ``` +ss---:/sso
+//     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
+//      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
+//    `..``-+ssss:                            `---` .----`         `.-::::-` .//-                                                                                                                  ````    
+// `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:                                                                                                                          
+// `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`                                                                         
+//  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`                                                                       
+//   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:sss :ss:``:ss/.:ss/..-sso                                                                       
+//            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `sss -ss+--/ss: ssso+++sss                                                                       
+//              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   sss `+ssooo/-  oss/-.....                                                                       
+//               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   sss -sso/:::-` .oss+///+:                                                                       
+//               .----..``````......-----------                    .://+//:` .::.   .::` .://:.-//:`-::`   ::: :ss+++ooss: `-:////-`                                                                       
+//               .`````....`        ``--------.`                                                              `sso````.sso                                                                                 
+//                  ``..-.            `-...``                                                                  /ossoooss+.                                                                                 
+//                                                                                                             `..--..`                                                                                                                                                                                                                                                                                                                                                                                                    
 //
 //                                                                                                  
 //  +++         .+++:    /++++++++/:.     .:/+++++/: .+++/`     .+++/  ++++.      ++++.     `-/++++++/:
@@ -112,7 +91,7 @@
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
-#define CHANGE_DEFAULT_TOLERANCE 0.44             //The tolerance in % for changes between current reading and previous reading ( %100 is max FSRs reading )
+#define CHANGE_DEFAULT_TOLERANCE 3              //The tolerance in changes between current reading and previous reading
 
 //***DON'T CHANGE THESE CONSTANTS***//       
 #define LIPSYNC_MODEL 1                           //LipSync Mouse
@@ -177,6 +156,9 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_buttonMapping5 50                  //int:50,51; 
 #define EEPROM_buttonMapping6 52                  //int:52,53; 
 #define EEPROM_configNumber 54                    //int:54,55; 3 when Bluetooth configured 
+//#define EEPROM_compFactor 56                    //int:56,57;
+#define EEPROM_changeTolerance 58                 //int:58,59;
+#define EEPROM_versionNumber 60                   //int:60,61; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
@@ -211,13 +193,14 @@ _functionList getCursorCalibrationFunction =    {"CA,0","0",&getCursorCalibratio
 _functionList setCursorCalibrationFunction =    {"CA,1","1",&setCursorCalibration};
 
 _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance};
+_functionList setChangeToleranceFunction =      {"CT,1","",&setChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
-_functionList factoryResetFunction =            {"FR,1","0",&factoryReset};
+_functionList factoryResetFunction =            {"FR,1","",&factoryReset};
 
 
 // Declare array of API functions
-_functionList apiFunction[22] = {
+_functionList apiFunction[23] = {
   getModelNumberFunction, 
   getVersionNumberFunction,
   getCursorSpeedFunction,
@@ -236,11 +219,14 @@ _functionList apiFunction[22] = {
   setCursorInitializationFunction,
   getCursorCalibrationFunction,
   setCursorCalibrationFunction,
-  //getChangeToleranceFunction,
+  getChangeToleranceFunction,
+  setChangeToleranceFunction,
   getButtonMappingFunction,
   setButtonMappingFunction,
   factoryResetFunction
   };
+
+
 
 const int cursorParams[11] = {CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED),
 CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
@@ -253,10 +239,12 @@ CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED),
 CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED), 
 CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED), 
 CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
-  
+
+
 //***GLOBAL VARIABLE DECLARATION***//
 
 int g_modelNumber;                                  //Declare LipSync model number variable 
+int g_versionNumber;                                //Declare LipSync version number variable 
 int g_actionButton[INPUT_ACTION_COUNT];             //Sip & Puff action mapping
 
 int   g_rotationAngle = ROTATION_ANGLE;               //Rotation angle variable (degrees)
@@ -283,7 +271,7 @@ int g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax;         //Max FSR values which
 
 float g_xHighYHighRadius, g_xHighYLowRadius, g_xLowYLowRadius, g_xLowYHighRadius; // Squared deadband distance from center
 
-int g_xHighChangeTolerance, g_yHighChangeTolerance, g_xLowChangeTolerance, g_yLowChangeTolerance;       //The tolerance of changes in FSRs readings 
+int g_changeTolerance;                                     //The tolerance of changes in FSRs readings 
 
 float yHighComp = 1.0;
 float yLowComp = 1.0;
@@ -298,7 +286,14 @@ bool g_settingsEnabled = false;                          //Serial input settings
 //-----------------------------------------------------------------------------------//
 
 //***MICROCONTROLLER AND PERIPHERAL MODULES CONFIGURATION***//
-
+// Function   : setup 
+// 
+// Description: This function handles the initialization of variables, pins, methods, libraries. This function only runs once at powerup or reset.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void setup() {
   
   Serial.begin(115200);                           //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
@@ -308,7 +303,7 @@ void setup() {
   Mouse.begin();                                  //Initialize the HID mouse functions
   delay(1000);
   
-  getModelNumber(false);                          //Get LipSync model number; Perform factory reset on initial upload.
+  //getModelNumber(false);                          //Get LipSync model number; Perform factory reset on initial upload.
   delay(10);
   
   setCursorInitialization(false,1);               //Set the Home joystick and generate movement threshold boundaries
@@ -318,7 +313,7 @@ void setup() {
   getCursorCalibration(false);                    //Get FSR Max calibration values 
   delay(10);
   
-  getChangeTolerance(false);                      // Get change tolerance using max FSR readings and default tolerance percentage 
+  g_changeTolerance = getChangeTolerance(false);    // Get change tolerance using max FSR readings and default tolerance 
   delay(10);
   
   getPressureThreshold(false);                    //Get the pressure sensor threshold boundaries
@@ -337,7 +332,7 @@ void setup() {
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
   delay(10);
   
-  getButtonMapping(false); 
+  getButtonMapping(false);                        //Get the input buttons to actions mappings 
   delay(10);
    
   g_rotationAngle = getRotationAngle(false);        //Read the saved rotation angle from EEPROM
@@ -354,7 +349,14 @@ void setup() {
 //-----------------------------------------------------------------------------------//
 
 //***START OF MAIN LOOP***//
-
+// Function   : loop 
+// 
+// Description: This function loops consecutively and responses to changes.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void loop() {
   
   g_settingsEnabled=serialSettings(g_settingsEnabled); //Check to see if setting option is enabled in Lipsync
@@ -377,7 +379,14 @@ void loop() {
 
 
 //*** CURSOR HANDLER FUNCTION***//
-
+// Function   : cursorHandler 
+// 
+// Description: This function handles the cursor movements based on the FSR values/
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void cursorHandler(void) {
 
   
@@ -439,10 +448,10 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   yLow  = analogRead(Y_DIR_LOW_PIN);              
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
-  bool skipChange = abs(xHigh - g_xHighPrev) < g_xHighChangeTolerance 
-                 && abs(xLow  - g_xLowPrev)  < g_xLowChangeTolerance 
-                 && abs(yHigh - g_yHighPrev) < g_yHighChangeTolerance 
-                 && abs(yLow  - g_yLowPrev)  < g_yLowChangeTolerance;
+  bool skipChange = abs(xHigh - g_xHighPrev) < g_changeTolerance 
+                 && abs(xLow  - g_xLowPrev)  < g_changeTolerance 
+                 && abs(yHigh - g_yHighPrev) < g_changeTolerance 
+                 && abs(yLow  - g_yLowPrev)  < g_changeTolerance;
   
   // Store FSR values for next skip check
   g_xHighPrev = xHigh;
@@ -512,6 +521,14 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
 
 
 //***INITIALIZE PINS FUNCTION ***//
+// Function   : initializePins 
+// 
+// Description: This function initializes the input/output pins.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void initializePins(void) {
   pinMode(LED_GREEN_PIN, OUTPUT);                 //Set the LED pin 1 as output(GREEN LED)
   pinMode(LED_RED_PIN, OUTPUT);                   //Set the LED pin 2 as output(RED LED)
@@ -536,28 +553,71 @@ void initializePins(void) {
 
 
 //***GET MODEL NUMBER FUNCTION***//
-
+// Function   : getModelNumber 
+// 
+// Description: This function retrieves the current LipSync firmware model number.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getModelNumber(bool responseEnabled) {
+  
   EEPROM.get(EEPROM_modelNumber, g_modelNumber);
-  if (g_modelNumber != LIPSYNC_MODEL) {              //If the previous firmware was different model then factory reset the settings 
-    factoryReset(false);
-        
-    g_modelNumber = LIPSYNC_MODEL;                   //And store the model number in EEPROM 
+  delay(10);
+  EEPROM.get(EEPROM_versionNumber, g_versionNumber);
+  delay(10);
+
+  if (g_modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
+    factoryReset(false,0);
+    delay(10);
+    
+    g_modelNumber = LIPSYNC_MODEL;                               //And store the model number in EEPROM 
     EEPROM.put(EEPROM_modelNumber, g_modelNumber);
     delay(10);
-  }  
+  } else if (g_versionNumber != LIPSYNC_VERSION) {                   //If the previous firmware was same model but different version then soft reset the settings 
+    factoryReset(false,1);
+    delay(10);
+    
+    g_versionNumber = LIPSYNC_VERSION;                               //And store the version number in EEPROM 
+    EEPROM.put(EEPROM_versionNumber, g_versionNumber);
+    delay(10);
+  } 
   printResponseSingle(responseEnabled,true,true,0,"MN,0",true,LIPSYNC_MODEL);
 
 }
 
 //***GET VERSION FUNCTION***//
-//Returns the LipSync Firmware version defined in the code.
+// Function   : getVersionNumber 
+// 
+// Description: This function retrieves the current LipSync firmware version number.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getVersionNumber(bool responseEnabled) {
+  EEPROM.get(EEPROM_versionNumber, g_versionNumber);
+    if (g_versionNumber != LIPSYNC_VERSION) {                          //If the previous firmware was different model then factory reset the settings 
+    g_versionNumber = LIPSYNC_VERSION;                               //And store the model number in EEPROM 
+    EEPROM.put(EEPROM_versionNumber, g_versionNumber);
+    delay(10);
+  }  
   printResponseSingle(responseEnabled,true,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
 
 //***GET CURSOR SPEED FUNCTION***//
-//
+// Function   : getCursorSpeed 
+// 
+// Description: This function retrieves the current cursor speed level.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 int getCursorSpeed(bool responseEnabled) {
   int speedCounter = SPEED_COUNTER;
   if(API_ENABLED) {
@@ -576,6 +636,16 @@ int getCursorSpeed(bool responseEnabled) {
 }
 
 //***SET CURSOR SPEED FUNCTION***//
+// Function   : setCursorSpeed 
+// 
+// Description: This function sets the current cursor speed level.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputSpeedCounter : bool : The new the cursor speed level.
+// 
+// Return     : void
+//*********************************//
 void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
 
   bool isValidSpeed = true;
@@ -607,6 +677,15 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
 }
 
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
+// Function   : increaseCursorSpeed 
+// 
+// Description: This function increases the cursor speed level by one.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void increaseCursorSpeed(bool responseEnabled) {
   g_cursorSpeedCounter++;
 
@@ -615,6 +694,15 @@ void increaseCursorSpeed(bool responseEnabled) {
 }
 
 //***DECREASE CURSOR SPEED LEVEL FUNCTION***//
+// Function   : decreaseCursorSpeed 
+// 
+// Description: This function decreases the cursor speed level by one.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void decreaseCursorSpeed(bool responseEnabled) {
   g_cursorSpeedCounter--;
 
@@ -634,6 +722,15 @@ float readPressure(void){
 }
 
 //***GET PRESSURE THRESHOLD FUNCTION***//
+// Function   : getPressureThreshold 
+// 
+// Description: This function returns the current pressure threshold in percentage and the nominal pressure [0.0V - 5.0V] multiplied by 100.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getPressureThreshold(bool responseEnabled) {
   
   float pressureNominal = readPressure();
@@ -663,6 +760,16 @@ void getPressureThreshold(bool responseEnabled) {
 }
 
 //***SET PRESSURE THRESHOLD FUNCTION***//
+// Function   : setPressureThreshold 
+// 
+// Description: This function sets the current pressure threshold in percentage.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputPressureThreshold : bool : The new pressure threshold in percentage.
+// 
+// Return     : void
+//*********************************//
 void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
   bool isValidThreshold = true;
   int pressureThreshold = inputPressureThreshold;
@@ -697,7 +804,16 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
 }
 
 //***GET JOYSTICK VALUE FUNCTION***//
-// Return a set of single FSR measurements
+// Function   : getJoystickValue 
+// 
+// Description: This function returns a set of single FSR measurements.
+//              Output format: "JV,0:xHighTemp,xLowTemp,yHighTemp,yLowTemp"
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getJoystickValue(bool responseEnabled) {
   int xHighTemp = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
   int xLowTemp  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
@@ -711,9 +827,17 @@ void getJoystickValue(bool responseEnabled) {
 }
 
 //***GET PRESSURE VALUE FUNCTION***//
-// Returns pressure value in volts * 100
+// Function   : getPressureValue 
+// 
+// Description: This function returns pressure value in volts [0.0V - 5.0V]. The pressure multiplied by 100.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getPressureValue(bool responseEnabled) {
-  
+
   // Measure pressure transducer value [0.0V - 5.0V]
   int tempPressureValue = readPressure() * 100; 
 
@@ -722,6 +846,15 @@ void getPressureValue(bool responseEnabled) {
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
+// Function   : getDebugMode 
+// 
+// Description: This function retrieves the state of debug mode.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : debugState : bool : The current state of debug mode.
+//*********************************//
 bool getDebugMode(bool responseEnabled) {
   bool debugState=DEBUG_MODE;
   int debugIntValue;
@@ -747,6 +880,16 @@ bool getDebugMode(bool responseEnabled) {
 }
 
 //***SET DEBUG MODE STATE FUNCTION***//
+// Function   : setDebugMode 
+// 
+// Description: This function sets the state of debug mode.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inpuDebugState : bool : The new debug mode state ( true = ON , false = OFF )
+// 
+// Return     : void
+//*********************************//
 void setDebugMode(bool responseEnabled,bool inpuDebugState) {
 
   bool isValidDebugState= true;
@@ -776,65 +919,61 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
 }
 
 //***SEND DEBUG DATA FUNCTION***//
+// Function   : sendDebugData 
+// 
+// Description: This function serial prints the debug mode data.
+//              Output format: "LOG:1:xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral"
+//              Output format: "LOG:2:xHighMax,xLowMax,yHighMax,yLowMax"
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void sendDebugData() {
-  /*
+  
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
   delay(100);
-  printResponseMultiple(true,true,true,0,"LOG,1","",4,",",neutralValue);
+  printResponseContinuous("LOG",1,4,",",neutralValue);
   delay(100);
-  printResponseMultiple(true,true,true,0,"LOG,2","",4,",",maxValue);
-  delay(100);
-  */
-  delay(100);
-  Serial.print("LOG,1:"); 
-  Serial.print(g_xHighNeutral); 
-  Serial.print(","); 
-  Serial.print(g_xLowNeutral); 
-  Serial.print(",");
-  Serial.print(g_yHighNeutral); 
-  Serial.print(",");
-  Serial.println(g_yLowNeutral); 
-  delay(100);
-  Serial.print("LOG,2:"); 
-  Serial.print(g_xHighMax); 
-  Serial.print(","); 
-  Serial.print(g_xLowMax); 
-  Serial.print(",");
-  Serial.print(g_yHighMax); 
-  Serial.print(",");
-  Serial.println(g_xHighMax); 
+  printResponseContinuous("LOG",2,4,",",maxValue);
   delay(100);
   
 }
 
 //***SEND RAW DATA FUNCTION***//
-// Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
+// Function   : sendRawData 
+// 
+// Description: This function serial prints the raw mode data.
+//              Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
+// 
+// Parameters :  x : int : The cursor x movement.
+//               y : int : The cursor y movement.
+//               action : int : The cursor button actions.
+//               xUp : int : The xUp FSR value.
+//               xDown : int : The xDown FSR value.
+//               yUp : int : The yUp FSR value.
+//               yDown : int : The yDown FSR value.
+// 
+// Return     : void
+//*********************************//
 void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
-  /*int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
-  printResponseMultiple(true,true,true,0,"RAW,1","",7,",",rawDataValue);
-  */
-  
-  Serial.print("RAW,1:"); 
-  Serial.print(x); 
-  Serial.print(","); 
-  Serial.print(y); 
-  Serial.print(",");
-  Serial.print(action); 
-  Serial.print(":"); 
-  Serial.print(xUp); 
-  Serial.print(","); 
-  Serial.print(xDown); 
-  Serial.print(",");
-  Serial.print(yUp); 
-  Serial.print(",");
-  Serial.println(yDown); 
-  
+  int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
+  printResponseContinuous("RAW",1,7,",",rawDataValue);
 }
 
 //***GET RAW MODE STATE FUNCTION***//
+// Function   : getRawMode 
+// 
+// Description: This function retrieves the state of raw mode.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : rawState : bool : The current state of raw mode.
+//*********************************//
 bool getRawMode(bool responseEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
@@ -858,6 +997,16 @@ bool getRawMode(bool responseEnabled) {
 }
 
 //***SET RAW MODE STATE FUNCTION***//
+// Function   : setRawMode 
+// 
+// Description: This function sets the state of raw mode.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputRawState : bool : The new raw mode state ( true = ON , false = OFF )
+// 
+// Return     : void
+//*********************************//
 void setRawMode(bool responseEnabled,bool inputRawState) {
 
   bool isValidRawState = true;
@@ -881,6 +1030,14 @@ void setRawMode(bool responseEnabled,bool inputRawState) {
 }
 
 //***GET COMP FACTOR VALUES FUNCTION***///
+/// Function   : getCompFactor 
+// 
+// Description: This function retrieves the FSR compensation factors.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void getCompFactor(void) {
 
   int compFactorIsSet;
@@ -922,6 +1079,14 @@ void getCompFactor(void) {
 }
 
 //***SET COMP FACTOR VALUES FUNCTION***///
+/// Function   : setCompFactor 
+// 
+// Description: This function sets the FSR compensation factors.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void setCompFactor(void) {
   
   //#if MAKES_NO_SENSE
@@ -946,19 +1111,35 @@ void setCompFactor(void) {
 }
 
 //***GET CURSOR INITIALIZATION FUNCTION***//
-//Returns the current neutral values of the joystick
+/// Function   : getCursorInitialization 
+// 
+// Description: This function retrieves the FSR Neutral values from joystick Initialization.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getCursorInitialization(bool responseEnabled) {
-  int neutralValue[]={g_xHighNeutral,
-                      g_xLowNeutral,
-                      g_yHighNeutral,
-                      g_yLowNeutral};
+  int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
   printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
   delay(10);  
 }
 
 //***SET CURSOR INITIALIZATION FUNCTION***//
+/// Function   : setCursorInitialization 
 // 
+// Description: This function performs joystick Initialization.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//                mode : int : The comp factor mode used during the joystick Initialization.
+//                             Get comp factors from memory if mode set to 1.
+//                             Set comp factors to memory if mode set to 2.
+// 
+// Return     : void
+//*********************************//
 void setCursorInitialization(bool responseEnabled, int mode) {
 
   ledOn(1); //Turn on Green LED
@@ -998,7 +1179,7 @@ void setCursorInitialization(bool responseEnabled, int mode) {
   EEPROM.get(EEPROM_xLowComp, xLowComp);
   delay(10);
 
-  int neutralValue[]={g_xHighNeutral, g_xLowNeutral, g_yHighNeutral, g_yLowNeutral};
+  int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
   printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
   
@@ -1007,6 +1188,15 @@ void setCursorInitialization(bool responseEnabled, int mode) {
 }
 
 //*** GET CURSOR CALIBRATION FUNCTION***//
+/// Function   : getCursorCalibration 
+// 
+// Description: This function retrieves FSR maximum values from joystick Calibration.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getCursorCalibration(bool responseEnable) {
   
   //Get the max values from Memory 
@@ -1024,7 +1214,7 @@ void getCursorCalibration(bool responseEnable) {
   g_xLowYLowRadius   = CURSOR_DEADBAND*CURSOR_DEADBAND;
   g_xLowYHighRadius  = CURSOR_DEADBAND*CURSOR_DEADBAND;
 
-  int maxValue[]={g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax};
+  int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
   printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
 
@@ -1032,6 +1222,15 @@ void getCursorCalibration(bool responseEnable) {
 }
 
 //*** SET CURSOR CALIBRATION FUNCTION***//
+/// Function   : getCursorCalibration 
+// 
+// Description: This function starts the joystick Calibration.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void setCursorCalibration(bool responseEnabled) {
 
   printResponseSingle(true,responseEnabled,true,0,"CA,1",true,0);  
@@ -1073,7 +1272,7 @@ void setCursorCalibration(bool responseEnabled) {
   delay(10);
 
   ledBlink(5, 250, 3);
-  int maxValue[]={g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax};
+  int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
   printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
 
@@ -1081,26 +1280,75 @@ void setCursorCalibration(bool responseEnabled) {
 }
 
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
-void getChangeTolerance(bool responseEnabled) {
-  g_xHighChangeTolerance = (int)(g_xHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
-  g_xLowChangeTolerance =  (int)(g_xLowMax  * (CHANGE_DEFAULT_TOLERANCE/100.0));
-  g_yHighChangeTolerance = (int)(g_yHighMax * (CHANGE_DEFAULT_TOLERANCE/100.0));
-  g_yLowChangeTolerance =  (int)(g_yLowMax  * (CHANGE_DEFAULT_TOLERANCE/100.0));
-/*
-  int changeTolerance[]={g_xHighChangeTolerance,g_xLowChangeTolerance,g_yHighChangeTolerance,g_yLowChangeTolerance};
-  //int changeToleranceSize = sizeof(changeTolerance) / sizeof(changeTolerance[0]);
+/// Function   : getChangeTolerance 
+// 
+// Description: This function retrieves the current change tolerance.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : tempChangeTolerance : int : The current change tolerance.
+//*********************************//
+int getChangeTolerance(bool responseEnabled) {
+  int tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
+   
+  if(API_ENABLED) {
+    //Get the change tolerance from memory 
+    EEPROM.get(EEPROM_changeTolerance, tempChangeTolerance);
+    delay(10);
+  } else {
+    tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
+  }
+  printResponseSingle(responseEnabled,true,true,0,"CT,0",true,tempChangeTolerance);
 
-  printResponseMultiple(responseEnabled,true,true,0 ,"CT,0","",4,"," ,changeTolerance);
-*/
-  delay(10);
+  delay(5); 
+  return tempChangeTolerance;
+}
+
+//***SET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***///  
+// Function   : setChangeTolerance 
+// 
+// Description: This function sets a new change tolerance [ 0 - 30 ].
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputChangeTolerance : int : The input change tolerance requested.
+// 
+// Return     : void
+//*********************************//
+void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
+
+  bool isValidChangeTolerance = true;
+  
+  if(inputChangeTolerance >= 0 && inputChangeTolerance <=CURSOR_DEADBAND) {
+    g_changeTolerance = inputChangeTolerance;                           //update value to global variable
+    EEPROM.put(EEPROM_changeTolerance, g_changeTolerance);                // Update value to memory from serial input
+    delay(10);
+    if(!API_ENABLED) {g_changeTolerance = CHANGE_DEFAULT_TOLERANCE; }    //Use default change tolerance if bad serial input
+    isValidChangeTolerance = true;
+  } else {
+    isValidChangeTolerance = false;
+  }
+  delay(5);
+  int responseCode=0;
+  (isValidChangeTolerance) ? responseCode = 0 : responseCode = 2;
+  
+  printResponseSingle(responseEnabled,true,true,responseCode,"CT,1",true,inputChangeTolerance); 
+
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
-//Retrieve button mapping
+// Function   : getButtonMapping 
+// 
+// Description: This function retrieves a new input button action mapping.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : void
+//*********************************//
 void getButtonMapping(bool responseEnabled) {
-  bool isValidMapping = true;
-  //memcpy(g_actionButton, BUTTON_MAPPING, INPUT_ACTION_COUNT);     //Copy the default sip and puff button action mapping
-  
+  bool isValidMapping = true;  
   if (API_ENABLED) {
     for (int i = 0; i < INPUT_ACTION_COUNT; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
@@ -1123,18 +1371,25 @@ void getButtonMapping(bool responseEnabled) {
       }
     }   
   }
-  //int buttonMappingSize = sizeof(g_actionButton) / sizeof(g_actionButton[0]);
-
   printResponseMultiple(responseEnabled,true,true,0,"MP,0","",6 ,"",g_actionButton);
 
   delay(5); 
 }
 
 //***SET BUTTON MAPPING FUNCTION***//
+// Function   : setButtonMapping 
+// 
+// Description: This function sets a new input button action mapping.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputButtonMapping : int array : The input button action mapping requested.
+// 
+// Return     : void
+//*********************************//
 void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
   
   bool isValidMapping = true;
-  
   
    for(int i = 0; i < INPUT_ACTION_COUNT; i++){           // Check each action for validity
     if(inputButtonMapping[i] < 0 || inputButtonMapping[i] > 7) {     // Up to 8 input actions but 6 available 
@@ -1155,13 +1410,21 @@ void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
    delay(5);
   int responseCode=0;
   (isValidMapping) ? responseCode = 0 : responseCode = 2;
-  //int buttonMappingSize = sizeof(inputButtonMapping) / sizeof(inputButtonMapping[0]);
   printResponseMultiple(responseEnabled,true,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
 
   delay(5); 
 }
 
 //***GET ROTATION ANGLE FUNCTION***///
+// Function   : getRotationAngle 
+// 
+// Description: This function gets the current rotation angle ( 0,90,180,270,360)
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+// 
+// Return     : tempRotationAngle : int : The current rotation angle ( 0,90,180,270,360)
+//*********************************//
 int getRotationAngle(bool responseEnabled) {
   int tempRotationAngle = ROTATION_ANGLE;
    
@@ -1180,13 +1443,23 @@ int getRotationAngle(bool responseEnabled) {
 }
 
 //***SET ROTATION ANGLE FUNCTION***///  
-void setRotationAngle(bool responseEnabled, int inputRotationAngle) {
+// Function   : setRotationAngle 
+// 
+// Description: This function sets a new rotation angle ( 0,90,180,270,360)
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               inputRotationAngle : int : The input rotation angle ( 0,90,180,270,360) requested.
+// 
+// Return     : void
+//*********************************//
+void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
 
   bool isValidRotationAngle = true;
   
   if(inputRotationAngle >= 0 && inputRotationAngle <=360) {
-    g_rotationAngle = inputRotationAngle; // Update value to global variable
-    EEPROM.put(EEPROM_rotationAngle, g_rotationAngle); // Update value to memory from serial input
+    g_rotationAngle = inputRotationAngle;                     //update value to global variable
+    EEPROM.put(EEPROM_rotationAngle, g_rotationAngle);        // Update value to memory from serial input
     delay(10);
     
     if(!API_ENABLED) {
@@ -1202,15 +1475,21 @@ void setRotationAngle(bool responseEnabled, int inputRotationAngle) {
   int responseCode=0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,g_rotationAngle); 
+  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,inputRotationAngle); 
   
   updateRotationAngle(); // Update rotation transform
 
 }
 
 //***UPDATE ROTATION ANGLES FUNCTION***///
-// This function updates the rotation matrix elements based on the rotation angle.
-// This function should be called whenever the rotation angle is updated.
+// Function   : updateRotationAngle 
+// 
+// Description: This function updates global rotation angles.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//***************************//
 void updateRotationAngle(void){
   
   //Convert rotation angle from degrees to radians
@@ -1224,18 +1503,45 @@ void updateRotationAngle(void){
   
 }
 
-
-
 //***FACTORY RESET FUNCTION***//
-void factoryReset(bool responseEnabled) { 
-           
-  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
-  delay(10);
+// Function   : factoryReset 
+// 
+// Description: This function performs factory reset. It can perform a soft or hard reset.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               resetType : int : The reset type ( 0 = hard reset, 1 = soft reset)
+// 
+// Return     : void
+//***************************//
+void factoryReset(bool responseEnabled, int resetType) { 
+
+  bool isValidResetType = true;
+  int responseCode = 0;
   
+  if (resetType == 0 || resetType == 1) {
+    isValidResetType = true;
+    responseCode = 0;
+  } else {
+     isValidResetType = false;
+     responseCode = 2;
+  }
+  
+  if (resetType==0){                                                    //Reset following settings only if a factory reset is performed 
   setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
   delay(10);
   
+  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
+  delay(10);
+  }
+  
+  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
+  delay(10);
+  
   setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
+  delay(10);
+
+  setChangeTolerance(false, CHANGE_DEFAULT_TOLERANCE);                  //set default change tolerance 
   delay(10);
   
   setDebugMode(false,DEBUG_MODE);                                       //set default debug mode
@@ -1243,9 +1549,6 @@ void factoryReset(bool responseEnabled) {
   
   setRawMode(false,RAW_MODE);                                           //set default button mapping
   delay(10);  
-  
-  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
-  delay(10);
   
   //Set the default values
   g_cursorSpeedCounter = SPEED_COUNTER; 
@@ -1257,7 +1560,7 @@ void factoryReset(bool responseEnabled) {
   getCompFactor();                                          
   delay(10);
       
-  printResponseSingle(responseEnabled,true,true,0,"FR,1",true,0);
+  printResponseSingle(responseEnabled,true,true,responseCode,"FR,1",true,resetType);
 
   delay(5); 
    
@@ -1265,6 +1568,16 @@ void factoryReset(bool responseEnabled) {
 }
 
 //***SERIAL SETTINGS FUNCTION TO CHANGE SPEED AND COMMUNICATION MODE USING SOFTWARE***//
+// Function   : serialSettings 
+// 
+// Description: This function confirms if serial settings should be enabled.
+//              It returns true if it's in the settings mode and is waiting for a command.
+//              It returns false if it's not in the settings mode or it needs to exit the settings mode.
+// 
+// Parameters :  enabled : bool : The input flag
+// 
+// Return     : bool
+//*************************************************************************************//
 bool serialSettings(bool enabled) {
 
     String commandString = "";  
@@ -1298,8 +1611,17 @@ bool serialSettings(bool enabled) {
 }
 
 //***VALIDATE INPUT COMMAND FORMAT FUNCTION***//
-// This function confirms command string has correct format.
-bool isValidCommandFormat (String inputCommandString) {
+// Function   : isValidCommandFormat 
+// 
+// Description: This function confirms command string has correct format.
+//              It returns true if the string has a correct format.
+//              It returns false if the string doesn't have a correct format.
+// 
+// Parameters :  inputCommandString : String : The input string
+// 
+// Return     : boolean
+//***********************************************//
+bool isValidCommandFormat(String inputCommandString) {
   bool isValidFormat = false;;
   if ((inputCommandString.length()==(6) || //XX,d:d
        inputCommandString.length()==(7) || //XX,d:dd
@@ -1311,6 +1633,16 @@ bool isValidCommandFormat (String inputCommandString) {
 }
 
 //***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
+// Function   : isValidCommandParameter 
+// 
+// Description: This function checks if the input string is a valid command parameters. 
+//              It returns true if the string includes valid parameters.
+//              It returns false if the string includes invalid parameters.
+// 
+// Parameters :  inputParamterString : String : The input string
+// 
+// Return     : boolean
+//*************************************************//
 bool isValidCommandParameter(String inputParamterString) {
   if (isStrNumber(inputParamterString)){ 
     return true;
@@ -1319,7 +1651,16 @@ bool isValidCommandParameter(String inputParamterString) {
 }
 
 //***CHECK IF STRING IS A NUMBER FUNCTION***//
-// This function checks if the input string is a number. It returns 
+// Function   : isStrNumber 
+// 
+// Description: This function checks if the input string is a number. 
+//              It returns true if the string includes all numeric characters.
+//              It returns false if the string includes a non numeric character.
+// 
+// Parameters :  str : String : The input string
+// 
+// Return     : boolean
+//******************************************//
 boolean isStrNumber(String str){
   
   for(byte i=0;i<str.length();i++)
@@ -1330,6 +1671,21 @@ boolean isStrNumber(String str){
 }
 
 //***SERIAL PRINT OUT COMMAND RESPONSE WITH SINGLE PARAMETER FUNCTION***//
+// Function   : printResponseSingle 
+// 
+// Description: Serial Print output of the responses from APIs with single parameter as the output 
+// 
+// Parameters :  responseEnabled : bool : Print the response if it's set to true, and skip the response if it's set to false.
+//               apiEnabled : bool : Print the response and indicate if the the function was called via the API if it's set to true. 
+//                                   Print Manual response if the function wasn't called via API.
+//               responseStatus : bool : The response status (SUCCESS,FAIL) 
+//               responseNumber : int : 0,1,2 (Different meanings depending on the responseStatus)
+//               responseCommand : String : The End-Point command which is returned as output.
+//               responseParameterEnabled : bool : Print the parameter if it's set to true, and skip the parameter if it's set to false.
+//               responseParameter : int : The response parameters printed as output.
+// 
+// Return     : void
+//***********************************************************************//
 void printResponseSingle(bool responseEnabled,bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand,bool responseParameterEnabled,int responseParameter) {
   if(responseEnabled) {
     
@@ -1353,7 +1709,23 @@ void printResponseSingle(bool responseEnabled,bool apiEnabled, bool responseStat
 }
 
 //***SERIAL PRINT OUT COMMAND RESPONSE WITH MULTIPLE PARAMETERS FUNCTION***//
-// Outputs a message over serial that contains multiple values passed in an array.
+// Function   : printResponseMultiple 
+// 
+// Description: Serial Print output of the responses from APIs with multiple parameters 
+// 
+// Parameters :  responseEnabled : bool : Print the response if it's set to true, and skip the response if it's set to false.
+//               apiEnabled : bool : Print the response and indicate if the the function was called via the API if it's set to true. 
+//                                   Print Manual response if the function wasn't called via API.
+//               responseStatus : bool : The response status (SUCCESS,FAIL) 
+//               responseNumber : int : 0,1,2 (Different meanings depending on the responseStatus)
+//               responseCommand : String : The End-Point command which is returned as output. 
+//               responsePrefix : String : The prefix to be added before the parameter section of the response. 
+//               responseParameterSize : int : The size of the array which holds output response parameters. 
+//               responseParameterDelimiter : char array : The delimiter used to separate multiple response parameters.
+//               responseParameter : int array : The response parameters printed as output. 
+// 
+// Return     : void
+//************************************************************************************//
 void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, String responsePrefix, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
   if(responseEnabled) {
    
@@ -1376,11 +1748,42 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
   }
 }
 
-
+//***CONTINUOUS SERIAL PRINT OUT COMMAND RESPONSE WITH MULTIPLE PARAMETERS FUNCTION***//
+// Function   : printResponseContinuous 
+// 
+// Description: Serial Print output of the continuous responses from APIs
+// 
+// Parameters :  responseStatus : String : The response to the API call (RAW,LOG)
+//               responseNumber : int : 0,1,2 (Different meanings depending on the responseStatus)
+//               responseParameterSize : int : The size of the array which holds output response parameters 
+//               responseParameterDelimiter : char array : The delimiter used to separate multiple response parameters
+//               responseParameter : int array : The response parameters printed as output 
+// 
+// Return     : void
+//************************************************************************************//
+void printResponseContinuous(String responseStatus, int responseNumber, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
+   
+    Serial.print(responseStatus);
+    Serial.print(",");
+    Serial.print(responseNumber);
+    Serial.print(":");
+    for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
+       Serial.print(responseParameter[parameterIndex]);  
+       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
+    }   
+    Serial.println("");  
+}
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
-// This function processes an input string from the serial and calls the 
-// corresponding API function, or outputs an error.
+// Function   : performCommand 
+// 
+// Description: This function takes processes an input string from the serial and calls the 
+//              corresponding API function, or outputs an error.
+// 
+// Parameters :  inputString : String : The input command as a string.
+// 
+// Return     : void
+//*********************************//
 void performCommand(String inputString) {
   int inputCommandIndex = inputString.indexOf(':');
   
@@ -1444,8 +1847,15 @@ void performCommand(String inputString) {
 }
 
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
-//This function handles reads the button states and either increases cursor speed, decreases
-//cursor speed, or initiates joystick calibration routine. 
+// Function   : pushButtonHandler 
+// 
+// Description: This function handles the push button actions.
+// 
+// Parameters :  switchUpPin : int : The state of switch up pin.
+//               switchDownPin : int : The state of switch down pin.
+// 
+// Return     : void
+//*********************************//
 void pushButtonHandler(int switchUpPin, int switchDownPin) {
     //Cursor speed control push button functions below
   if (digitalRead(switchUpPin) == LOW) {
@@ -1472,8 +1882,14 @@ void pushButtonHandler(int switchUpPin, int switchDownPin) {
 }
 
 //***SIP AND PUFF ACTION HANDLER FUNCTION***//
-// This function reads the pressure, determines if it beyond the threshold and then intiates an
-// appropriate action depending on the length of activation.
+// Function   : sipAndPuffHandler 
+// 
+// Description: This function handles the sip and puff actions using input button mapping.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void sipAndPuffHandler() {
   //Read pressure sensor for sip and puff functions
   g_cursorPressure = readPressure();   // [0.0V - 5.0V]
@@ -1530,8 +1946,17 @@ void sipAndPuffHandler() {
   } //end sip handling
 }
 
-//***SIP AND PUFF ACTION RAW HANDLER FUNCTION***//
-// Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is detected
+////***SIP AND PUFF RAW HANDLER FUNCTION***//
+// Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is deteced
+// Function   : sipAndPuffRawHandler 
+// 
+// Description: This function handles the sip and puff raw actions.
+//               Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is deteced           
+// 
+// Parameters :  void
+// 
+// Return     : currentAction : int : The return raw action value for sip apuff actions ( Neutral = 0, 1 = Puff, 2 = Sip)
+//*********************************//
 int sipAndPuffRawHandler() {
   
   int currentAction = 0;
@@ -1553,8 +1978,15 @@ int sipAndPuffRawHandler() {
   return currentAction;
 }
 
-//***PERFORM BUTTON ACTION FUNCTION**//
-// This functions cancels any current mouse actions
+////***CLEAR BUTTON ACTION FUNCTION***//
+// Function   : clearButtonAction 
+// 
+// Description: This function clears or releases active cursor button actions.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
 void clearButtonAction(){
   ledClear(); // Turn of status LEDs
   if (Mouse.isPressed(MOUSE_LEFT)) {
@@ -1566,7 +1998,14 @@ void clearButtonAction(){
 }
 
 //***PERFORM BUTTON ACTION FUNCTION**//
-// Perform mapped output actions (e.g. left click) based on input action (e.g. short puff)
+// Function   : performButtonAction 
+// 
+// Description: This function perform mapped output actions (e.g. left click) based on input action (e.g. short puff)
+// 
+// Parameters : outputAction : int : The output action number used to map sip and puff inputs.
+// 
+// Return     : void 
+//*********************************//
 void performButtonAction(int outputAction) {
     switch (outputAction) {
       case OUTPUT_NOTHING: {
@@ -1643,9 +2082,14 @@ void performButtonAction(int outputAction) {
 }
 
 //***LED ON FUNCTION***//
-// This function is used to turn LEDs on
-// 1: Turn green on
-// 2: Turn red on
+// Function   : ledOn 
+// 
+// Description: This function is used to turn LEDs on.
+//
+// Parameters : ledNumber : int : The led number (1: Turn green on , 2: Turn red on).
+// 
+// Return     : void 
+//*********************************//
 void ledOn(int ledNumber) {
   switch (ledNumber) {
     case 1: { //Turn GREEN LED on
@@ -1664,19 +2108,32 @@ void ledOn(int ledNumber) {
 }
 
 //***LED CLEAR FUNCTION***//
-//Turns off both LEDs
+// Function   : ledClear 
+// 
+// Description: This function is used to turns both LEDs off.
+//
+// Parameters : void
+// 
+// Return     : void 
+//*********************************//
 void ledClear(void) {
   digitalWrite(LED_GREEN_PIN, LOW);
   digitalWrite(LED_RED_PIN, LOW);
 }
 
 //***LED BLINK FUNCTION***//
-// This functions blinks the LEDs.
-//1 - flash green
-//2 - flash red
-//3 - alternate
+// Function   : ledBlink 
+// 
+// Description: This function blinks the LEDs.
+//
+// Parameters : numBlinks : int : The number of LED blinks.
+//              delayBlinks : int : The delay for each LED blink.
+//              ledNumber : int : The led number (1: Flash green, 2: Flash red, 3: Alternate).
+// 
+// Return     : void 
+//*********************************//
 void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
- // if (numBlinks < 0) numBlinks *= -1; //TODO is this error checking?
+  if (numBlinks < 0) numBlinks *= -1; //todo is this error checking?
 
   switch (ledNumber) {
     case 1: { //Flash green
@@ -1710,12 +2167,24 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
         }
         break;
       }
+//    case 6: { // Turn LEDs off.   //todo this does not appear to be used and is redundant with ledClear()
+//        digitalWrite(LED_GREEN_PIN, LOW);
+//        digitalWrite(LED_RED_PIN, LOW);
+//        break;
+//      }
   }
 }
 
 //***FORCE DISPLAY OF CURSOR***//
-// This function slighlty moves the cursor, which causes the cursor to appear on mobile 
-// devices. Called during initialization.
+// Function   : forceCursorDisplay 
+// 
+// Description: This function slighlty moves the cursor, which causes the cursor to appear on mobile 
+//              devices. Called during initialization.
+//
+// Parameters : void
+// 
+// Return     : void 
+//******************************//
 void forceCursorDisplay(void) {
   Mouse.move(1, 0, 0);
   delay(5);
@@ -1725,6 +2194,14 @@ void forceCursorDisplay(void) {
 
 
 //***SECONDARY ACTION FUNCTION SELECTION***//
+// Function   : secondaryAction 
+// 
+// Description: This function performs sip and puff secondary action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
 void secondaryAction(void) {
   while (1) {
     bool outputMouse = false;
@@ -1760,7 +2237,15 @@ void secondaryAction(void) {
 }
 
 //***ROTATE CURSOR FUNCTION ***//
-//This function applies a rotation to the two input coordinates using the global variable angles.
+// Function   : cursorSwipe 
+// 
+// Description: This function applies a rotation to the two input coordinates using the global variable angles.
+//
+// Parameters : xCursor : int : the input x cursor value.
+//              yCursor : int : the input y cursor value.
+// 
+// Return     : void 
+//********************//
 void rotateCursor(int &xCursor, int &yCursor){
 
   //Apply rotation matrix to inputs
@@ -1781,9 +2266,27 @@ void moveCursor(const int xCursor, const int yCursor, const int wheel){
 
 }
 
+/*
+void moveCursor(int xCursor, int yCursor, int wheel){
+  
+  // Apply rotation transform to inputs
+  int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
+  int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
 
+  // Output transformed mouse movement
+  Mouse.move(uCursor, vCursor, wheel);                
+
+}*/
 
 //***SWIPE FUNCTION***//
+// Function   : cursorSwipe 
+// 
+// Description: This function performs cursor swipe action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//********************//
 void cursorSwipe(void) {
   
   for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
@@ -1796,14 +2299,29 @@ void cursorSwipe(void) {
 }
 
 //***CURSOR MIDDLE CLICK FUNCTION***//
+// Function   : cursorMiddleClick 
+// 
+// Description: This function performs cursor middle click action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
 void cursorMiddleClick(void) {
   Mouse.click(MOUSE_MIDDLE);
-  // delay(125); //TODO unnecessary delay
+  // delay(125); //todo unnecessary delay
 }
 
 //***CURSOR SCROLL FUNCTION***//
-// This function is an operating mode that converts vertical joystick movements into
-// mouse wheel scrolling.
+// Function   : cursorScroll 
+// 
+// Description: This function is an operating mode that converts vertical joystick movements into
+//              mouse wheel scrolling.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
 void cursorScroll(void) {
  
   while (1) { //continue in scroll mode until released by a sip or a puff input
@@ -1836,11 +2354,29 @@ void cursorScroll(void) {
      }
         
     
-  }
+    } //end check joystick deadband
+    /*
+    else if ((scrollRelease > sipThreshold) || (scrollRelease < puffThreshold)) { // if sip or puff, stop scroll mode
+      break;
+    }
+    */
+        
+    delay(CURSOR_DELAY);
+
 }
 
 //***FSR CURSOR MOVEMENT MODIFIER FUNCTION***//
-// Converts FSR voltage readings into mouse cursor movements
+// Function   : cursorModifier 
+// 
+// Description: This function converts FSR voltage readings into mouse cursor movements.
+//
+// Parameters : rawValue : const int : raw FSR value.
+//              neutralValue : const int : neutral FSR value.
+//              maxValue : constint : maximum FSR value.
+//              compValue : float : FSR compensation value.
+// 
+// Return     : cursorOutput : int : The modified cursor value. 
+//****************************************//
 int cursorModifier(const int rawValue, const int neutralValue, const int maxValue, float compValue) {
   int cursorOutput = 0;
   
