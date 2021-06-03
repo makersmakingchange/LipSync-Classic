@@ -1245,7 +1245,7 @@ int getChangeTolerance(bool responseEnabled) {
 //***SET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***///  
 // Function   : setChangeTolerance 
 // 
-// Description: This function sets a new change tolerance ( 0-30 ).
+// Description: This function sets a new change tolerance [ 0 - 30 ].
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
