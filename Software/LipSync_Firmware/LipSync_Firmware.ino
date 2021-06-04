@@ -17,10 +17,10 @@
 // `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:                                                                                                                          
 // `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`                                                                         
 //  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`                                                                       
-//   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:sss :ss:``:ss/.:ss/..-sso                                                                       
-//            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `sss -ss+--/ss: ssso+++sss                                                                       
-//              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   sss `+ssooo/-  oss/-.....                                                                       
-//               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   sss -sso/:::-` .oss+///+:                                                                       
+//   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:s1s :ss:``:ss/.:ss/..-sso                                                                       
+//            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `s9s -ss+--/ss: ssso+++sss                                                                       
+//              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   s8s `+ssooo/-  oss/-.....                                                                       
+//               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   s4s -sso/:::-` .oss+///+:                                                                       
 //               .----..``````......-----------                    .://+//:` .::.   .::` .://:.-//:`-::`   ::: :ss+++ooss: `-:////-`                                                                       
 //               .`````....`        ``--------.`                                                              `sso````.sso                                                                                 
 //                  ``..-.            `-...``                                                                  /ossoooss+.                                                                                 
@@ -161,7 +161,7 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_versionNumber 60                   //int:60,61; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
-typedef void (*FunctionPointer)(bool,int);        //Type definition for API function pointer
+typedef void (*FunctionPointer)(bool,bool,int);        //Type definition for API function pointer
 
 typedef struct {                                  //Type definition for API function list
   String _command;                                //Unique two character command code
@@ -298,44 +298,44 @@ void setup() {
   
   Serial.begin(115200);                           //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
   
-  initializePins();                               //Initialize Arduino input and output pins
+  initializePins();                                       //Initialize Arduino input and output pins
 
-  Mouse.begin();                                  //Initialize the HID mouse functions
+  Mouse.begin();                                          //Initialize the HID mouse functions
   delay(1000);
   
-  getModelNumber(false);                          //Get LipSync model number; Perform factory reset on initial upload.
+  getModelNumber(false, false);                            //Get LipSync model number; Perform factory reset on initial upload.
   delay(10);
   
-  setCursorInitialization(false,1);               //Set the Home joystick and generate movement threshold boundaries
-  delay(10);                                      //TODO - may want to change to 2 so we trigger reset of comp values 
-                                                  //   based on new neutral position
+  setCursorInitialization(false, false, 1);                //Set the Home joystick and generate movement threshold boundaries
+  delay(10);                                              //TODO - may want to change to 2 so we trigger reset of comp values 
+                                                          //   based on new neutral position
   
-  getCursorCalibration(false);                    //Get FSR Max calibration values 
+  getCursorCalibration(false, false);                     //Get FSR Max calibration values 
   delay(10);
   
-  g_changeTolerance = getChangeTolerance(false);    // Get change tolerance using max FSR readings and default tolerance 
+  g_changeTolerance = getChangeTolerance(false, false);    // Get change tolerance using max FSR readings and default tolerance 
   delay(10);
   
-  getPressureThreshold(false);                    //Get the pressure sensor threshold boundaries
+  getPressureThreshold(false, false);                     //Get the pressure sensor threshold boundaries
   delay(10);
   
-  g_debugModeEnabled = getDebugMode(false);         //Get the debug mode state
+  g_debugModeEnabled = getDebugMode(false, false);         //Get the debug mode state
   delay(10);
   
-  g_rawModeEnabled = getRawMode(false);             //Get the raw mode state
+  g_rawModeEnabled = getRawMode(false, false);             //Get the raw mode state
   delay(50); 
   
-  getCompFactor();                                //Get the default values that are stored in EEPROM
+  getCompFactor();                                         //Get the default values that are stored in EEPROM
   delay(10);
   
-  g_cursorSpeedCounter = getCursorSpeed(false);     //Read the saved cursor speed parameter from EEPROM
+  g_cursorSpeedCounter = getCursorSpeed(false, false);     //Read the saved cursor speed parameter from EEPROM
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
   delay(10);
   
-  getButtonMapping(false);                        //Get the input buttons to actions mappings 
+  getButtonMapping(false, false);                         //Get the input buttons to actions mappings 
   delay(10);
    
-  g_rotationAngle = getRotationAngle(false);        //Read the saved rotation angle from EEPROM
+  g_rotationAngle = getRotationAngle(false, false);        //Read the saved rotation angle from EEPROM
   updateRotationAngle();
   delay(10);
 
@@ -558,10 +558,12 @@ void initializePins(void) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getModelNumber(bool responseEnabled) {
+void getModelNumber(bool responseEnabled, bool apiEnabled) {
   
   EEPROM.get(EEPROM_modelNumber, g_modelNumber);
   delay(10);
@@ -569,21 +571,21 @@ void getModelNumber(bool responseEnabled) {
   delay(10);
 
   if (g_modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
-    factoryReset(true,0);
+    factoryReset(responseEnabled, apiEnabled, 0);
     delay(10);
     
     g_modelNumber = LIPSYNC_MODEL;                               //And store the model number in EEPROM 
     EEPROM.put(EEPROM_modelNumber, g_modelNumber);
     delay(10);
   } else if (g_versionNumber != LIPSYNC_VERSION) {                   //If the previous firmware was same model but different version then soft reset the settings 
-    factoryReset(true,1);
+    factoryReset(responseEnabled, apiEnabled, 1);
     delay(10);
     
     g_versionNumber = LIPSYNC_VERSION;                               //And store the version number in EEPROM 
     EEPROM.put(EEPROM_versionNumber, g_versionNumber);
     delay(10);
   } 
-  printResponseSingle(responseEnabled,true,true,0,"MN,0",true,LIPSYNC_MODEL);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"MN,0",true,LIPSYNC_MODEL);
 
 }
 
@@ -594,17 +596,19 @@ void getModelNumber(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getVersionNumber(bool responseEnabled) {
+void getVersionNumber(bool responseEnabled, bool apiEnabled) {
   EEPROM.get(EEPROM_versionNumber, g_versionNumber);
     if (g_versionNumber != LIPSYNC_VERSION) {                          //If the previous firmware was different model then factory reset the settings 
     g_versionNumber = LIPSYNC_VERSION;                               //And store the model number in EEPROM 
     EEPROM.put(EEPROM_versionNumber, g_versionNumber);
     delay(10);
   }  
-  printResponseSingle(responseEnabled,true,true,0,"VN,0",true,LIPSYNC_VERSION);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
 
 //***GET CURSOR SPEED FUNCTION***//
@@ -614,10 +618,12 @@ void getVersionNumber(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-int getCursorSpeed(bool responseEnabled) {
+int getCursorSpeed(bool responseEnabled, bool apiEnabled) {
   int speedCounter = SPEED_COUNTER;
   if(API_ENABLED) {
     EEPROM.get(EEPROM_speedCounter, speedCounter);
@@ -629,7 +635,7 @@ int getCursorSpeed(bool responseEnabled) {
     }
   } 
 
-  printResponseSingle(responseEnabled,true,true,0,"SS,0",true,speedCounter);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"SS,0",true,speedCounter);
 
   return speedCounter;
 }
@@ -641,11 +647,13 @@ int getCursorSpeed(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputSpeedCounter : bool : The new the cursor speed level.
 // 
 // Return     : void
 //*********************************//
-void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
+void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter) {
 
   bool isValidSpeed = true;
   if(inputSpeedCounter >= 0 && inputSpeedCounter <= 10){ //Check if inputSpeedCounter is valid
@@ -671,7 +679,7 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
   
   int responseCode=0;
   (isValidSpeed) ? responseCode = 0 : responseCode = 2;
-  printResponseSingle(responseEnabled,false,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
+  printResponseSingle(responseEnabled,apiEnabled,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
   delay(5); 
 }
 
@@ -682,13 +690,15 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void increaseCursorSpeed(bool responseEnabled) {
+void increaseCursorSpeed(bool responseEnabled, bool apiEnabled) {
   g_cursorSpeedCounter++;
 
-  setCursorSpeed(responseEnabled, g_cursorSpeedCounter);
+  setCursorSpeed(responseEnabled, apiEnabled, g_cursorSpeedCounter);
   delay(5);
 }
 
@@ -699,19 +709,29 @@ void increaseCursorSpeed(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void decreaseCursorSpeed(bool responseEnabled) {
+void decreaseCursorSpeed(bool responseEnabled, bool apiEnabled) {
   g_cursorSpeedCounter--;
 
-  setCursorSpeed(responseEnabled, g_cursorSpeedCounter);
+  setCursorSpeed(responseEnabled, apiEnabled, g_cursorSpeedCounter);
 
   delay(5);
 }
 
 
 //***READ PRESSURE***//
+// Function   : readPressure 
+// 
+// Description: This function returns a single pressure sensor value in volts
+// 
+// Parameters :  void
+// 
+// Return     : float : The pressure sensor value in volts
+//*********************************//
 // This function returns a single pressure sensor value in volts
 float readPressure(void){
   
@@ -727,10 +747,12 @@ float readPressure(void){
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getPressureThreshold(bool responseEnabled) {
+void getPressureThreshold(bool responseEnabled, bool apiEnabled) {
   
   float pressureNominal = readPressure();
   int pressureThreshold = PRESSURE_THRESHOLD;
@@ -753,7 +775,7 @@ void getPressureThreshold(bool responseEnabled) {
 
   int pressureValue[]={pressureThreshold, pressureNominal*100};
 
-  printResponseMultiple(responseEnabled,true,true,0,"PT,0","",2,":",pressureValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"PT,0","",2,":",pressureValue);
   
   delay(5); 
 }
@@ -765,11 +787,13 @@ void getPressureThreshold(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputPressureThreshold : bool : The new pressure threshold in percentage.
 // 
 // Return     : void
 //*********************************//
-void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
+void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressureThreshold) {
   bool isValidThreshold = true;
   int pressureThreshold = inputPressureThreshold;
   float pressureNominal = readPressure(); // Read neutral pressure transducer analog value [0.0V - 5.0V]
@@ -797,7 +821,7 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
 
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,true,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
+  printResponseMultiple(responseEnabled,apiEnabled,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
 
   delay(5); 
 }
@@ -810,10 +834,12 @@ void setPressureThreshold(bool responseEnabled,int inputPressureThreshold) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getJoystickValue(bool responseEnabled) {
+void getJoystickValue(bool responseEnabled, bool apiEnabled) {
   int xHighTemp = analogRead(X_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
   int xLowTemp  = analogRead(X_DIR_LOW_PIN);              //Read analog values of FSR's : A1
   int yHighTemp = analogRead(Y_DIR_HIGH_PIN);             //Read analog values of FSR's : A0
@@ -821,7 +847,7 @@ void getJoystickValue(bool responseEnabled) {
 
   int joystickTempValue[]={xHighTemp,xLowTemp,yHighTemp,yLowTemp};
 
-  printResponseMultiple(responseEnabled,true,true,0,"JV,0","",4,",",joystickTempValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"JV,0","",4,",",joystickTempValue);
 
 }
 
@@ -832,15 +858,17 @@ void getJoystickValue(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getPressureValue(bool responseEnabled) {
+void getPressureValue(bool responseEnabled, bool apiEnabled) {
 
   // Measure pressure transducer value [0.0V - 5.0V]
   int tempPressureValue = readPressure() * 100; 
 
-  printResponseSingle(responseEnabled,true,true,0,"PV,0",true,tempPressureValue);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"PV,0",true,tempPressureValue);
 
 }
 
@@ -851,10 +879,12 @@ void getPressureValue(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : debugState : bool : The current state of debug mode.
 //*********************************//
-bool getDebugMode(bool responseEnabled) {
+bool getDebugMode(bool responseEnabled, bool apiEnabled) {
   bool debugState=DEBUG_MODE;
   int debugIntValue;
   if(API_ENABLED) {
@@ -870,7 +900,7 @@ bool getDebugMode(bool responseEnabled) {
     delay(5);   
   }
 
-  printResponseSingle(responseEnabled,true,true,0,"DM,0",true,debugState);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"DM,0",true,debugState);
 
   if(responseEnabled && debugState){ sendDebugData();}
 
@@ -885,11 +915,13 @@ bool getDebugMode(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inpuDebugState : bool : The new debug mode state ( true = ON , false = OFF )
 // 
 // Return     : void
 //*********************************//
-void setDebugMode(bool responseEnabled,bool inpuDebugState) {
+void setDebugMode(bool responseEnabled, bool apiEnabled, bool inpuDebugState) {
 
   bool isValidDebugState= true;
   if (inpuDebugState==0 || inpuDebugState==1) {
@@ -910,7 +942,7 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
   int responseCode=0;
   (isValidDebugState) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,isValidDebugState,responseCode,"DM,1",true,g_debugModeEnabled);
+  printResponseSingle(responseEnabled, apiEnabled, isValidDebugState, responseCode, "DM,1", true, g_debugModeEnabled);
 
   if(responseEnabled && g_debugModeEnabled){ 
     g_rawModeEnabled = false;
@@ -973,10 +1005,12 @@ void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDow
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : rawState : bool : The current state of raw mode.
 //*********************************//
-bool getRawMode(bool responseEnabled) {
+bool getRawMode(bool responseEnabled, bool apiEnabled) {
   bool rawState=RAW_MODE;
   int rawIntValue;
   
@@ -992,7 +1026,7 @@ bool getRawMode(bool responseEnabled) {
     delay(5);   
   }
 
-  printResponseSingle(responseEnabled,true,true,0,"RM,0",true,rawState);
+  printResponseSingle(responseEnabled, apiEnabled, true, 0, "RM,0", true, rawState);
   
   delay(5); 
   return rawState;
@@ -1005,11 +1039,13 @@ bool getRawMode(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputRawState : bool : The new raw mode state ( true = ON , false = OFF )
 // 
 // Return     : void
 //*********************************//
-void setRawMode(bool responseEnabled,bool inputRawState) {
+void setRawMode(bool responseEnabled, bool apiEnabled, bool inputRawState) {
 
   bool isValidRawState = true;
   if (inputRawState==0 || inputRawState==1) {
@@ -1026,7 +1062,7 @@ void setRawMode(bool responseEnabled,bool inputRawState) {
   int responseCode=0;
   (isValidRawState) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,isValidRawState,responseCode,"RM,1",true,g_rawModeEnabled);
+  printResponseSingle(responseEnabled, apiEnabled, isValidRawState, responseCode, "RM,1", true, g_rawModeEnabled);
   
 if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
 
@@ -1121,13 +1157,15 @@ void setCompFactor(void) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getCursorInitialization(bool responseEnabled) {
+void getCursorInitialization(bool responseEnabled, bool apiEnabled) {
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
-  printResponseMultiple(responseEnabled,true,true,0,"IN,0","",4,",",neutralValue);
+  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "IN,0", "", 4, ",", neutralValue);
   delay(10);  
 }
 
@@ -1138,13 +1176,15 @@ void getCursorInitialization(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//                mode : int : The comp factor mode used during the joystick Initialization.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               mode : int : The comp factor mode used during the joystick Initialization.
 //                             Get comp factors from memory if mode set to 1.
 //                             Set comp factors to memory if mode set to 2.
 // 
 // Return     : void
 //*********************************//
-void setCursorInitialization(bool responseEnabled, int mode) {
+void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode) {
 
   ledOn(1); //Turn on Green LED
 
@@ -1185,7 +1225,7 @@ void setCursorInitialization(bool responseEnabled, int mode) {
 
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
-  printResponseMultiple(true,responseEnabled,true,0,"IN,1","",4,",",neutralValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"IN,1","",4,",",neutralValue);
   
   delay(5); 
   ledClear();
@@ -1198,10 +1238,12 @@ void setCursorInitialization(bool responseEnabled, int mode) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getCursorCalibration(bool responseEnable) {
+void getCursorCalibration(bool responseEnable, bool apiEnabled) {
   
   //Get the max values from Memory 
   EEPROM.get(EEPROM_xHighMax, g_xHighMax);
@@ -1220,7 +1262,7 @@ void getCursorCalibration(bool responseEnable) {
 
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
-  printResponseMultiple(responseEnable,true,true,0,"CA,0","",4,",",maxValue);
+  printResponseMultiple(responseEnable, apiEnabled, true, 0, "CA,0", "", 4, ",", maxValue);
 
   delay(10);
 }
@@ -1232,33 +1274,35 @@ void getCursorCalibration(bool responseEnable) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void setCursorCalibration(bool responseEnabled) {
+void setCursorCalibration(bool responseEnabled, bool apiEnabled) {
 
-  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,0);  
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,0);  
   
   ledBlink(4, 300, 3);
-  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,1);  
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,1);  
   
   ledBlink(6, 500, 1);
   g_yHighMax = analogRead(Y_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,2);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,2);
   
   ledBlink(6, 500, 1);
   g_xHighMax = analogRead(X_DIR_HIGH_PIN);
   ledBlink(1, 1000, 2);
 
-  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,3);  
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,3);  
   
   ledBlink(6, 500, 1);
   g_yLowMax = analogRead(Y_DIR_LOW_PIN);
   ledBlink(1, 1000, 2);
   
-  printResponseSingle(true,responseEnabled,true,0,"CA,1",true,4);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,4);
   
   ledBlink(6, 500, 1);
   g_xLowMax = analogRead(X_DIR_LOW_PIN);
@@ -1278,7 +1322,7 @@ void setCursorCalibration(bool responseEnabled) {
   ledBlink(5, 250, 3);
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
-  printResponseMultiple(true,responseEnabled,true,0,"CA,1","5:",4,",",maxValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"CA,1","5:",4,",",maxValue);
 
   delay(10);
 }
@@ -1290,10 +1334,12 @@ void setCursorCalibration(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : tempChangeTolerance : int : The current change tolerance.
 //*********************************//
-int getChangeTolerance(bool responseEnabled) {
+int getChangeTolerance(bool responseEnabled, bool apiEnabled) {
   int tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
    
   if(API_ENABLED) {
@@ -1303,7 +1349,7 @@ int getChangeTolerance(bool responseEnabled) {
   } else {
     tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
   }
-  printResponseSingle(responseEnabled,true,true,0,"CT,0",true,tempChangeTolerance);
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"CT,0",true,tempChangeTolerance);
 
   delay(5); 
   return tempChangeTolerance;
@@ -1316,11 +1362,13 @@ int getChangeTolerance(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputChangeTolerance : int : The input change tolerance requested.
 // 
 // Return     : void
 //*********************************//
-void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
+void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTolerance) {
 
   bool isValidChangeTolerance = true;
   
@@ -1337,7 +1385,7 @@ void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
   int responseCode=0;
   (isValidChangeTolerance) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
+  printResponseSingle(responseEnabled,apiEnabled,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
 
 }
 
@@ -1348,10 +1396,12 @@ void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
 //*********************************//
-void getButtonMapping(bool responseEnabled) {
+void getButtonMapping(bool responseEnabled, bool apiEnabled) {
   bool isValidMapping = true;  
   if (API_ENABLED) {
     for (int i = 0; i < INPUT_ACTION_COUNT; i++) {                    //Check if it's a valid mapping
@@ -1375,7 +1425,7 @@ void getButtonMapping(bool responseEnabled) {
       }
     }   
   }
-  printResponseMultiple(responseEnabled,true,true,0,"MP,0","",6 ,"",g_actionButton);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"MP,0","",6 ,"",g_actionButton);
 
   delay(5); 
 }
@@ -1387,11 +1437,13 @@ void getButtonMapping(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputButtonMapping : int array : The input button action mapping requested.
 // 
 // Return     : void
 //*********************************//
-void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
+void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapping[]) {
   
   bool isValidMapping = true;
   
@@ -1414,7 +1466,7 @@ void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
    delay(5);
   int responseCode=0;
   (isValidMapping) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,true,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
+  printResponseMultiple(responseEnabled,apiEnabled,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
 
   delay(5); 
 }
@@ -1426,10 +1478,12 @@ void setButtonMapping(bool responseEnabled,int inputButtonMapping[]) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 // 
 // Return     : tempRotationAngle : int : The current rotation angle ( 0,90,180,270,360)
 //*********************************//
-int getRotationAngle(bool responseEnabled) {
+int getRotationAngle(bool responseEnabled, bool apiEnabled) {
   int tempRotationAngle = ROTATION_ANGLE;
    
    if(API_ENABLED) {
@@ -1439,7 +1493,7 @@ int getRotationAngle(bool responseEnabled) {
    } else {
       tempRotationAngle = ROTATION_ANGLE;
    }
-   printResponseSingle(responseEnabled,true,true,0,"RA,0",true,tempRotationAngle);
+   printResponseSingle(responseEnabled,apiEnabled,true,0,"RA,0",true,tempRotationAngle);
 
    delay(5); 
     
@@ -1453,11 +1507,13 @@ int getRotationAngle(bool responseEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               inputRotationAngle : int : The input rotation angle ( 0,90,180,270,360) requested.
 // 
 // Return     : void
 //*********************************//
-void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
+void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAngle) {
 
   bool isValidRotationAngle = true;
   
@@ -1479,7 +1535,7 @@ void setRotationAngle(bool responseEnabled,int inputRotationAngle) {
   int responseCode=0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,true,responseCode,"RA,1",true,inputRotationAngle); 
+  printResponseSingle(responseEnabled,apiEnabled,isValidRotationAngle,responseCode,"RA,1",true,inputRotationAngle); 
   
   updateRotationAngle(); // Update rotation transform
 
@@ -1514,61 +1570,64 @@ void updateRotationAngle(void){
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
 //               resetType : int : The reset type ( 0 = hard reset, 1 = soft reset)
 // 
 // Return     : void
 //***************************//
-void factoryReset(bool responseEnabled, int resetType) { 
+void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) { 
 
   bool isValidResetType = true;
   int responseCode = 0;
   
-  if (resetType == 0 || resetType == 1) {
+  if (resetType == 0 || resetType == 1){                                //Reset following settings only if a factory reset is performed
+     
     isValidResetType = true;
     responseCode = 0;
+
+    if(resetType == 0){
+      setPressureThreshold(false, true, PRESSURE_THRESHOLD);                      //set default pressure threshold
+      delay(10);
+      
+      setButtonMapping(false, true, BUTTON_MAPPING);                               //set default action mapping
+      delay(10);
+    }
+    
+    setCursorSpeed(false, true, SPEED_COUNTER);                                  // set default cursor speed counter
+    delay(10);
+    
+    setRotationAngle(false, true, ROTATION_ANGLE);                              //set default rotation angle
+    delay(10);
+  
+    setChangeTolerance(false, true, CHANGE_DEFAULT_TOLERANCE);                  //set default change tolerance 
+    delay(10);
+    
+    setDebugMode(false, true, DEBUG_MODE);                                       //set default debug mode
+    delay(10);  
+    
+    setRawMode(false, true, RAW_MODE);                                           //set default button mapping
+    delay(10);  
+    
+    //Set the default values
+    g_cursorSpeedCounter = SPEED_COUNTER; 
+    g_cursorMaxSpeed =  cursorParams[g_cursorSpeedCounter];
+    
+    g_debugModeEnabled = DEBUG_MODE;  
+    g_rawModeEnabled = RAW_MODE;
+    
+    getCompFactor();                                   
+    delay(10);
+    
+    ledBlink(2, 250, 1);
   } else {
      isValidResetType = false;
      responseCode = 2;
   }
-  
-  if (resetType==0){                                                    //Reset following settings only if a factory reset is performed 
-  setPressureThreshold(false, PRESSURE_THRESHOLD);                      //set default pressure threshold
-  delay(10);
-  
-  setButtonMapping(false,BUTTON_MAPPING);                               //set default action mapping
-  delay(10);
-  }
-  
-  setCursorSpeed(false,SPEED_COUNTER);                                  // set default cursor speed counter
-  delay(10);
-  
-  setRotationAngle(false, ROTATION_ANGLE);                              //set default rotation angle
-  delay(10);
-
-  setChangeTolerance(false, CHANGE_DEFAULT_TOLERANCE);                  //set default change tolerance 
-  delay(10);
-  
-  setDebugMode(false,DEBUG_MODE);                                       //set default debug mode
-  delay(10);  
-  
-  setRawMode(false,RAW_MODE);                                           //set default button mapping
-  delay(10);  
-  
-  //Set the default values
-  g_cursorSpeedCounter = SPEED_COUNTER; 
-  g_cursorMaxSpeed =  cursorParams[g_cursorSpeedCounter];
-  
-  g_debugModeEnabled = DEBUG_MODE;  
-  g_rawModeEnabled = RAW_MODE;
-  
-  getCompFactor();                                          
-  delay(10);
       
-  printResponseSingle(responseEnabled,true,true,responseCode,"FR,1",true,resetType);
+  printResponseSingle(responseEnabled,apiEnabled,isValidResetType,responseCode,"FR,1",true,resetType);
 
   delay(5); 
-   
-  ledBlink(2, 250, 1);
 }
 
 //***SERIAL SETTINGS FUNCTION TO CHANGE SPEED AND COMMUNICATION MODE USING SOFTWARE***//
@@ -1822,12 +1881,12 @@ void performCommand(String inputString) {
           }
           
           // Call matching API function with input parameter array
-          apiFunction[apiIndex]._function(true, inputParameterArray);
+          apiFunction[apiIndex]._function(true, true, inputParameterArray);
           delay(5);     
         } else {
 
           // Call matching API function with input parameter string
-          apiFunction[apiIndex]._function(true, inputParameterString.toInt());
+          apiFunction[apiIndex]._function(true, true, inputParameterString.toInt());
           delay(5);
         }
       } else { // Invalid input parameter
@@ -1867,9 +1926,9 @@ void pushButtonHandler(int switchUpPin, int switchDownPin) {
     clearButtonAction();
     delay(50);
     if (digitalRead(switchDownPin) == LOW) {
-      setCursorCalibration(false);                      //Call joystick calibration if both push button up and down are pressed 
+      setCursorCalibration(true, false);                      //Call joystick calibration if both push button up and down are pressed 
     } else {
-      increaseCursorSpeed(false);                      //Call increase cursor speed function if push button up is pressed 
+      increaseCursorSpeed(true, false);                      //Call increase cursor speed function if push button up is pressed 
     }
   }
 
@@ -1878,9 +1937,9 @@ void pushButtonHandler(int switchUpPin, int switchDownPin) {
     clearButtonAction();
     delay(50);
     if (digitalRead(switchUpPin) == LOW) {
-      setCursorCalibration(false);                      //Call joystick calibration if both push button up and down are pressed 
+      setCursorCalibration(true, false);                      //Call joystick calibration if both push button up and down are pressed 
     } else {
-      decreaseCursorSpeed(false);                      //Call increase cursor speed function if push button up is pressed 
+      decreaseCursorSpeed(true, false);                      //Call increase cursor speed function if push button up is pressed 
     }
   }
 }
@@ -2069,7 +2128,7 @@ void performButtonAction(int outputAction) {
         clearButtonAction();
         ledClear();
         ledBlink(4, 350, 3); 
-        setCursorInitialization(false,2);
+        setCursorInitialization(true, false, 2);
         delay(5);
         break;
       }
@@ -2078,7 +2137,7 @@ void performButtonAction(int outputAction) {
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
         clearButtonAction();
         ledClear();
-        setCursorCalibration(false);
+        setCursorCalibration(true, false);
         delay(5);
         break;
       }
