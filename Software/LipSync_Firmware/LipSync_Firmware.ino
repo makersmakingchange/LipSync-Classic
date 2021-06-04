@@ -3,13 +3,13 @@
 //              `/ossss: `.`         `--------.`                                                                                                                                                           
 //               /ssso. .----..```..-----------                                                                                                                                  ``                        
 //               -ss+``-----------------------.                  ssss       -/++/`              /ss-                                     ./++/-      //+//             oss       `oss-                       
-//              `os+ `----------------.......--`                 sssss:    `sssss.              +ss-                                     -sssss`    :sssss             sss        /++`                       
-//    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +ss-  `---  `-::::.  `-:`.::. .::::-     -ss/ss+   `ss:sss  `-::::-`   sss   .--. ---  .-- -:::-    .::::---.
-//   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +ss- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -ss:/ss-  +ss`sss  ooo+osss-  sss  :ss+` oss. ossooosss+ `oso//osso/
-//  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +ss+/ss+` :ss+-.-+ss.-sss-```sss/-.`     -ss:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+ 
-// .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +ssooss:  +sso+++ooo`-ss+    ./+osso:    -ss: -ss-+so  sss `+ss++oss+  sss+sss.   oss. oss.   sss``oss++oso. 
-// :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +ss:`+ss/`-sso-.`..- -ss+   `.```:sso    -ss:  +soss.  sss /ss+``:sso.`sss`-sss-  oss. oss.   sss``oso:::.`  
-//   `-+ssssssss.                               .--------`       ss+   +sso`  /ss.  +ssso++sss: /ss- `/ss+.-+sssooo+ .ss+   .osoosso-    -ss:  `sss/   oso .ossoo+osso.sss  .+ss/ oss` +ss.   oss`.sssoooo+:`
+//              `os+ `----------------.......--`                 sssss:    `s400s.              +sH-                                     -sBsss`    :ssBCs             sVs        /++`                       
+//    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +se-  `---  `-::::.  `-:`.::. .::::-     -su/ss+   `ss:sss  `-::::-`   s5s   .--. ---  .-- -:::-    .::::---.
+//   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +sn- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -sr:/ss-  +ss`sss  ooo+osss-  sCs  :ss+` oss. ossooosss+ `oso//osso/
+//  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +sn+/ss+` :Dr+-.-+ss.-sss-```sss/-.`     -sn:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+ 
+// .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +siooss:  +sso+++ooo`-ss+    ./+osso:    -sa: -ss-+so  sss `+ss++oss+  s6s+sss.   oss. oss.   sss``oss++oso. 
+// :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +sn:`+ss/`-sso-.`..- -ss+   `.```:sso    -sb:  +soss.  sss /ss+``:sso.`sBs`-sss-  oss. oss.   sss``oso:::.`  
+//   `-+ssssssss.                               .--------`       ss+   +sso`  /ss.  +3999++sss: /sg- `/ss+.-+sssooo+ .ss+   .osoosso-    -sy:  `sss/   oso .ossoo+osso.s9s  .+ss/ oss` +ss.   oss`.sssoooo+:`
 //    `+sssssss.                              ` .------`        ```   ````   ```   `...` ... ```     ````  `....`   ```    `....``      ```   ```    ```  `...` `..` ```    ``` ```  ```    ``` +ss---:/sso
 //     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
 //      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
@@ -303,7 +303,7 @@ void setup() {
   Mouse.begin();                                  //Initialize the HID mouse functions
   delay(1000);
   
-  //getModelNumber(false);                          //Get LipSync model number; Perform factory reset on initial upload.
+  getModelNumber(false);                          //Get LipSync model number; Perform factory reset on initial upload.
   delay(10);
   
   setCursorInitialization(false,1);               //Set the Home joystick and generate movement threshold boundaries
@@ -404,39 +404,38 @@ void cursorHandler(void) {
   rotateCursor(xCursor, yCursor); //apply transform for mounting angle
  
   if (outputMouse){
-    
-    moveCursor(xCursor, yCursor, 0); //output mouse command
+    (g_rawModeEnabled) ? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
-  } else if(g_rawModeEnabled) {
-    sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-    delay(CURSOR_DELAY);
-  }
+  } 
 
   //Debug information 
   if(g_debugModeEnabled) {
-    /*
-    int debugDataValue[]={xHigh,xLow,yHigh,yLow};
-    printResponseMultiple(true,true,true,0,"LOG,3","",4,",",debugDataValue);
-    */
-    Serial.print("LOG,3:");
-    Serial.print(xHigh);
-    Serial.print(",");
-    Serial.print(xLow);
-    Serial.print(",");
-    Serial.print(yHigh);
-    Serial.print(",");
-    Serial.println(yLow); 
     
+    int debugDataValue[]={xHigh,xLow,yHigh,yLow};
+
+    printResponseContinuous("LOG",3,4,",",debugDataValue);
+
     delay(150);
   }
   
 }
 
-
 //***READ JOYSTICK FUNCTION**//
-// Reads FSR values, checks if values exceed deadband, and calculates 
-// cursor movements. Outputs true if mouse should be moved.
+// Function   : readJoystick 
+// 
+// Description: This function reads the current FSR values, checks if values exceed deadband, and calculates 
+//              cursor movements. Outputs true if mouse should be moved.
+// 
+// Parameters :  xCursor : int : This is the output x cursor value.
+//               yCursor : int : This is the output y cursor value.
+//               xHigh : int : This is the xHigh FSR value.
+//               xLow : int : This is the xLow FSR value.
+//               yHigh : int : This is the yHigh FSR value.
+//               yLow : int : This is the yLow FSR value.
+// 
+// Return     : outputMouse : bool : This variable is used to indicate if mouse values should be outputted or skipped.
+//*********************************//
 bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh, int &yLow){
 
   bool outputMouse = false;
@@ -570,14 +569,14 @@ void getModelNumber(bool responseEnabled) {
   delay(10);
 
   if (g_modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
-    factoryReset(false,0);
+    factoryReset(true,0);
     delay(10);
     
     g_modelNumber = LIPSYNC_MODEL;                               //And store the model number in EEPROM 
     EEPROM.put(EEPROM_modelNumber, g_modelNumber);
     delay(10);
   } else if (g_versionNumber != LIPSYNC_VERSION) {                   //If the previous firmware was same model but different version then soft reset the settings 
-    factoryReset(false,1);
+    factoryReset(true,1);
     delay(10);
     
     g_versionNumber = LIPSYNC_VERSION;                               //And store the version number in EEPROM 
@@ -672,7 +671,7 @@ void setCursorSpeed(bool responseEnabled, int inputSpeedCounter) {
   
   int responseCode=0;
   (isValidSpeed) ? responseCode = 0 : responseCode = 2;
-  printResponseSingle(true,responseEnabled,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
+  printResponseSingle(responseEnabled,false,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
   delay(5); 
 }
 
@@ -913,7 +912,10 @@ void setDebugMode(bool responseEnabled,bool inpuDebugState) {
   
   printResponseSingle(responseEnabled,true,isValidDebugState,responseCode,"DM,1",true,g_debugModeEnabled);
 
-  if(responseEnabled && g_debugModeEnabled){ sendDebugData();}
+  if(responseEnabled && g_debugModeEnabled){ 
+    g_rawModeEnabled = false;
+    sendDebugData();
+    }
   
   delay(5); 
 }
@@ -1026,6 +1028,8 @@ void setRawMode(bool responseEnabled,bool inputRawState) {
   
   printResponseSingle(responseEnabled,true,isValidRawState,responseCode,"RM,1",true,g_rawModeEnabled);
   
+if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
+
   delay(5); 
 }
 
@@ -1333,7 +1337,7 @@ void setChangeTolerance(bool responseEnabled,int inputChangeTolerance) {
   int responseCode=0;
   (isValidChangeTolerance) ? responseCode = 0 : responseCode = 2;
   
-  printResponseSingle(responseEnabled,true,true,responseCode,"CT,1",true,inputChangeTolerance); 
+  printResponseSingle(responseEnabled,true,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
 
 }
 
@@ -1829,7 +1833,7 @@ void performCommand(String inputString) {
       } else { // Invalid input parameter
       
       // Outut error message
-      printResponseSingle(true,true,false,2,"FAIL",false,0);
+      printResponseSingle(true,true,false,2,inputString,false,0);
 
       delay(5);
       }
@@ -1837,7 +1841,7 @@ void performCommand(String inputString) {
     } else if(apiIndex== (totalCommandNumber-1)) { // command doesn’t exist
     
     //Output error message
-    printResponseSingle(true,true,false,1,"FAIL",false,0);
+    printResponseSingle(true,true,false,1,inputString,false,0);
 
     delay(5);
     break;
