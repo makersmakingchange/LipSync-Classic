@@ -157,7 +157,7 @@ This GitHub repository will serve as a database for all files and documentation 
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Hardware/Housing_design/LipSync_Joystick_Stand.STL">LipSync_Joystick_Stand.STL</a></td>
 </tr>
 <tr>
-  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Rear_Housing.stl">LipSync_Rear_Housing.STL</a></td>
+  <td><a href="https://github.com/makersmakingchange/LipSync/raw/master/Hardware/Housing_design/LipSync_Rear_Housing.STL">LipSync_Rear_Housing.STL</a></td>
 </tr>
 <tr>
   <td><a href="https://raw.githubusercontent.com/makersmakingchange/LipSync/master/Hardware/Housing_design/Print_Settings.txt">Print_Settings.txt</a></td>
