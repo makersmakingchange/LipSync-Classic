@@ -74,7 +74,7 @@
 //#define ACTION_SHORT_PUFF   OUTPUT_RIGHT_CLICK     
 //#define ACTION_SHORT_SIP    OUTPUT_LEFT_CLICK        
 
-#define DRAG_SCROLL_DELAY 125                     //The delay used in drag and scroll functions before existing
+#define ACTION_HOLD_DELAY 150                     //The delay used in drag and scroll functions before existing
 
 //***CUSTOMIZABLE VARIABLES***//
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}
@@ -282,7 +282,6 @@ float xLowComp = 1.0;
 bool g_debugModeEnabled;                               //Declare raw and debug enable variable
 bool g_rawModeEnabled;
 bool g_settingsEnabled = false;                          //Serial input settings command mode enabled or disabled 
-
 
 //-----------------------------------------------------------------------------------//
 
@@ -2116,6 +2115,7 @@ void performButtonAction(int outputAction) {
         //Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
         ledOn(1); // Turn on Green LED
         cursorScroll(); //Enter Scroll mode
+        ledClear();
         delay(5);
         break;
       }
@@ -2270,7 +2270,7 @@ void forceCursorDisplay(void) {
 //****************************************//
 void secondaryAction(void) {
   while (1) {
-    //bool outputMouse = false;
+    bool outputMouse = false;
     int xCursor = 0;
     int yCursor = 0;
     int xHigh = 0;
@@ -2357,11 +2357,11 @@ void cursorSwipe(void) {
   
   for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
   Mouse.press(MOUSE_LEFT);
-  delay(DRAG_SCROLL_DELAY);
+  delay(ACTION_HOLD_DELAY);
 
   for (int j = 0; j < 3; j++) Mouse.move(0, -126, 0);
   Mouse.release(MOUSE_LEFT);
-  delay(DRAG_SCROLL_DELAY);
+  delay(ACTION_HOLD_DELAY);
 }
 
 //***CURSOR MIDDLE CLICK FUNCTION***//
@@ -2396,7 +2396,7 @@ void cursorScroll(void) {
     float scrollRelease = readPressure();
     
     if ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) { // if sip or puff, stop scroll mode
-      delay(DRAG_SCROLL_DELAY);
+      delay(ACTION_HOLD_DELAY);
       break;
     }
 
@@ -2427,9 +2427,7 @@ void cursorScroll(void) {
       break;
     }
     */
-        
     delay(CURSOR_DELAY);
-
 }
 
 //***FSR CURSOR MOVEMENT MODIFIER FUNCTION***//
