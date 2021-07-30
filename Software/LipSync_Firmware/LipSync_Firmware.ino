@@ -74,6 +74,7 @@
 //#define ACTION_SHORT_PUFF   OUTPUT_RIGHT_CLICK     
 //#define ACTION_SHORT_SIP    OUTPUT_LEFT_CLICK        
 
+#define DRAG_SCROLL_DELAY 125                     //The delay used in drag and scroll functions before existing
 
 //***CUSTOMIZABLE VARIABLES***//
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}
@@ -407,7 +408,9 @@ void cursorHandler(void) {
     (g_rawModeEnabled) ? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
-  } 
+  } else if (g_rawModeEnabled) {
+    sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
+  }
 
   //Debug information 
   if(g_debugModeEnabled) {
@@ -2267,7 +2270,7 @@ void forceCursorDisplay(void) {
 //****************************************//
 void secondaryAction(void) {
   while (1) {
-    bool outputMouse = false;
+    //bool outputMouse = false;
     int xCursor = 0;
     int yCursor = 0;
     int xHigh = 0;
@@ -2354,11 +2357,11 @@ void cursorSwipe(void) {
   
   for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
   Mouse.press(MOUSE_LEFT);
-  delay(125);
+  delay(DRAG_SCROLL_DELAY);
 
   for (int j = 0; j < 3; j++) Mouse.move(0, -126, 0);
   Mouse.release(MOUSE_LEFT);
-  delay(125);
+  delay(DRAG_SCROLL_DELAY);
 }
 
 //***CURSOR MIDDLE CLICK FUNCTION***//
@@ -2393,6 +2396,7 @@ void cursorScroll(void) {
     float scrollRelease = readPressure();
     
     if ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) { // if sip or puff, stop scroll mode
+      delay(DRAG_SCROLL_DELAY);
       break;
     }
 
