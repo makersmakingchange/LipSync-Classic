@@ -282,6 +282,8 @@ float xLowComp = 1.0;
 bool g_debugModeEnabled;                               //Declare raw and debug enable variable
 bool g_rawModeEnabled;
 bool g_settingsEnabled = false;                          //Serial input settings command mode enabled or disabled 
+bool g_actionHoldEnabled = false; 
+
 
 //-----------------------------------------------------------------------------------//
 
@@ -2072,6 +2074,7 @@ void clearButtonAction(){
 // Return     : void 
 //*********************************//
 void performButtonAction(int outputAction) {
+  
     switch (outputAction) {
       case OUTPUT_NOTHING: {
         //do nothing
@@ -2081,7 +2084,8 @@ void performButtonAction(int outputAction) {
         //Left Click: Perform mouse left click action
         //Default: puff counter value is under PUFF_COUNT_THRESHOLD_MED ( 1 Second Short Puff )
         ledClear();
-        if (Mouse.isPressed(MOUSE_LEFT)) {
+        if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
+          Mouse.release(MOUSE_RIGHT);
           Mouse.release(MOUSE_LEFT);
         } else {
           Mouse.click(MOUSE_LEFT);
@@ -2093,8 +2097,13 @@ void performButtonAction(int outputAction) {
         //Right Click: Perform mouse right click action
         //Default: if sip counter value is under SIP_COUNT_THRESHOLD_MED ( 1 Second Short Sip )
         ledClear();
-        Mouse.click(MOUSE_RIGHT);
-        delay(5);
+        if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
+          Mouse.release(MOUSE_RIGHT);
+          Mouse.release(MOUSE_LEFT);
+        } else {
+          Mouse.click(MOUSE_RIGHT);
+          delay(5);
+        }
         break;
       }
       case OUTPUT_DRAG: {
@@ -2113,10 +2122,10 @@ void performButtonAction(int outputAction) {
       case OUTPUT_SCROLL: {
         //Scroll: Perform mouse scroll action
         //Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
-        ledOn(1); // Turn on Green LED
-        cursorScroll(); //Enter Scroll mode
-        ledClear();
-        delay(5);
+          ledOn(1); //Turn on Green LED
+          cursorScroll(); //Enter Scroll mode
+          ledClear();
+          delay(5);
         break;
       }
       case OUTPUT_MIDDLE_CLICK: {
