@@ -1285,6 +1285,7 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled) {
 //*********************************//
 void setCursorCalibration(bool responseEnabled, bool apiEnabled) {
 
+  ledClear();
   printResponseSingle(responseEnabled,apiEnabled,true,0,"CA,1",true,0);  
   
   ledBlink(4, 300, 3);
@@ -2075,10 +2076,11 @@ void clearButtonAction(){
 //*********************************//
 void performButtonAction(int outputAction) {
 
-    if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
+    if (Mouse.isPressed(MOUSE_LEFT) || Mouse.isPressed(MOUSE_MIDDLE) || Mouse.isPressed(MOUSE_RIGHT)) {
       ledClear();
-      Mouse.release(MOUSE_RIGHT);
       Mouse.release(MOUSE_LEFT);
+      Mouse.release(MOUSE_MIDDLE);
+      Mouse.release(MOUSE_RIGHT);
     } else {
     switch (outputAction) {
       case OUTPUT_NOTHING: {
@@ -2088,47 +2090,29 @@ void performButtonAction(int outputAction) {
       case OUTPUT_LEFT_CLICK: {
         //Left Click: Perform mouse left click action
         //Default: puff counter value is under PUFF_COUNT_THRESHOLD_MED ( 1 Second Short Puff )
-        ledClear();
-        if (Mouse.isPressed(MOUSE_LEFT)) {
-          Mouse.release(MOUSE_LEFT);
-        } else {
-          Mouse.click(MOUSE_LEFT);
-          delay(5);
-        }
+        cursorLeftClick();
+        delay(5);
         break;
       }
       case OUTPUT_RIGHT_CLICK: {
         //Right Click: Perform mouse right click action
         //Default: if sip counter value is under SIP_COUNT_THRESHOLD_MED ( 1 Second Short Sip )
-        ledClear();
-        if (Mouse.isPressed(MOUSE_RIGHT)) {
-          Mouse.release(MOUSE_RIGHT);
-        } else {
-          Mouse.click(MOUSE_RIGHT);
-          delay(5);
-        }
+        cursorRightClick();
+        delay(5);
         break;
       }
       case OUTPUT_DRAG: {
         //Drag: Perform mouse left press action ( Drag Action ) 
         //Default: if puff counter value is under 750 and more than PUFF_COUNT_THRESHOLD_MED ( 3 Second Long Puff )
-        if (Mouse.isPressed(MOUSE_LEFT)) {
-          Mouse.release(MOUSE_LEFT);
-          ledClear();
-        } else {
-          ledOn(2); //Turn on RED LED
-          Mouse.press(MOUSE_LEFT);
-          delay(5);
-        }
+        cursorDrag();
+        delay(5);
         break;
       }
       case OUTPUT_SCROLL: {
         //Scroll: Perform mouse scroll action
         //Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
-          ledOn(1); //Turn on Green LED
-          cursorScroll(); //Enter Scroll mode
-          ledClear();
-          delay(5);
+        cursorScroll(); //Enter Scroll mode
+        delay(5);
         break;
       }
       case OUTPUT_MIDDLE_CLICK: {
@@ -2140,7 +2124,6 @@ void performButtonAction(int outputAction) {
       case OUTPUT_CURSOR_HOME_RESET: {
         //Cursor Initialization: Perform cursor manual home initialization to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
-        //clearButtonAction();
         ledClear();
         ledBlink(4, 350, 3); 
         setCursorInitialization(true, false, 2);
@@ -2150,8 +2133,6 @@ void performButtonAction(int outputAction) {
       case OUTPUT_CURSOR_CALIBRATION: {
         //Cursor Calibration: Perform cursor Calibration to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
-        //clearButtonAction();
-        ledClear();
         setCursorCalibration(true, false);
         delay(5);
         break;
@@ -2357,6 +2338,84 @@ void moveCursor(int xCursor, int yCursor, int wheel){
 
 }*/
 
+//***CURSOR LEFT CLICK FUNCTION***//
+// Function   : cursorLeftClick 
+// 
+// Description: This function performs cursor left click action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
+void cursorLeftClick(void) {
+  ledClear();
+  if (Mouse.isPressed(MOUSE_LEFT)) {
+    Mouse.release(MOUSE_LEFT);
+  } else {
+    Mouse.click(MOUSE_LEFT);
+    delay(5);
+  }
+}
+
+//***CURSOR MIDDLE CLICK FUNCTION***//
+// Function   : cursorMiddleClick 
+// 
+// Description: This function performs cursor middle click action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
+void cursorMiddleClick(void) {
+  ledClear();
+  if (Mouse.isPressed(MOUSE_MIDDLE)) {
+    Mouse.release(MOUSE_MIDDLE);
+  } else {
+    Mouse.click(MOUSE_MIDDLE);
+    delay(5);
+  }
+}
+
+//***CURSOR RIGHT CLICK FUNCTION***//
+// Function   : cursorRightClick 
+// 
+// Description: This function performs cursor right click action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
+void cursorRightClick(void) {
+  ledClear();
+  if (Mouse.isPressed(MOUSE_RIGHT)) {
+    Mouse.release(MOUSE_RIGHT);
+  } else {
+    Mouse.click(MOUSE_RIGHT);
+    delay(5);
+  }
+}
+
+//***DRAG FUNCTION***//
+// Function   : cursorDrag 
+// 
+// Description: This function performs cursor drag action.
+//
+// Parameters : void
+// 
+// Return     : void 
+//********************//
+void cursorDrag(void) {
+  if (Mouse.isPressed(MOUSE_LEFT)) {
+    Mouse.release(MOUSE_LEFT);
+    ledClear();
+  } else {
+    ledOn(2); //Turn on RED LED
+    Mouse.press(MOUSE_LEFT);
+    delay(5);
+  }
+}
+
+
 //***SWIPE FUNCTION***//
 // Function   : cursorSwipe 
 // 
@@ -2377,20 +2436,6 @@ void cursorSwipe(void) {
   delay(ACTION_HOLD_DELAY);
 }
 
-//***CURSOR MIDDLE CLICK FUNCTION***//
-// Function   : cursorMiddleClick 
-// 
-// Description: This function performs cursor middle click action.
-//
-// Parameters : void
-// 
-// Return     : void 
-//****************************************//
-void cursorMiddleClick(void) {
-  Mouse.click(MOUSE_MIDDLE);
-  // delay(125); //todo unnecessary delay
-}
-
 //***CURSOR SCROLL FUNCTION***//
 // Function   : cursorScroll 
 // 
@@ -2405,6 +2450,8 @@ void cursorScroll(void) {
  
   while (1) { //continue in scroll mode until released by a sip or a puff input
 
+    ledOn(1); //Turn on Green LED
+
     // Read sip and puff input
     float scrollRelease = readPressure();
     
@@ -2413,6 +2460,7 @@ void cursorScroll(void) {
         scrollRelease = readPressure();
       }
       delay(ACTION_HOLD_DELAY);
+      ledClear();
       break;
     }
 
