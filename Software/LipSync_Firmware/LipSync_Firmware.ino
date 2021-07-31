@@ -2074,7 +2074,12 @@ void clearButtonAction(){
 // Return     : void 
 //*********************************//
 void performButtonAction(int outputAction) {
-  
+
+    if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
+      ledClear();
+      Mouse.release(MOUSE_RIGHT);
+      Mouse.release(MOUSE_LEFT);
+    } else {
     switch (outputAction) {
       case OUTPUT_NOTHING: {
         //do nothing
@@ -2084,8 +2089,7 @@ void performButtonAction(int outputAction) {
         //Left Click: Perform mouse left click action
         //Default: puff counter value is under PUFF_COUNT_THRESHOLD_MED ( 1 Second Short Puff )
         ledClear();
-        if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
-          Mouse.release(MOUSE_RIGHT);
+        if (Mouse.isPressed(MOUSE_LEFT)) {
           Mouse.release(MOUSE_LEFT);
         } else {
           Mouse.click(MOUSE_LEFT);
@@ -2097,9 +2101,8 @@ void performButtonAction(int outputAction) {
         //Right Click: Perform mouse right click action
         //Default: if sip counter value is under SIP_COUNT_THRESHOLD_MED ( 1 Second Short Sip )
         ledClear();
-        if (Mouse.isPressed(MOUSE_RIGHT) || Mouse.isPressed(MOUSE_LEFT)) {
+        if (Mouse.isPressed(MOUSE_RIGHT)) {
           Mouse.release(MOUSE_RIGHT);
-          Mouse.release(MOUSE_LEFT);
         } else {
           Mouse.click(MOUSE_RIGHT);
           delay(5);
@@ -2137,7 +2140,7 @@ void performButtonAction(int outputAction) {
       case OUTPUT_CURSOR_HOME_RESET: {
         //Cursor Initialization: Perform cursor manual home initialization to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
-        clearButtonAction();
+        //clearButtonAction();
         ledClear();
         ledBlink(4, 350, 3); 
         setCursorInitialization(true, false, 2);
@@ -2147,13 +2150,14 @@ void performButtonAction(int outputAction) {
       case OUTPUT_CURSOR_CALIBRATION: {
         //Cursor Calibration: Perform cursor Calibration to reset default value of FSR's
         //Default: if puff counter value is more than 750 ( 5 second Long Puff )
-        clearButtonAction();
+        //clearButtonAction();
         ledClear();
         setCursorCalibration(true, false);
         delay(5);
         break;
       }
     }
+   }
 }
 
 //***LED ON FUNCTION***//
@@ -2405,6 +2409,9 @@ void cursorScroll(void) {
     float scrollRelease = readPressure();
     
     if ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) { // if sip or puff, stop scroll mode
+      while ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) {
+        scrollRelease = readPressure();
+      }
       delay(ACTION_HOLD_DELAY);
       break;
     }
