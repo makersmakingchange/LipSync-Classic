@@ -389,6 +389,36 @@ void loop() {
 //-----------------------------------------------------------------------------------//
 //-----------------------------------------------------------------------------------//
 
+//***INITIALIZE PINS FUNCTION ***//
+// Function   : initializePins 
+// 
+// Description: This function initializes the input/output pins.
+// 
+// Parameters :  void
+// 
+// Return     : void
+//*********************************//
+void initializePins(void) {
+  pinMode(LED_GREEN_PIN, OUTPUT);                 //Set the LED pin 1 as output(GREEN LED)
+  pinMode(LED_RED_PIN, OUTPUT);                   //Set the LED pin 2 as output(RED LED)
+  pinMode(TRANS_CONTROL_PIN, OUTPUT);             //Set the transistor pin as output
+  pinMode(PIO4_PIN, OUTPUT);                      //Set the bluetooth command mode pin as output
+  pinMode(PRESSURE_PIN, INPUT);                   //Set the pressure sensor pin input
+  pinMode(X_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Right FSR )
+  pinMode(X_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Left FSR )
+  pinMode(Y_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Up FSR )
+  pinMode(Y_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Down FSR )
+  pinMode(BUTTON_UP_PIN, INPUT_PULLUP);           //Set increase cursor speed button pin as input
+  pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         //Set decrease cursor speed button pin as input
+
+  pinMode(2, INPUT_PULLUP);                       //Set unused pins as inputs with pullups
+  pinMode(3, INPUT_PULLUP);
+  pinMode(9, INPUT_PULLUP);
+  pinMode(11, INPUT_PULLUP);
+  pinMode(12, INPUT_PULLUP);
+  pinMode(13, INPUT_PULLUP);
+}
+
 
 //*** CURSOR HANDLER FUNCTION***//
 // Function   : cursorHandler 
@@ -532,38 +562,99 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   return outputMouse;
 }
 
+//***ROTATE CURSOR FUNCTION ***//
+// Function   : rotateCursor 
+// 
+// Description: This function applies a rotation to the two input coordinates using the global variable angles.
+//
+// Parameters : xCursor : int : the input x cursor value.
+//              yCursor : int : the input y cursor value.
+// 
+// Return     : void 
+//********************//
+void rotateCursor(int &xCursor, int &yCursor){
 
-//***INITIALIZE PINS FUNCTION ***//
-// Function   : initializePins 
-// 
-// Description: This function initializes the input/output pins.
-// 
-// Parameters :  void
-// 
-// Return     : void
-//*********************************//
-void initializePins(void) {
-  pinMode(LED_GREEN_PIN, OUTPUT);                 //Set the LED pin 1 as output(GREEN LED)
-  pinMode(LED_RED_PIN, OUTPUT);                   //Set the LED pin 2 as output(RED LED)
-  pinMode(TRANS_CONTROL_PIN, OUTPUT);             //Set the transistor pin as output
-  pinMode(PIO4_PIN, OUTPUT);                      //Set the bluetooth command mode pin as output
-  pinMode(PRESSURE_PIN, INPUT);                   //Set the pressure sensor pin input
-  pinMode(X_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Right FSR )
-  pinMode(X_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Left FSR )
-  pinMode(Y_DIR_HIGH_PIN, INPUT);                 //Define Force sensor pinsas input ( Up FSR )
-  pinMode(Y_DIR_LOW_PIN, INPUT);                  //Define Force sensor pinsas input ( Down FSR )
-  pinMode(BUTTON_UP_PIN, INPUT_PULLUP);           //Set increase cursor speed button pin as input
-  pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         //Set decrease cursor speed button pin as input
+  //Apply rotation matrix to inputs
+  int uCursor = g_rotationAngle11 * xCursor + g_rotationAngle12 * yCursor; 
+  int vCursor = g_rotationAngle21 * xCursor + g_rotationAngle22 * yCursor;
 
-  pinMode(2, INPUT_PULLUP);                       //Set unused pins as inputs with pullups
-  pinMode(3, INPUT_PULLUP);
-  pinMode(9, INPUT_PULLUP);
-  pinMode(11, INPUT_PULLUP);
-  pinMode(12, INPUT_PULLUP);
-  pinMode(13, INPUT_PULLUP);
+  //Update inputs
+  xCursor = uCursor;
+  yCursor = vCursor;
 }
 
+// This function applies 
+//***CURSOR MOVEMENT FUNCTION ***//
+// Function   : moveCursor 
+// 
+// Description: This function applies a rotation to the two input coordinates using the global variable angles.
+//
+// Parameters : xCursor : int : the input x cursor value.
+//              yCursor : int : the input y cursor value.
+//              wheel   : int : the input scroll wheel value.
+// 
+// Return     : void 
+//********************//
+void moveCursor(const int xCursor, const int yCursor, const int wheel){
+  
+  // Output transformed mouse movement
+  Mouse.move(xCursor, yCursor, wheel);                
 
+}
+
+//***FSR CURSOR MOVEMENT MODIFIER FUNCTION***//
+// Function   : cursorModifier 
+// 
+// Description: This function converts FSR voltage readings into mouse cursor movements.
+//
+// Parameters : rawValue : const int : raw FSR value.
+//              neutralValue : const int : neutral FSR value.
+//              maxValue : constint : maximum FSR value.
+//              compValue : float : FSR compensation value.
+// 
+// Return     : cursorOutput : int : The modified cursor value. 
+//****************************************//
+int cursorModifier(const int rawValue, const int neutralValue, const int maxValue, float compValue) {
+  int cursorOutput = 0;
+  
+  compValue = 1.0; //TODO temporary
+  
+  if (rawValue > neutralValue) { //FSR greater than neutral 
+    //Calculate X left factor ( 1.25 multiplied by fsr compensation multiplied by ratio of current value to maximum value )
+    float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
+
+    //Use the calculated X down factor to none linearize the maximum speeds
+    float cursorFloat = round(1.0 * pow(g_cursorMaxSpeed, neutralFactor)) - 1.0;   
+
+    //Determine value when FSR at max
+    int valueAtMax = round(1.0 * pow(g_cursorMaxSpeed, 1.25*compValue)) - 1.0;
+
+    //Map the values to a value between 0 and the selected maximum speed
+    cursorFloat = map(cursorFloat, 0, valueAtMax, 0, g_cursorMaxSpeed); 
+    
+    //Constrain the output to allowable limits 
+    cursorOutput = constrain(cursorFloat,0, g_cursorMaxSpeed);   
+  } //end FSR pressed
+  
+  return cursorOutput;
+}
+
+//***FORCE DISPLAY OF CURSOR***//
+// Function   : forceCursorDisplay 
+// 
+// Description: This function slighlty moves the cursor, which causes the cursor to appear on mobile 
+//              devices. Called during initialization.
+//
+// Parameters : void
+// 
+// Return     : void 
+//******************************//
+void forceCursorDisplay(void) {
+  Mouse.move(1, 0, 0);
+  delay(5);
+  Mouse.move(-1, 0, 0);
+  delay(5);
+}
 
 //***GET MODEL NUMBER FUNCTION***//
 // Function   : getModelNumber 
@@ -1078,7 +1169,7 @@ void setRawMode(bool responseEnabled, bool apiEnabled, bool inputRawState) {
   
   printResponseSingle(responseEnabled, apiEnabled, isValidRawState, responseCode, "RM,1", true, g_rawModeEnabled);
   
-if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
+  if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
 
   delay(5); 
 }
@@ -1997,6 +2088,95 @@ void performCommand(String inputString) {
 
 }
 
+//***LED ON FUNCTION***//
+// Function   : ledOn 
+// 
+// Description: This function is used to turn LEDs on.
+//
+// Parameters : ledNumber : int : The led number (1: Turn green on , 2: Turn red on).
+// 
+// Return     : void 
+//*********************************//
+void ledOn(int ledNumber) {
+  switch (ledNumber) {
+    case 1: { //Turn GREEN LED on
+        digitalWrite(LED_GREEN_PIN, HIGH);
+        delay(5);
+        digitalWrite(LED_RED_PIN, LOW);
+        break;
+      }
+    case 2: { // Turn RED LED on
+        digitalWrite(LED_RED_PIN, HIGH);
+        delay(5);
+        digitalWrite(LED_GREEN_PIN, LOW);
+        break;
+      }
+  }
+}
+
+//***LED CLEAR FUNCTION***//
+// Function   : ledClear 
+// 
+// Description: This function is used to turns both LEDs off.
+//
+// Parameters : void
+// 
+// Return     : void 
+//*********************************//
+void ledClear(void) {
+  digitalWrite(LED_GREEN_PIN, LOW);
+  digitalWrite(LED_RED_PIN, LOW);
+}
+
+//***LED BLINK FUNCTION***//
+// Function   : ledBlink 
+// 
+// Description: This function blinks the LEDs.
+//
+// Parameters : numBlinks : int : The number of LED blinks.
+//              delayBlinks : int : The delay for each LED blink.
+//              ledNumber : int : The led number (1: Flash green, 2: Flash red, 3: Alternate).
+// 
+// Return     : void 
+//*********************************//
+void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
+  if (numBlinks < 0) numBlinks *= -1; //todo is this error checking?
+
+  switch (ledNumber) {
+    case 1: { //Flash green
+        for (int i = 0; i < numBlinks; i++) {
+          digitalWrite(LED_GREEN_PIN, HIGH);
+          delay(delayBlinks);
+          digitalWrite(LED_GREEN_PIN, LOW);
+          delay(delayBlinks);
+        }
+        break;
+      }
+    case 2: { //Flash red
+        for (int i = 0; i < numBlinks; i++) {
+          digitalWrite(LED_RED_PIN, HIGH);
+          delay(delayBlinks);
+          digitalWrite(LED_RED_PIN, LOW);
+          delay(delayBlinks);
+        }
+        break;
+      }
+    case 3: { // Alternate flashing red and green
+        for (int i = 0; i < numBlinks; i++) {
+          digitalWrite(LED_GREEN_PIN, HIGH);
+          delay(delayBlinks);
+          digitalWrite(LED_GREEN_PIN, LOW);
+          delay(delayBlinks);
+          digitalWrite(LED_RED_PIN, HIGH);
+          delay(delayBlinks);
+          digitalWrite(LED_RED_PIN, LOW);
+          delay(delayBlinks);
+        }
+        break;
+      }
+  }
+}
+
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
 // Function   : pushButtonHandler 
 // 
@@ -2231,203 +2411,6 @@ void performButtonAction(int outputAction) {
    }
 }
 
-//***LED ON FUNCTION***//
-// Function   : ledOn 
-// 
-// Description: This function is used to turn LEDs on.
-//
-// Parameters : ledNumber : int : The led number (1: Turn green on , 2: Turn red on).
-// 
-// Return     : void 
-//*********************************//
-void ledOn(int ledNumber) {
-  switch (ledNumber) {
-    case 1: { //Turn GREEN LED on
-        digitalWrite(LED_GREEN_PIN, HIGH);
-        delay(5);
-        digitalWrite(LED_RED_PIN, LOW);
-        break;
-      }
-    case 2: { // Turn RED LED on
-        digitalWrite(LED_RED_PIN, HIGH);
-        delay(5);
-        digitalWrite(LED_GREEN_PIN, LOW);
-        break;
-      }
-  }
-}
-
-//***LED CLEAR FUNCTION***//
-// Function   : ledClear 
-// 
-// Description: This function is used to turns both LEDs off.
-//
-// Parameters : void
-// 
-// Return     : void 
-//*********************************//
-void ledClear(void) {
-  digitalWrite(LED_GREEN_PIN, LOW);
-  digitalWrite(LED_RED_PIN, LOW);
-}
-
-//***LED BLINK FUNCTION***//
-// Function   : ledBlink 
-// 
-// Description: This function blinks the LEDs.
-//
-// Parameters : numBlinks : int : The number of LED blinks.
-//              delayBlinks : int : The delay for each LED blink.
-//              ledNumber : int : The led number (1: Flash green, 2: Flash red, 3: Alternate).
-// 
-// Return     : void 
-//*********************************//
-void ledBlink(int numBlinks, int delayBlinks, int ledNumber) {
-  if (numBlinks < 0) numBlinks *= -1; //todo is this error checking?
-
-  switch (ledNumber) {
-    case 1: { //Flash green
-        for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_GREEN_PIN, HIGH);
-          delay(delayBlinks);
-          digitalWrite(LED_GREEN_PIN, LOW);
-          delay(delayBlinks);
-        }
-        break;
-      }
-    case 2: { //Flash red
-        for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_RED_PIN, HIGH);
-          delay(delayBlinks);
-          digitalWrite(LED_RED_PIN, LOW);
-          delay(delayBlinks);
-        }
-        break;
-      }
-    case 3: { // Alternate flashing red and green
-        for (int i = 0; i < numBlinks; i++) {
-          digitalWrite(LED_GREEN_PIN, HIGH);
-          delay(delayBlinks);
-          digitalWrite(LED_GREEN_PIN, LOW);
-          delay(delayBlinks);
-          digitalWrite(LED_RED_PIN, HIGH);
-          delay(delayBlinks);
-          digitalWrite(LED_RED_PIN, LOW);
-          delay(delayBlinks);
-        }
-        break;
-      }
-//    case 6: { // Turn LEDs off.   //todo this does not appear to be used and is redundant with ledClear()
-//        digitalWrite(LED_GREEN_PIN, LOW);
-//        digitalWrite(LED_RED_PIN, LOW);
-//        break;
-//      }
-  }
-}
-
-//***FORCE DISPLAY OF CURSOR***//
-// Function   : forceCursorDisplay 
-// 
-// Description: This function slighlty moves the cursor, which causes the cursor to appear on mobile 
-//              devices. Called during initialization.
-//
-// Parameters : void
-// 
-// Return     : void 
-//******************************//
-void forceCursorDisplay(void) {
-  Mouse.move(1, 0, 0);
-  delay(5);
-  Mouse.move(-1, 0, 0);
-  delay(5);
-}
-
-
-//***SECONDARY ACTION FUNCTION SELECTION***//
-// Function   : secondaryAction 
-// 
-// Description: This function performs sip and puff secondary action.
-//
-// Parameters : void
-// 
-// Return     : void 
-//****************************************//
-void secondaryAction(void) {
-  while (1) {
-    bool outputMouse = false;
-    int xCursor = 0;
-    int yCursor = 0;
-    int xHigh = 0;
-    int xLow = 0;
-    int yHigh = 0;
-    int yLow = 0;
-
-    outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
-    rotateCursor(xCursor,yCursor);
-    
-    ledOn(2); //Turn red LED on
-
-    /* //TODO Needs to be worked on
-    if (xHigh > (g_xHighNeutral + CURSOR_DEADBAND)) {
-      cursorMiddleClick();
-      break;
-    } else if (xLow > (g_xLowNeutral + CURSOR_DEADBAND)) {
-      cursorMiddleClick();
-      break;
-    } else if (yHigh > (g_yHighNeutral + CURSOR_DEADBAND)) {
-      cursorSwipe();
-      break;
-    } else if (yLow > (g_yLowNeutral + CURSOR_DEADBAND)) {
-      cursorSwipe();
-      break;
-    }
-    */
-  }
-  digitalWrite(LED_RED_PIN, LOW);
-}
-
-//***ROTATE CURSOR FUNCTION ***//
-// Function   : cursorSwipe 
-// 
-// Description: This function applies a rotation to the two input coordinates using the global variable angles.
-//
-// Parameters : xCursor : int : the input x cursor value.
-//              yCursor : int : the input y cursor value.
-// 
-// Return     : void 
-//********************//
-void rotateCursor(int &xCursor, int &yCursor){
-
-  //Apply rotation matrix to inputs
-  int uCursor = g_rotationAngle11 * xCursor + g_rotationAngle12 * yCursor; 
-  int vCursor = g_rotationAngle21 * xCursor + g_rotationAngle22 * yCursor;
-
-  //Update inputs
-  xCursor = uCursor;
-  yCursor = vCursor;
-}
-
-//***CURSOR MOVEMENT FUNCTION ***//
-// This function applies 
-void moveCursor(const int xCursor, const int yCursor, const int wheel){
-  
-  // Output transformed mouse movement
-  Mouse.move(xCursor, yCursor, wheel);                
-
-}
-
-/*
-void moveCursor(int xCursor, int yCursor, int wheel){
-  
-  // Apply rotation transform to inputs
-  int uCursor = rotationAngle11*xCursor + rotationAngle12*yCursor; 
-  int vCursor = rotationAngle21*xCursor + rotationAngle22*yCursor;
-
-  // Output transformed mouse movement
-  Mouse.move(uCursor, vCursor, wheel);                
-
-}*/
-
 //***CURSOR LEFT CLICK FUNCTION***//
 // Function   : cursorLeftClick 
 // 
@@ -2506,26 +2489,6 @@ void cursorDrag(void) {
 }
 
 
-//***SWIPE FUNCTION***//
-// Function   : cursorSwipe 
-// 
-// Description: This function performs cursor swipe action.
-//
-// Parameters : void
-// 
-// Return     : void 
-//********************//
-void cursorSwipe(void) {
-  
-  for (int i = 0; i < 3; i++) Mouse.move(0, 126, 0);
-  Mouse.press(MOUSE_LEFT);
-  delay(ACTION_HOLD_DELAY);
-
-  for (int j = 0; j < 3; j++) Mouse.move(0, -126, 0);
-  Mouse.release(MOUSE_LEFT);
-  delay(ACTION_HOLD_DELAY);
-}
-
 //***CURSOR SCROLL FUNCTION***//
 // Function   : cursorScroll 
 // 
@@ -2569,7 +2532,6 @@ void cursorScroll(void) {
     // Apply rotation transform to inputs
      if (outputMouse){
         Mouse.move(0, 0, -1 * yCursor); // Apply vertical direction to scroll 
-        //delay(CURSOR_DELAY * 35);  // 5 x 35 = 175 ms
         delay(g_cursorScrollDelay); 
      } else {
         delay(CURSOR_DELAY);  
@@ -2590,41 +2552,4 @@ void cursorSecondaryScroll(void) {
     Mouse.press(MOUSE_MIDDLE);
     delay(5);
   }
-}
-
-//***FSR CURSOR MOVEMENT MODIFIER FUNCTION***//
-// Function   : cursorModifier 
-// 
-// Description: This function converts FSR voltage readings into mouse cursor movements.
-//
-// Parameters : rawValue : const int : raw FSR value.
-//              neutralValue : const int : neutral FSR value.
-//              maxValue : constint : maximum FSR value.
-//              compValue : float : FSR compensation value.
-// 
-// Return     : cursorOutput : int : The modified cursor value. 
-//****************************************//
-int cursorModifier(const int rawValue, const int neutralValue, const int maxValue, float compValue) {
-  int cursorOutput = 0;
-  
-  compValue = 1.0; //TODO temporary
-  
-  if (rawValue > neutralValue) { //FSR greater than neutral 
-    //Calculate X left factor ( 1.25 multiplied by fsr compensation multiplied by ratio of current value to maximum value )
-    float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
-
-    //Use the calculated X down factor to none linearize the maximum speeds
-    float cursorFloat = round(1.0 * pow(g_cursorMaxSpeed, neutralFactor)) - 1.0;   
-
-    //Determine value when FSR at max
-    int valueAtMax = round(1.0 * pow(g_cursorMaxSpeed, 1.25*compValue)) - 1.0;
-
-    //Map the values to a value between 0 and the selected maximum speed
-    cursorFloat = map(cursorFloat, 0, valueAtMax, 0, g_cursorMaxSpeed); 
-    
-    //Constrain the output to allowable limits 
-    cursorOutput = constrain(cursorFloat,0, g_cursorMaxSpeed);   
-  } //end FSR pressed
-  
-  return cursorOutput;
 }
