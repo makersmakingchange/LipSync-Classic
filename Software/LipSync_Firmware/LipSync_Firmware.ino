@@ -617,8 +617,6 @@ void moveCursor(const int xCursor, const int yCursor, const int wheel){
 int cursorModifier(const int rawValue, const int neutralValue, const int maxValue, float compValue) {
   int cursorOutput = 0;
   
-  compValue = 1.0; //TODO temporary
-  
   if (rawValue > neutralValue) { //FSR greater than neutral 
     //Calculate X left factor ( 1.25 multiplied by fsr compensation multiplied by ratio of current value to maximum value )
     float neutralFactor = 1.25 * (compValue * (((float)(rawValue - neutralValue)) / (maxValue - neutralValue)));
