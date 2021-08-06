@@ -201,11 +201,12 @@ _functionList getChangeToleranceFunction =      {"CT,0","0",&getChangeTolerance}
 _functionList setChangeToleranceFunction =      {"CT,1","",&setChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0","0",&getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1","r",&setButtonMapping}; //"r" denotes an array parameter 
+_functionList getScrollLevelFunction =          {"SL,0","0",&getScrollLevel};
 _functionList setScrollLevelFunction =          {"SL,1","",&setScrollLevel};
 _functionList factoryResetFunction =            {"FR,1","",&factoryReset};
 
 // Declare array of API functions
-_functionList apiFunction[24] = {
+_functionList apiFunction[25] = {
   getModelNumberFunction, 
   getVersionNumberFunction,
   getCursorSpeedFunction,
@@ -228,6 +229,7 @@ _functionList apiFunction[24] = {
   setChangeToleranceFunction,
   getButtonMappingFunction,
   setButtonMappingFunction,
+  getScrollLevelFunction,
   setScrollLevelFunction,
   factoryResetFunction
   };
