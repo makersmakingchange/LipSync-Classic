@@ -529,11 +529,11 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
          }
     
     g_pollCounter++;      //Add to the poll counter
-    delay(20); 
+    //delay(20); 
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-   // if(!skipChange && g_pollCounter >= 3) {
-    if(!skipChange) {
+    if(!skipChange && g_pollCounter >= 3) {
+    //if(!skipChange) {
       outputMouse = true;  
        //Quadrant 1 (Upper left)
       if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
@@ -2482,7 +2482,7 @@ void cursorDrag(void) {
     Mouse.release(MOUSE_LEFT);
     ledClear();
   } else {
-    ledOn(2); //Turn on RED LED
+    //ledOn(2); //Turn on RED LED
     Mouse.press(MOUSE_LEFT);
     delay(5);
   }
@@ -2503,7 +2503,7 @@ void cursorScroll(void) {
  
   while (1) { //continue in scroll mode until released by a sip or a puff input
 
-    ledOn(1); //Turn on Green LED
+    //ledOn(1); //Turn on Green LED
 
     // Read sip and puff input
     float scrollRelease = readPressure();
@@ -2547,8 +2547,7 @@ void cursorSecondaryScroll(void) {
     Mouse.release(MOUSE_MIDDLE);
     ledClear();
   } else {
-    ledOn(1); //Turn on RED LED
-    Serial.println("test");
+    //ledOn(1); //Turn on Green LED
     Mouse.press(MOUSE_MIDDLE);
     delay(5);
   }
