@@ -189,8 +189,8 @@ _functionList getJoystickValueFunction =        {"JV,0","0",&getJoystickValue};
 
 _functionList getDebugModeFunction =            {"DM,0","0",&getDebugMode};
 _functionList setDebugModeFunction =            {"DM,1","",&setDebugMode};
-_functionList getRawModeFunction =              {"RM,0","0",&getRawMode};
-_functionList setRawModeFunction =              {"RM,1","",&setRawMode};
+//_functionList getRawModeFunction =              {"RM,0","0",&getRawMode};
+//_functionList setRawModeFunction =              {"RM,1","",&setRawMode};
 
 _functionList getCursorInitializationFunction = {"IN,0","0",&getCursorInitialization};
 _functionList setCursorInitializationFunction = {"IN,1","1",&setCursorInitialization};
@@ -206,7 +206,7 @@ _functionList setScrollLevelFunction =          {"SL,1","",&setScrollLevel};
 _functionList factoryResetFunction =            {"FR,1","",&factoryReset};
 
 // Declare array of API functions
-_functionList apiFunction[25] = {
+_functionList apiFunction[23] = {
   getModelNumberFunction, 
   getVersionNumberFunction,
   getCursorSpeedFunction,
@@ -219,8 +219,8 @@ _functionList apiFunction[25] = {
   getJoystickValueFunction,
   getDebugModeFunction,
   setDebugModeFunction,
-  getRawModeFunction,
-  setRawModeFunction,
+  //getRawModeFunction,
+  //setRawModeFunction,
   getCursorInitializationFunction,
   setCursorInitializationFunction,
   getCursorCalibrationFunction,
