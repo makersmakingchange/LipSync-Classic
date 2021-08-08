@@ -91,7 +91,8 @@
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_DELAY 5                            //Current cursor delay
 #define SCROLL_LEVEL 5                            //Default scroll level
-#define SCROLL_BASE_DELAY 35                      //Current scroll base delay
+#define SCROLL_DELAY 140                          //Current scroll delay
+#define SCROLL_MAX_SPEED 127                      //Scroll Maximum allowed speed
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
@@ -265,7 +266,6 @@ int g_cursorSpeedCounter;                           // Variable to track current
 int g_cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
 float g_cursorFactor;                               // Current cursor factor //TODO not currently used.
 int g_cursorScrollLevel;
-int g_cursorScrollDelay;
 
 float g_cursorPressure;                             //Variable to hold pressure readings
 float g_sipThreshold;                               //Sip pressure threshold in volts
@@ -343,7 +343,6 @@ void setup() {
   delay(10);
 
   g_cursorScrollLevel = getScrollLevel(false, false);     //Read the saved cursor scroll level parameter from EEPROM
-  g_cursorScrollDelay =  SCROLL_BASE_DELAY * (11 - g_cursorScrollLevel);
   delay(10);
 
   getButtonMapping(false, false);                         //Get the input buttons to actions mappings 
@@ -452,8 +451,9 @@ void cursorHandler(void) {
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
   } else if (outputMouse && scrollModeEnabled) {
-    Mouse.move(0, 0, -1 * yCursor);
-    delay(g_cursorScrollDelay); 
+    int yScroll = scrollModifier(yCursor,g_cursorMaxSpeed,SCROLL_MAX_SPEED,g_cursorScrollLevel);
+    moveCursor(0, 0, yScroll);
+    delay(SCROLL_DELAY); 
     g_pollCounter = 0;
   } else if (g_rawModeEnabled) {
     sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
@@ -641,6 +641,27 @@ int cursorModifier(const int rawValue, const int neutralValue, const int maxValu
   } //end FSR pressed
   
   return cursorOutput;
+}
+
+//***FSR SCROLL MOVEMENT MODIFIER FUNCTION***//
+// Function   : scrollModifier 
+// 
+// Description: This function converts y cursor movements to y scroll movements based on y cursor value and scroll speed level.
+//
+// Parameters : cursorValue : const int : y cursor value.
+//              cursorMaxValue : const int : maximum y cursor value.
+//              scrollMaxValue : const int : maximum y scroll value.
+//              scrollLevelValue : const int : scroll speed level value.
+// 
+// Return     : cursorOutput : int : The modified scroll value. 
+//****************************************//
+int scrollModifier(const int cursorValue, const int cursorMaxValue, const int scrollMaxValue, const int scrollLevelValue) {
+    int scrollOutput = 0;
+    int scrollMaxSpeed = round(1.0 * pow(scrollMaxValue, scrollLevelValue/10.0));   
+    scrollOutput = map(cursorValue, 0, cursorMaxValue, 0, scrollMaxSpeed); 
+    scrollOutput = -1 * constrain(scrollOutput,-1 * scrollMaxSpeed, scrollMaxSpeed);   
+
+    return scrollOutput;
 }
 
 //***FORCE DISPLAY OF CURSOR***//
@@ -1736,9 +1757,6 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
     isValidFactor = false;
   }
   delay(5); 
-
-  g_cursorScrollDelay =  SCROLL_BASE_DELAY * (11 - g_cursorScrollLevel);
-
   
   int responseCode=0;
   (isValidFactor) ? responseCode = 0 : responseCode = 2;
@@ -2493,12 +2511,10 @@ void cursorDrag(void) {
   }
 }
 
-
 //***CURSOR SCROLL FUNCTION***//
 // Function   : cursorScroll 
 // 
-// Description: This function is an operating mode that converts vertical joystick movements into
-//              mouse wheel scrolling.
+// Description: This function is an operating mode that enables scrolling action.
 //
 // Parameters : void
 // 
@@ -2509,55 +2525,22 @@ void cursorScroll(void) {
     scrollModeEnabled=false;
     ledClear();
   } else {
-    //ledOn(2); //Turn on RED LED
+    //ledOn(1); //Turn on Green LED
     scrollModeEnabled=true;
     delay(ACTION_HOLD_DELAY);
   }
 }
-/*
-void cursorScroll(void) {
- 
-  while (1) { //continue in scroll mode until released by a sip or a puff input
 
-    //ledOn(1); //Turn on Green LED
-
-    // Read sip and puff input
-    float scrollRelease = readPressure();
-    
-    if ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) { // if sip or puff, stop scroll mode
-      while ((scrollRelease > g_sipThreshold) || (scrollRelease < g_puffThreshold)) {
-        scrollRelease = readPressure();
-      }
-      delay(ACTION_HOLD_DELAY);
-      ledClear();
-      break;
-    }
-
-    
-    bool outputMouse = false;
-    int xCursor = 0;
-    int yCursor = 0;
-    int xHigh = 0;
-    int xLow = 0;
-    int yHigh = 0;
-    int yLow = 0;
-   
-    outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
-    rotateCursor(xCursor, yCursor);
-    
-    // Apply rotation transform to inputs
-     if (outputMouse){
-        Mouse.move(0, 0, -1 * yCursor); // Apply vertical direction to scroll 
-        delay(g_cursorScrollDelay); 
-     } else {
-        delay(CURSOR_DELAY);  
-     }
-        
-    
-    } //end check joystick deadband
-    delay(CURSOR_DELAY);
-}
-*/
+//***CURSOR SECONDARY SCROLL FUNCTION***//
+// Function   : cursorSecondaryScroll 
+// 
+// Description: This function is an operating mode that enables secondary scrolling action 
+//              by holding and pressing mouse middle click button.
+//
+// Parameters : void
+// 
+// Return     : void 
+//****************************************//
 void cursorSecondaryScroll(void) {
   if (Mouse.isPressed(MOUSE_MIDDLE)) {
     Mouse.release(MOUSE_MIDDLE);
