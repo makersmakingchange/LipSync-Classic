@@ -291,7 +291,7 @@ float xLowComp = 1.0;
 bool g_debugModeEnabled;                               //Declare raw and debug enable variable
 bool g_rawModeEnabled;
 bool g_settingsEnabled = false;                          //Serial input settings command mode enabled or disabled
-
+bool scrollModeEnabled = false;
 
 //-----------------------------------------------------------------------------------//
 
@@ -447,9 +447,13 @@ void cursorHandler(void) {
   outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
   rotateCursor(xCursor, yCursor); //apply transform for mounting angle
  
-  if (outputMouse){
+  if (outputMouse && !scrollModeEnabled){
     (g_rawModeEnabled) ? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
+    g_pollCounter = 0;
+  } else if (outputMouse && scrollModeEnabled) {
+    Mouse.move(0, 0, -1 * yCursor);
+    delay(g_cursorScrollDelay); 
     g_pollCounter = 0;
   } else if (g_rawModeEnabled) {
     sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
@@ -2339,11 +2343,12 @@ void clearButtonAction(){
 //*********************************//
 void performButtonAction(int outputAction) {
 
-    if (Mouse.isPressed(MOUSE_LEFT) || Mouse.isPressed(MOUSE_MIDDLE) || Mouse.isPressed(MOUSE_RIGHT)) {
+    if (Mouse.isPressed(MOUSE_LEFT) || Mouse.isPressed(MOUSE_MIDDLE) || Mouse.isPressed(MOUSE_RIGHT) || scrollModeEnabled) {
       ledClear();
       Mouse.release(MOUSE_LEFT);
       Mouse.release(MOUSE_MIDDLE);
       Mouse.release(MOUSE_RIGHT);
+      scrollModeEnabled=false;
     } else {
     switch (outputAction) {
       case OUTPUT_NOTHING: {
@@ -2484,7 +2489,7 @@ void cursorDrag(void) {
   } else {
     //ledOn(2); //Turn on RED LED
     Mouse.press(MOUSE_LEFT);
-    delay(5);
+    delay(ACTION_HOLD_DELAY);
   }
 }
 
@@ -2499,6 +2504,17 @@ void cursorDrag(void) {
 // 
 // Return     : void 
 //****************************************//
+void cursorScroll(void) {
+  if (scrollModeEnabled) {
+    scrollModeEnabled=false;
+    ledClear();
+  } else {
+    //ledOn(2); //Turn on RED LED
+    scrollModeEnabled=true;
+    delay(ACTION_HOLD_DELAY);
+  }
+}
+/*
 void cursorScroll(void) {
  
   while (1) { //continue in scroll mode until released by a sip or a puff input
@@ -2541,7 +2557,7 @@ void cursorScroll(void) {
     } //end check joystick deadband
     delay(CURSOR_DELAY);
 }
-
+*/
 void cursorSecondaryScroll(void) {
   if (Mouse.isPressed(MOUSE_MIDDLE)) {
     Mouse.release(MOUSE_MIDDLE);
@@ -2549,6 +2565,6 @@ void cursorSecondaryScroll(void) {
   } else {
     //ledOn(1); //Turn on Green LED
     Mouse.press(MOUSE_MIDDLE);
-    delay(5);
+    delay(ACTION_HOLD_DELAY);
   }
 }
