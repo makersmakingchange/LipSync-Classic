@@ -91,8 +91,9 @@
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_DELAY 5                            //Current cursor delay
 #define SCROLL_LEVEL 5                            //Default scroll level
-#define SCROLL_BASE_DELAY 35                      //Base or minimum scroll delay
-#define SCROLL_MAX_MOVE 127                       //Scroll Maximum allowed moevment
+#define SCROLL_BASE_DELAY 45                      //Base or minimum scroll delay
+#define SCROLL_MAX_MOVE 120                       //Scroll Maximum allowed moevment
+#define SCROLL_BASE_MOVE 5                        //Scroll base moevment
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
@@ -658,7 +659,7 @@ int cursorModifier(const int rawValue, const int neutralValue, const int maxValu
 //****************************************//
 int scrollModifier(const int cursorValue, const int cursorMaxValue, const int scrollLevelValue) {
     int scrollOutput = 0;
-    int scrollMaxSpeed = round(1.0 * pow(SCROLL_MAX_MOVE, scrollLevelValue/10.0));   
+    int scrollMaxSpeed = round(1.0 * pow(SCROLL_MAX_MOVE, scrollLevelValue/10.0)) + SCROLL_BASE_MOVE;   
     scrollOutput = map(cursorValue, 0, cursorMaxValue, 0, scrollMaxSpeed); 
     scrollOutput = -1 * constrain(scrollOutput,-1 * scrollMaxSpeed, scrollMaxSpeed);   
 
