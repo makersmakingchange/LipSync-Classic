@@ -91,8 +91,8 @@
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_DELAY 5                            //Current cursor delay
 #define SCROLL_LEVEL 5                            //Default scroll level
-#define SCROLL_DELAY 140                          //Current scroll delay
-#define SCROLL_MAX_SPEED 127                      //Scroll Maximum allowed speed
+#define SCROLL_BASE_DELAY 35                      //Base or minimum scroll delay
+#define SCROLL_MAX_MOVE 127                       //Scroll Maximum allowed moevment
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
@@ -101,7 +101,7 @@
 //***DON'T CHANGE THESE CONSTANTS***//       
 #define LIPSYNC_MODEL 1                           //LipSync Mouse
 #define LIPSYNC_VERSION 30                        //LipSync Version
-#define PRESSURE_THRESHOLD_MIN 5                  //Minimum Pressure sip and puff threshold
+#define PRESSURE_THRESHOLD_MIN 10                 //Minimum Pressure sip and puff threshold
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
@@ -265,7 +265,8 @@ float g_rotationAngle22;
 int g_cursorSpeedCounter;                           // Variable to track current cursor speed level
 int g_cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
 float g_cursorFactor;                               // Current cursor factor //TODO not currently used.
-int g_cursorScrollLevel;
+int g_cursorScrollLevel;                            // Variable to track current scroll speed level
+int g_cursorScrollDelay;                            // Current Scroll delay
 
 float g_cursorPressure;                             //Variable to hold pressure readings
 float g_sipThreshold;                               //Sip pressure threshold in volts
@@ -343,6 +344,7 @@ void setup() {
   delay(10);
 
   g_cursorScrollLevel = getScrollLevel(false, false);     //Read the saved cursor scroll level parameter from EEPROM
+  g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel); // Calculate scroll time delay 
   delay(10);
 
   getButtonMapping(false, false);                         //Get the input buttons to actions mappings 
@@ -451,9 +453,9 @@ void cursorHandler(void) {
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
   } else if (outputMouse && scrollModeEnabled) {
-    int yScroll = scrollModifier(yCursor,g_cursorMaxSpeed,SCROLL_MAX_SPEED,g_cursorScrollLevel);
+    int yScroll = scrollModifier(yCursor,g_cursorMaxSpeed,g_cursorScrollLevel);
     moveCursor(0, 0, yScroll);
-    delay(SCROLL_DELAY); 
+    delay(g_cursorScrollDelay); 
     g_pollCounter = 0;
   } else if (g_rawModeEnabled) {
     sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
@@ -650,18 +652,33 @@ int cursorModifier(const int rawValue, const int neutralValue, const int maxValu
 //
 // Parameters : cursorValue : const int : y cursor value.
 //              cursorMaxValue : const int : maximum y cursor value.
-//              scrollMaxValue : const int : maximum y scroll value.
 //              scrollLevelValue : const int : scroll speed level value.
 // 
 // Return     : cursorOutput : int : The modified scroll value. 
 //****************************************//
-int scrollModifier(const int cursorValue, const int cursorMaxValue, const int scrollMaxValue, const int scrollLevelValue) {
+int scrollModifier(const int cursorValue, const int cursorMaxValue, const int scrollLevelValue) {
     int scrollOutput = 0;
-    int scrollMaxSpeed = round(1.0 * pow(scrollMaxValue, scrollLevelValue/10.0));   
+    int scrollMaxSpeed = round(1.0 * pow(SCROLL_MAX_MOVE, scrollLevelValue/10.0));   
     scrollOutput = map(cursorValue, 0, cursorMaxValue, 0, scrollMaxSpeed); 
     scrollOutput = -1 * constrain(scrollOutput,-1 * scrollMaxSpeed, scrollMaxSpeed);   
 
     return scrollOutput;
+}
+
+//***SCROLL TIME DELAY CALCULATOR FUNCTION***//
+// Function   : calculateScrollDelay 
+// 
+// Description: This function calculates scroll time delay based on scroll speed level.
+//
+// Parameters : scrollLevelValue : const int : scroll speed level value.
+// 
+// Return     : delayOutput : int : The scroll time delay. 
+//****************************************//
+int calculateScrollDelay(const int scrollLevelValue) {
+  
+    int delayOutput = round(1.0 * pow(2 * SCROLL_BASE_DELAY, (11 - scrollLevelValue)/10.0)) + SCROLL_BASE_DELAY;
+    
+    return delayOutput;
 }
 
 //***FORCE DISPLAY OF CURSOR***//
@@ -1757,6 +1774,8 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
     isValidFactor = false;
   }
   delay(5); 
+
+  g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel);
   
   int responseCode=0;
   (isValidFactor) ? responseCode = 0 : responseCode = 2;
