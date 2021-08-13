@@ -91,8 +91,8 @@
 #define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
 #define CURSOR_DELAY 5                            //Current cursor delay
 #define SCROLL_LEVEL 5                            //Default scroll level
-#define SCROLL_BASE_DELAY 45                      //Base or minimum scroll delay
-#define SCROLL_MAX_MOVE 120                       //Scroll Maximum allowed moevment
+#define SCROLL_BASE_DELAY 50                      //Base or minimum scroll delay
+#define SCROLL_MAX_MOVE 100                       //Scroll Maximum allowed moevment
 #define SCROLL_BASE_MOVE 5                        //Scroll base moevment
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
