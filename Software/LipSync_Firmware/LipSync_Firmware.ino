@@ -108,7 +108,7 @@
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
 #define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
 
-const int BUTTON_MAPPING[INPUT_ACTION_COUNT] = 
+int BUTTON_MAPPING[INPUT_ACTION_COUNT] = 
   {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
    ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_SHORT_PUFF};     
 const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     //MMC default sip and puff buttons actions
@@ -921,7 +921,7 @@ void getPressureThreshold(bool responseEnabled, bool apiEnabled) {
   //Create puff pressure threshold value ***Larger values tend to minimize frequency of inadvertent activation
   g_puffThreshold = pressureNominal - ((pressureThreshold * 5.0)/100.0);   
 
-  int pressureValue[]={pressureThreshold, pressureNominal*100};
+  int pressureValue[]={pressureThreshold, (int) (pressureNominal*100)};
 
   printResponseMultiple(responseEnabled,apiEnabled,true,0,"PT,0","",2,":",pressureValue);
   
@@ -965,7 +965,7 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
   }
   delay(5); 
 
-  int pressureValue[]={pressureThreshold,pressureNominal*100};
+  int pressureValue[]={pressureThreshold,(int) (pressureNominal*100)};
 
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
@@ -2096,7 +2096,7 @@ void performCommand(String inputString) {
         if(apiFunction[apiIndex]._parameter=="r"){   //"r" denotes an array parameter 
           
           int inputParameterArray[inputParameterString.length() + 1];
-          for(int arrayIndex=0; arrayIndex<inputParameterString.length(); arrayIndex++)
+          for(unsigned int arrayIndex=0; arrayIndex<inputParameterString.length(); arrayIndex++)
           {
             inputParameterArray[arrayIndex]=inputParameterString.charAt(arrayIndex)-'0';
           }
