@@ -736,7 +736,18 @@ void getModelNumber(bool responseEnabled, bool apiEnabled) {
   printResponseSingle(responseEnabled,apiEnabled,true,0,"MN,0",true,LIPSYNC_MODEL);
 
 }
-
+//***GET MODEL NUMBER API FUNCTION***//
+// Function   : getModelNumber 
+// 
+// Description: This function is redefinition of main getModelNumber function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getModelNumber(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getModelNumber(responseEnabled, apiEnabled);
@@ -764,7 +775,18 @@ void getVersionNumber(bool responseEnabled, bool apiEnabled) {
   }  
   printResponseSingle(responseEnabled,apiEnabled,true,0,"VN,0",true,LIPSYNC_VERSION);
 }
-
+//***GET VERSION API FUNCTION***//
+// Function   : getVersionNumber 
+// 
+// Description: This function is redefinition of main getVersionNumber function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getVersionNumber(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getVersionNumber(responseEnabled, apiEnabled);
@@ -799,7 +821,18 @@ int getCursorSpeed(bool responseEnabled, bool apiEnabled) {
 
   return speedCounter;
 }
-
+//***GET CURSOR SPEED API FUNCTION***//
+// Function   : getCursorSpeed 
+// 
+// Description: This function is redefinition of main getCursorSpeed function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getCursorSpeed(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getCursorSpeed(responseEnabled, apiEnabled);
@@ -815,7 +848,7 @@ void getCursorSpeed(bool responseEnabled, bool apiEnabled, int* optionalArray) {
 //                                        The serial printing is ignored if it's set to false.
 //               apiEnabled : bool : The api response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
-//               inputSpeedCounter : bool : The new the cursor speed level.
+//               inputSpeedCounter : bool : The new cursor speed level.
 // 
 // Return     : void
 //*********************************//
@@ -848,7 +881,18 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
   printResponseSingle(responseEnabled,apiEnabled,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
   delay(5); 
 }
-
+//***SET CURSOR SPEED API FUNCTION***//
+// Function   : setCursorSpeed 
+// 
+// Description: This function is redefinition of main setCursorSpeed function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputSpeedCounter : int* : The array of one element which contains the new cursor speed level.
+// 
+// Return     : void
 void setCursorSpeed(bool responseEnabled, bool apiEnabled, int* inputSpeedCounter){
   setCursorSpeed(responseEnabled, apiEnabled, inputSpeedCounter[0]);
 }
@@ -949,7 +993,18 @@ void getPressureThreshold(bool responseEnabled, bool apiEnabled) {
   
   delay(5); 
 }
-
+//***GET PRESSURE THRESHOLD API FUNCTION***//
+// Function   : getPressureThreshold 
+// 
+// Description: This function is redefinition of main getPressureThreshold function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getPressureThreshold(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getPressureThreshold(responseEnabled, apiEnabled);
@@ -1001,7 +1056,18 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
 
   delay(5); 
 }
-
+//***SET PRESSURE THRESHOLD API FUNCTION***//
+// Function   : setPressureThreshold 
+// 
+// Description: This function is redefinition of main setPressureThreshold function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputPressureThreshold : int* : The array of one element which contains the new pressure threshold.
+// 
+// Return     : void
 void setPressureThreshold(bool responseEnabled, bool apiEnabled, int* inputPressureThreshold) {
   setPressureThreshold(responseEnabled,apiEnabled, inputPressureThreshold[0]);
 }
@@ -1026,7 +1092,18 @@ void getPressureValue(bool responseEnabled, bool apiEnabled) {
   printResponseSingle(responseEnabled,apiEnabled,true,0,"PV,0",true,tempPressureValue);
 
 }
-
+//***GET PRESSURE VALUE API FUNCTION***//
+// Function   : getPressureValue 
+// 
+// Description: This function is redefinition of main getPressureValue function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getPressureValue(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getPressureValue(responseEnabled, apiEnabled);
@@ -1057,7 +1134,18 @@ void getJoystickValue(bool responseEnabled, bool apiEnabled) {
   printResponseMultiple(responseEnabled,apiEnabled,true,0,"JV,0","",4,',',joystickTempValue);
 
 }
-
+//***GET JOYSTICK VALUE API FUNCTION***//
+// Function   : getJoystickValue 
+// 
+// Description: This function is redefinition of main getJoystickValue function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getJoystickValue(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getJoystickValue(responseEnabled, apiEnabled);
@@ -1099,7 +1187,18 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled) {
   delay(5); 
   return debugState;
 }
-
+//***GET DEBUG MODE STATE API FUNCTION***//
+// Function   : getDebugMode 
+// 
+// Description: This function is redefinition of main getDebugMode function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getDebugMode(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getDebugMode(responseEnabled, apiEnabled);
@@ -1149,7 +1248,18 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState) {
   
   delay(5); 
 }
-
+//***SET DEBUG MODE STATE API FUNCTION***//
+// Function   : setDebugMode 
+// 
+// Description: This function is redefinition of main setDebugMode function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inpuDebugState : int* : The array of one element which contains the new debug mode state.
+// 
+// Return     : void
 void setDebugMode(bool responseEnabled, bool apiEnabled, int* inpuDebugState){
   setDebugMode(responseEnabled, apiEnabled, inpuDebugState[0]);
 }
@@ -1233,7 +1343,18 @@ bool getRawMode(bool responseEnabled, bool apiEnabled) {
   delay(5); 
   return rawState;
 }
-
+//***GET RAW MODE STATE API FUNCTION***//
+// Function   : getRawMode 
+// 
+// Description: This function is redefinition of main getRawMode function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getRawMode(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getRawMode(responseEnabled, apiEnabled);
@@ -1276,7 +1397,18 @@ void setRawMode(bool responseEnabled, bool apiEnabled, bool inputRawState) {
 
   delay(5); 
 }
-
+//***SET RAW MODE STATE API FUNCTION***//
+// Function   : setRawMode 
+// 
+// Description: This function is redefinition of main setRawMode function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputRawState : int* : The array of one element which contains the new raw mode state.
+// 
+// Return     : void
 void setRawMode(bool responseEnabled, bool apiEnabled, int* inputRawState){
   setRawMode(responseEnabled, apiEnabled, inputRawState[0]);
 }
@@ -1380,7 +1512,18 @@ void getCursorInitialization(bool responseEnabled, bool apiEnabled) {
   printResponseMultiple(responseEnabled, apiEnabled, true, 0, "IN,0", "", 4, ',', neutralValue);
   delay(10);  
 }
-
+//***GET CURSOR INITIALIZATION API FUNCTION***//
+// Function   : getCursorInitialization 
+// 
+// Description: This function is redefinition of main getCursorInitialization function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getCursorInitialization(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getCursorInitialization(responseEnabled, apiEnabled);
@@ -1448,7 +1591,18 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode) {
   delay(5); 
   ledClear();
 }
-
+//***SET CURSOR INITIALIZATION API FUNCTION***//
+// Function   : setCursorInitialization 
+// 
+// Description: This function is redefinition of main setCursorInitialization function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               mode : int* : The array of one element which contains the initialization mode.
+// 
+// Return     : void
 void setCursorInitialization(bool responseEnabled, bool apiEnabled, int* mode) {
   setCursorInitialization(responseEnabled, apiEnabled, mode[0]);
 }
@@ -1488,7 +1642,18 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled) {
 
   delay(10);
 }
-
+//***GET CURSOR CALIBRATION API FUNCTION***//
+// Function   : getCursorCalibration 
+// 
+// Description: This function is redefinition of main getCursorCalibration function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getCursorCalibration(responseEnabled, apiEnabled);
@@ -1555,7 +1720,18 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled) {
 
   delay(10);
 }
-
+//***SET CURSOR CALIBRATION API FUNCTION***//
+// Function   : setCursorCalibration 
+// 
+// Description: This function is redefinition of main setCursorCalibration function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void setCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     setCursorCalibration(responseEnabled, apiEnabled);
@@ -1589,7 +1765,18 @@ int getChangeTolerance(bool responseEnabled, bool apiEnabled) {
   delay(5); 
   return tempChangeTolerance;
 }
-
+//***GET CHANGE TOLERANCE VALUE CALIBRATION API FUNCTION***//
+// Function   : getChangeTolerance 
+// 
+// Description: This function is redefinition of main getChangeTolerance function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getChangeTolerance(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getChangeTolerance(responseEnabled, apiEnabled);
@@ -1629,7 +1816,18 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
   printResponseSingle(responseEnabled,apiEnabled,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
 
 }
-
+//***SET CHANGE TOLERANCE VALUE CALIBRATION API FUNCTION***//
+// Function   : setChangeTolerance 
+// 
+// Description: This function is redefinition of main setChangeTolerance function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputChangeTolerance : int* : The array of one element which contains the new change tolerance value.
+// 
+// Return     : void
 void setChangeTolerance(bool responseEnabled, bool apiEnabled, int* inputChangeTolerance) {
   setChangeTolerance(responseEnabled, apiEnabled, inputChangeTolerance[0]);
 }
@@ -1674,7 +1872,18 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled) {
 
   delay(5); 
 }
-
+//***GET BUTTON MAPPING API FUNCTION***//
+// Function   : getButtonMapping 
+// 
+// Description: This function is redefinition of main getButtonMapping function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getButtonMapping(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getButtonMapping(responseEnabled, apiEnabled);
@@ -1750,7 +1959,18 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled) {
     
    return tempRotationAngle;
 }
-
+//***GET ROTATION ANGLE API FUNCTION***//
+// Function   : getRotationAngle 
+// 
+// Description: This function is redefinition of main getRotationAngle function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getRotationAngle(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getRotationAngle(responseEnabled, apiEnabled);
@@ -1797,7 +2017,18 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
   updateRotationAngle(); // Update rotation transform
 
 }
-
+//***SET ROTATION ANGLE API FUNCTION***//
+// Function   : setRotationAngle 
+// 
+// Description: This function is redefinition of main setRotationAngle function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputRotationAngle : int* : The array of one element which contains the new rotation angle.
+// 
+// Return     : void
 void setRotationAngle(bool responseEnabled, bool apiEnabled, int* inputRotationAngle) {
   setRotationAngle(responseEnabled, apiEnabled, inputRotationAngle[0]);
 }
@@ -1852,7 +2083,18 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled) {
 
   return scrollLevel;
 }
-
+//***GET SCROLL LEVEL API FUNCTION***//
+// Function   : getScrollLevel 
+// 
+// Description: This function is redefinition of main getScrollLevel function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               optionalArray : int* : The array of int which should contain one element with value of zero.
+// 
+// Return     : void
 void getScrollLevel(bool responseEnabled, bool apiEnabled, int* optionalArray) {
   if(optionalArray[0]==0){
     getScrollLevel(responseEnabled, apiEnabled);
@@ -1901,6 +2143,18 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
   printResponseSingle(responseEnabled,apiEnabled,isValidFactor,responseCode,"SL,1",true,g_cursorScrollLevel);
   delay(5); 
 }
+//***SET SCROLL LEVEL API FUNCTION***//
+// Function   : setScrollLevel 
+// 
+// Description: This function is redefinition of main setScrollLevel function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               inputScrollLevel : int* : The array of one element which contains the new scroll speed level.
+// 
+// Return     : void
 void setScrollLevel(bool responseEnabled, bool apiEnabled, int* inputScrollLevel) {
   setScrollLevel(responseEnabled, apiEnabled, inputScrollLevel[0]);
 }
@@ -1971,6 +2225,18 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
 
   delay(5); 
 }
+//***FACTORY RESET API FUNCTION***//
+// Function   : factoryReset 
+// 
+// Description: This function is redefinition of main factoryReset function to match the types of API function arguments.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+//               resetType : int* : The array of one element which contains the reset type.
+// 
+// Return     : void
 void factoryReset(bool responseEnabled, bool apiEnabled, int* resetType) { 
   factoryReset(responseEnabled, apiEnabled, resetType[0]);
 }
