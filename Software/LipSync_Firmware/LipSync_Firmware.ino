@@ -168,7 +168,7 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 #define EEPROM_scrollLevel 62                    //int:62,63; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
-typedef void (*FunctionPointer)(bool,bool,int);        //Type definition for API function pointer
+typedef void (*FunctionPointer)(bool,bool,int*);        //Type definition for API function pointer
 
 typedef struct {                                  //Type definition for API function list
   String _command;                                //Unique two character command code
@@ -467,7 +467,7 @@ void cursorHandler(void) {
     
     int debugDataValue[]={xHigh,xLow,yHigh,yLow};
 
-    printResponseContinuous("LOG",3,4,",",debugDataValue);
+    printResponseContinuous("LOG",3,4,',',debugDataValue);
 
     delay(150);
   }
@@ -737,6 +737,12 @@ void getModelNumber(bool responseEnabled, bool apiEnabled) {
 
 }
 
+void getModelNumber(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getModelNumber(responseEnabled, apiEnabled);
+  }
+}
+
 //***GET VERSION FUNCTION***//
 // Function   : getVersionNumber 
 // 
@@ -757,6 +763,12 @@ void getVersionNumber(bool responseEnabled, bool apiEnabled) {
     delay(10);
   }  
   printResponseSingle(responseEnabled,apiEnabled,true,0,"VN,0",true,LIPSYNC_VERSION);
+}
+
+void getVersionNumber(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getVersionNumber(responseEnabled, apiEnabled);
+  }
 }
 
 //***GET CURSOR SPEED FUNCTION***//
@@ -786,6 +798,12 @@ int getCursorSpeed(bool responseEnabled, bool apiEnabled) {
   printResponseSingle(responseEnabled,apiEnabled,true,0,"SS,0",true,speedCounter);
 
   return speedCounter;
+}
+
+void getCursorSpeed(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getCursorSpeed(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET CURSOR SPEED FUNCTION***//
@@ -829,6 +847,10 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
   (isValidSpeed) ? responseCode = 0 : responseCode = 2;
   printResponseSingle(responseEnabled,apiEnabled,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
   delay(5); 
+}
+
+void setCursorSpeed(bool responseEnabled, bool apiEnabled, int* inputSpeedCounter){
+  setCursorSpeed(responseEnabled, apiEnabled, inputSpeedCounter[0]);
 }
 
 //***INCREASE CURSOR SPEED LEVEL FUNCTION***//
@@ -923,9 +945,15 @@ void getPressureThreshold(bool responseEnabled, bool apiEnabled) {
 
   int pressureValue[]={pressureThreshold, (int) (pressureNominal*100)};
 
-  printResponseMultiple(responseEnabled,apiEnabled,true,0,"PT,0","",2,":",pressureValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"PT,0","",2,':',pressureValue);
   
   delay(5); 
+}
+
+void getPressureThreshold(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getPressureThreshold(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET PRESSURE THRESHOLD FUNCTION***//
@@ -969,9 +997,40 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
 
   int responseCode=0;
   (isValidThreshold) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,apiEnabled,isValidThreshold,responseCode,"PT,1","",2,":",pressureValue);
+  printResponseMultiple(responseEnabled,apiEnabled,isValidThreshold,responseCode,"PT,1","",2,':',pressureValue);
 
   delay(5); 
+}
+
+void setPressureThreshold(bool responseEnabled, bool apiEnabled, int* inputPressureThreshold) {
+  setPressureThreshold(responseEnabled,apiEnabled, inputPressureThreshold[0]);
+}
+
+//***GET PRESSURE VALUE FUNCTION***//
+// Function   : getPressureValue 
+// 
+// Description: This function returns pressure value in volts [0.0V - 5.0V]. The pressure multiplied by 100.
+// 
+// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
+//                                        The serial printing is ignored if it's set to false.
+//               apiEnabled : bool : The api response is sent if it's set to true.
+//                                   Manual response is sent if it's set to false.
+// 
+// Return     : void
+//*********************************//
+void getPressureValue(bool responseEnabled, bool apiEnabled) {
+
+  // Measure pressure transducer value [0.0V - 5.0V]
+  int tempPressureValue = readPressure() * 100; 
+
+  printResponseSingle(responseEnabled,apiEnabled,true,0,"PV,0",true,tempPressureValue);
+
+}
+
+void getPressureValue(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getPressureValue(responseEnabled, apiEnabled);
+  }
 }
 
 //***GET JOYSTICK VALUE FUNCTION***//
@@ -995,29 +1054,14 @@ void getJoystickValue(bool responseEnabled, bool apiEnabled) {
 
   int joystickTempValue[]={xHighTemp,xLowTemp,yHighTemp,yLowTemp};
 
-  printResponseMultiple(responseEnabled,apiEnabled,true,0,"JV,0","",4,",",joystickTempValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"JV,0","",4,',',joystickTempValue);
 
 }
 
-//***GET PRESSURE VALUE FUNCTION***//
-// Function   : getPressureValue 
-// 
-// Description: This function returns pressure value in volts [0.0V - 5.0V]. The pressure multiplied by 100.
-// 
-// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
-//                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
-//                                   Manual response is sent if it's set to false.
-// 
-// Return     : void
-//*********************************//
-void getPressureValue(bool responseEnabled, bool apiEnabled) {
-
-  // Measure pressure transducer value [0.0V - 5.0V]
-  int tempPressureValue = readPressure() * 100; 
-
-  printResponseSingle(responseEnabled,apiEnabled,true,0,"PV,0",true,tempPressureValue);
-
+void getJoystickValue(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getJoystickValue(responseEnabled, apiEnabled);
+  }
 }
 
 //***GET DEBUG MODE STATE FUNCTION***//
@@ -1056,6 +1100,12 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled) {
   return debugState;
 }
 
+void getDebugMode(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getDebugMode(responseEnabled, apiEnabled);
+  }
+}
+
 //***SET DEBUG MODE STATE FUNCTION***//
 // Function   : setDebugMode 
 // 
@@ -1065,11 +1115,11 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled) {
 //                                        The serial printing is ignored if it's set to false.
 //               apiEnabled : bool : The api response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
-//               inpuDebugState : bool : The new debug mode state ( true = ON , false = OFF )
+//               inpuDebugState : int : The new debug mode state ( true = ON , false = OFF )
 // 
 // Return     : void
 //*********************************//
-void setDebugMode(bool responseEnabled, bool apiEnabled, bool inpuDebugState) {
+void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState) {
 
   bool isValidDebugState= true;
   if (inpuDebugState==0 || inpuDebugState==1) {
@@ -1100,6 +1150,10 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, bool inpuDebugState) {
   delay(5); 
 }
 
+void setDebugMode(bool responseEnabled, bool apiEnabled, int* inpuDebugState){
+  setDebugMode(responseEnabled, apiEnabled, inpuDebugState[0]);
+}
+
 //***SEND DEBUG DATA FUNCTION***//
 // Function   : sendDebugData 
 // 
@@ -1117,9 +1171,9 @@ void sendDebugData() {
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
   delay(100);
-  printResponseContinuous("LOG",1,4,",",neutralValue);
+  printResponseContinuous("LOG",1,4,',',neutralValue);
   delay(100);
-  printResponseContinuous("LOG",2,4,",",maxValue);
+  printResponseContinuous("LOG",2,4,',',maxValue);
   delay(100);
   
 }
@@ -1143,7 +1197,7 @@ void sendDebugData() {
 void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
   int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
-  printResponseContinuous("RAW",1,7,",",rawDataValue);
+  printResponseContinuous("RAW",1,7,',',rawDataValue);
 }
 
 //***GET RAW MODE STATE FUNCTION***//
@@ -1178,6 +1232,12 @@ bool getRawMode(bool responseEnabled, bool apiEnabled) {
   
   delay(5); 
   return rawState;
+}
+
+void getRawMode(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getRawMode(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET RAW MODE STATE FUNCTION***//
@@ -1215,6 +1275,10 @@ void setRawMode(bool responseEnabled, bool apiEnabled, bool inputRawState) {
   if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
 
   delay(5); 
+}
+
+void setRawMode(bool responseEnabled, bool apiEnabled, int* inputRawState){
+  setRawMode(responseEnabled, apiEnabled, inputRawState[0]);
 }
 
 //***GET COMP FACTOR VALUES FUNCTION***///
@@ -1313,8 +1377,14 @@ void setCompFactor(void) {
 void getCursorInitialization(bool responseEnabled, bool apiEnabled) {
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
-  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "IN,0", "", 4, ",", neutralValue);
+  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "IN,0", "", 4, ',', neutralValue);
   delay(10);  
+}
+
+void getCursorInitialization(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getCursorInitialization(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET CURSOR INITIALIZATION FUNCTION***//
@@ -1373,10 +1443,14 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode) {
 
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
-  printResponseMultiple(responseEnabled,apiEnabled,true,0,"IN,1","",4,",",neutralValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"IN,1","",4,',',neutralValue);
   
   delay(5); 
   ledClear();
+}
+
+void setCursorInitialization(bool responseEnabled, bool apiEnabled, int* mode) {
+  setCursorInitialization(responseEnabled, apiEnabled, mode[0]);
 }
 
 //*** GET CURSOR CALIBRATION FUNCTION***//
@@ -1410,9 +1484,15 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled) {
 
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
-  printResponseMultiple(responseEnable, apiEnabled, true, 0, "CA,0", "", 4, ",", maxValue);
+  printResponseMultiple(responseEnable, apiEnabled, true, 0, "CA,0", "", 4, ',', maxValue);
 
   delay(10);
+}
+
+void getCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getCursorCalibration(responseEnabled, apiEnabled);
+  }
 }
 
 //*** SET CURSOR CALIBRATION FUNCTION***//
@@ -1471,9 +1551,15 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled) {
   ledBlink(5, 250, 3);
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
-  printResponseMultiple(responseEnabled,apiEnabled,true,0,"CA,1","5:",4,",",maxValue);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"CA,1","5:",4,',',maxValue);
 
   delay(10);
+}
+
+void setCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    setCursorCalibration(responseEnabled, apiEnabled);
+  }
 }
 
 //*** GET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***//
@@ -1502,6 +1588,12 @@ int getChangeTolerance(bool responseEnabled, bool apiEnabled) {
 
   delay(5); 
   return tempChangeTolerance;
+}
+
+void getChangeTolerance(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getChangeTolerance(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET CHANGE TOLERANCE VALUE CALIBRATION FUNCTION***///  
@@ -1536,6 +1628,10 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
   
   printResponseSingle(responseEnabled,apiEnabled,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
 
+}
+
+void setChangeTolerance(bool responseEnabled, bool apiEnabled, int* inputChangeTolerance) {
+  setChangeTolerance(responseEnabled, apiEnabled, inputChangeTolerance[0]);
 }
 
 //***GET BUTTON MAPPING FUNCTION***//
@@ -1574,9 +1670,15 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled) {
       }
     }   
   }
-  printResponseMultiple(responseEnabled,apiEnabled,true,0,"MP,0","",6 ,"",g_actionButton);
+  printResponseMultiple(responseEnabled,apiEnabled,true,0,"MP,0","",6 ,'\0',g_actionButton);
 
   delay(5); 
+}
+
+void getButtonMapping(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getButtonMapping(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET BUTTON MAPPING FUNCTION***//
@@ -1615,7 +1717,7 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
    delay(5);
   int responseCode=0;
   (isValidMapping) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,apiEnabled,isValidMapping,responseCode,"MP,1","",6,"",inputButtonMapping);
+  printResponseMultiple(responseEnabled,apiEnabled,isValidMapping,responseCode,"MP,1","",6,'\0',inputButtonMapping);
 
   delay(5); 
 }
@@ -1647,6 +1749,12 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled) {
    delay(5); 
     
    return tempRotationAngle;
+}
+
+void getRotationAngle(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getRotationAngle(responseEnabled, apiEnabled);
+  }
 }
 
 //***SET ROTATION ANGLE FUNCTION***///  
@@ -1688,6 +1796,10 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
   
   updateRotationAngle(); // Update rotation transform
 
+}
+
+void setRotationAngle(bool responseEnabled, bool apiEnabled, int* inputRotationAngle) {
+  setRotationAngle(responseEnabled, apiEnabled, inputRotationAngle[0]);
 }
 
 //***UPDATE ROTATION ANGLES FUNCTION***///
@@ -1741,6 +1853,12 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled) {
   return scrollLevel;
 }
 
+void getScrollLevel(bool responseEnabled, bool apiEnabled, int* optionalArray) {
+  if(optionalArray[0]==0){
+    getScrollLevel(responseEnabled, apiEnabled);
+  }
+}
+
 //***SET SCROLL LEVEL FUNCTION***//
 // Function   : setScrollLevel
 // 
@@ -1782,6 +1900,9 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
   (isValidFactor) ? responseCode = 0 : responseCode = 2;
   printResponseSingle(responseEnabled,apiEnabled,isValidFactor,responseCode,"SL,1",true,g_cursorScrollLevel);
   delay(5); 
+}
+void setScrollLevel(bool responseEnabled, bool apiEnabled, int* inputScrollLevel) {
+  setScrollLevel(responseEnabled, apiEnabled, inputScrollLevel[0]);
 }
 
 //***FACTORY RESET FUNCTION***//
@@ -1849,6 +1970,9 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
   printResponseSingle(responseEnabled,apiEnabled,isValidResetType,responseCode,"FR,1",true,resetType);
 
   delay(5); 
+}
+void factoryReset(bool responseEnabled, bool apiEnabled, int* resetType) { 
+  factoryReset(responseEnabled, apiEnabled, resetType[0]);
 }
 
 //***SERIAL SETTINGS FUNCTION TO CHANGE SPEED AND COMMUNICATION MODE USING SOFTWARE***//
@@ -1954,6 +2078,26 @@ boolean isStrNumber(String str){
   return true;
 }
 
+//***CHECK IF CHAR IS A VALID DELIMITER FUNCTION***//
+// Function   : isValidDelimiter 
+// 
+// Description: This function checks if the input char is a valid delimiter. 
+//              It returns true if the character is a valid delimiter.
+//              It returns false if the character is not a valid delimiter.
+// 
+// Parameters :  inputDelimiter : char : The input char delimiter
+// 
+// Return     : boolean
+//******************************************//
+bool isValidDelimiter(char inputDelimiter){
+  bool validOutput;
+  
+  (inputDelimiter == ',' || inputDelimiter == ':' || inputDelimiter == '-') ? validOutput = true : validOutput = false;
+
+  return validOutput;
+}
+
+
 //***SERIAL PRINT OUT COMMAND RESPONSE WITH SINGLE PARAMETER FUNCTION***//
 // Function   : printResponseSingle 
 // 
@@ -2010,7 +2154,11 @@ void printResponseSingle(bool responseEnabled,bool apiEnabled, bool responseStat
 // 
 // Return     : void
 //************************************************************************************//
-void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, String responsePrefix, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
+void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus, int responseNumber, String responseCommand, String responsePrefix, int responseParameterSize, char responseParameterDelimiter, int responseParameter[]) {
+  char tempParameterDelimiter[1];
+
+  (isValidDelimiter(responseParameterDelimiter)) ? tempParameterDelimiter[0]={responseParameterDelimiter} : tempParameterDelimiter[0]={'\0'};
+
   if(responseEnabled) {
    
     if(responseStatus){
@@ -2026,7 +2174,7 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
     Serial.print(responsePrefix);
     for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
        Serial.print(responseParameter[parameterIndex]);  
-       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
+       if(parameterIndex < (responseParameterSize-1)){ Serial.print(tempParameterDelimiter[0]);  };
     }   
     Serial.println("");  
   }
@@ -2045,17 +2193,20 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
 // 
 // Return     : void
 //************************************************************************************//
-void printResponseContinuous(String responseStatus, int responseNumber, int responseParameterSize, char responseParameterDelimiter[], int responseParameter[]) {
-   
-    Serial.print(responseStatus);
-    Serial.print(",");
-    Serial.print(responseNumber);
-    Serial.print(":");
-    for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
-       Serial.print(responseParameter[parameterIndex]);  
-       if(parameterIndex < (responseParameterSize-1)){ Serial.print(responseParameterDelimiter);  };
-    }   
-    Serial.println("");  
+void printResponseContinuous(String responseStatus, int responseNumber, int responseParameterSize, char responseParameterDelimiter, int responseParameter[]) {
+  char tempParameterDelimiter[1];
+
+  (isValidDelimiter(responseParameterDelimiter)) ? tempParameterDelimiter[0]={responseParameterDelimiter} : tempParameterDelimiter[0]={'\0'};
+    
+  Serial.print(responseStatus);
+  Serial.print(",");
+  Serial.print(responseNumber);
+  Serial.print(":");
+  for(int parameterIndex = 0; parameterIndex< responseParameterSize; parameterIndex++){
+     Serial.print(responseParameter[parameterIndex]);  
+     if(parameterIndex < (responseParameterSize-1)){ Serial.print(tempParameterDelimiter[0]);  };
+  }   
+  Serial.println("");  
 }
 
 //***PERFORM COMMAND FUNCTION TO CHANGE SETTINGS USING SOFTWARE***//
@@ -2070,7 +2221,7 @@ void printResponseContinuous(String responseStatus, int responseNumber, int resp
 //*********************************//
 void performCommand(String inputString) {
   int inputCommandIndex = inputString.indexOf(':');
-  
+
   //Extract command string from input string
   String inputCommandString = inputString.substring(0, inputCommandIndex);
   
@@ -2105,9 +2256,10 @@ void performCommand(String inputString) {
           apiFunction[apiIndex]._function(true, true, inputParameterArray);
           delay(5);     
         } else {
-
+          int tempParameterArray[1] = {(int)inputParameterString.toInt()};
+          //int inputParameterInteger = inputParameterString.toInt();
           // Call matching API function with input parameter string
-          apiFunction[apiIndex]._function(true, true, inputParameterString.toInt());
+          apiFunction[apiIndex]._function(true, true, tempParameterArray);
           delay(5);
         }
       } else { // Invalid input parameter
