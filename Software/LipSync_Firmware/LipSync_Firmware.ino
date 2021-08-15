@@ -2408,7 +2408,6 @@ void performCommand(String inputString) {
           delay(5);     
         } else {
           int tempParameterArray[1] = {(int)inputParameterString.toInt()};
-          //int inputParameterInteger = inputParameterString.toInt();
           // Call matching API function with input parameter string
           apiFunction[apiIndex]._function(true, true, tempParameterArray);
           delay(5);
