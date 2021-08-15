@@ -75,8 +75,6 @@
 //#define ACTION_SHORT_PUFF   OUTPUT_RIGHT_CLICK     
 //#define ACTION_SHORT_SIP    OUTPUT_LEFT_CLICK        
 
-#define ACTION_HOLD_DELAY 175                     //The delay used in drag and scroll functions before existing
-
 //***CUSTOMIZABLE VARIABLES***//
 #define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}
 
@@ -95,6 +93,9 @@
 #define SCROLL_MAX_MOVE 100                       //Scroll Maximum allowed moevment
 #define SCROLL_BASE_MOVE 5                        //Scroll base moevment
 
+#define ACTION_HOLD_DELAY 175                     //The delay used in drag and scroll functions before existing
+#define DEBUG_MODE_DELAY 150                      //The delay used in debug mode between each reading 
+
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
 #define CURSOR_DEADBAND 30                        //Joystick deadband
 #define CHANGE_DEFAULT_TOLERANCE 3                //The tolerance in changes between current reading and previous reading
@@ -108,10 +109,9 @@
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
 #define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
 
-int BUTTON_MAPPING[INPUT_ACTION_COUNT] = 
+int BUTTON_MAPPING[INPUT_ACTION_COUNT] =          
   {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
-   ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_SHORT_PUFF};     
-const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     //MMC default sip and puff buttons actions
+   ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_VLONG_SIP};                      
 
 //***DON'T CHANGE THESE CONSTANTS***//
 #define XHIGH_DIRECTION 1                         //Mouthpiece right movements correspond to positive (i.e. right) mouse movement
@@ -121,7 +121,6 @@ const int DEFAULT_BUTTON_MAPPING[INPUT_ACTION_COUNT] = {1, 2, 3, 4, 6, 0};     /
 
 //*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.  
 #define DEBUG_MODE false                          //Enable debug information to serial output (Default: false)
-#define RAW_MODE false                            //Enable raw FSR readings to serial output (Default: false)
 #define API_ENABLED true                          //Enable API Serial interface = true , Disable API serial interface = false      
 
 //***PIN ASSIGNMENTS***// - DO NOT CHANGE
@@ -191,8 +190,6 @@ _functionList getJoystickValueFunction =        {"JV,0","0",&getJoystickValue};
 
 _functionList getDebugModeFunction =            {"DM,0","0",&getDebugMode};
 _functionList setDebugModeFunction =            {"DM,1","",&setDebugMode};
-//_functionList getRawModeFunction =              {"RM,0","0",&getRawMode};
-//_functionList setRawModeFunction =              {"RM,1","",&setRawMode};
 
 _functionList getCursorInitializationFunction = {"IN,0","0",&getCursorInitialization};
 _functionList setCursorInitializationFunction = {"IN,1","1",&setCursorInitialization};
@@ -221,8 +218,6 @@ _functionList apiFunction[23] = {
   getJoystickValueFunction,
   getDebugModeFunction,
   setDebugModeFunction,
-  //getRawModeFunction,
-  //setRawModeFunction,
   getCursorInitializationFunction,
   setCursorInitializationFunction,
   getCursorCalibrationFunction,
@@ -290,10 +285,9 @@ float yLowComp = 1.0;
 float xHighComp = 1.0;
 float xLowComp = 1.0;
 
-bool g_debugModeEnabled;                               //Declare raw and debug enable variable
-bool g_rawModeEnabled;
-bool g_settingsEnabled = false;                          //Serial input settings command mode enabled or disabled
-bool scrollModeEnabled = false;
+bool g_debugModeEnabled;                               //Declare debug enable variable
+bool g_settingsEnabled = false;                        //Serial input settings command mode enabled or disabled
+bool scrollModeEnabled = false;                        //Declare scroll mode enable variable                       
 
 //-----------------------------------------------------------------------------------//
 
@@ -333,9 +327,6 @@ void setup() {
   
   g_debugModeEnabled = getDebugMode(false, false);         //Get the debug mode state
   delay(10);
-  
-  g_rawModeEnabled = getRawMode(false, false);             //Get the raw mode state
-  delay(50); 
   
   getCompFactor();                                         //Get the default values that are stored in EEPROM
   delay(10);
@@ -380,9 +371,7 @@ void loop() {
   cursorHandler();                                  //Read the joystick values and output mouse cursor movements.
 
   //Perform sip and puff actions raw mode is disabled 
-  if(!g_rawModeEnabled) {
-    sipAndPuffHandler();                           //Pressure sensor sip and puff functions
-  }                                                       
+  sipAndPuffHandler();                           //Pressure sensor sip and puff functions                                                      
   delay(5);
   pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
 }
@@ -450,7 +439,7 @@ void cursorHandler(void) {
   rotateCursor(xCursor, yCursor); //apply transform for mounting angle
  
   if (outputMouse && !scrollModeEnabled){
-    (g_rawModeEnabled) ? sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow) : moveCursor(xCursor, yCursor, 0); //output mouse command
+    moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
     g_pollCounter = 0;
   } else if (outputMouse && scrollModeEnabled) {
@@ -458,18 +447,14 @@ void cursorHandler(void) {
     moveCursor(0, 0, yScroll);
     delay(g_cursorScrollDelay); 
     g_pollCounter = 0;
-  } else if (g_rawModeEnabled) {
-    sendRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-  }
+  } 
 
   //Debug information 
   if(g_debugModeEnabled) {
     
-    int debugDataValue[]={xHigh,xLow,yHigh,yLow};
+    sendDebugRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
 
-    printResponseContinuous("LOG",3,4,',',debugDataValue);
-
-    delay(150);
+    delay(DEBUG_MODE_DELAY);
   }
   
 }
@@ -877,7 +862,7 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
   
   int responseCode=0;
-  (isValidSpeed) ? responseCode = 0 : responseCode = 2;
+  (isValidSpeed) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled,apiEnabled,isValidSpeed,responseCode,"SS,1",true,g_cursorSpeedCounter);
   delay(5); 
 }
@@ -1029,7 +1014,7 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
   int pressureThreshold = inputPressureThreshold;
   float pressureNominal = readPressure(); // Read neutral pressure transducer analog value [0.0V - 5.0V]
 
-  if (pressureThreshold>=5 && pressureThreshold<=50) {
+  if (pressureThreshold>=PRESSURE_THRESHOLD_MIN && pressureThreshold<=PRESSURE_THRESHOLD_MAX) {
     EEPROM.put(EEPROM_pressureThreshold, pressureThreshold); // Update value to memory from serial input
     delay(10); 
     
@@ -1051,7 +1036,7 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
   int pressureValue[]={pressureThreshold,(int) (pressureNominal*100)};
 
   int responseCode=0;
-  (isValidThreshold) ? responseCode = 0 : responseCode = 2;
+  (isValidThreshold) ? responseCode = 0 : responseCode = 3;
   printResponseMultiple(responseEnabled,apiEnabled,isValidThreshold,responseCode,"PT,1","",2,':',pressureValue);
 
   delay(5); 
@@ -1182,7 +1167,7 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled) {
 
   printResponseSingle(responseEnabled,apiEnabled,true,0,"DM,0",true,debugState);
 
-  if(responseEnabled && debugState){ sendDebugData();}
+  if(responseEnabled && debugState==1){ sendDebugConfigData();}
 
   delay(5); 
   return debugState;
@@ -1237,14 +1222,11 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState) {
   delay(5);
 
   int responseCode=0;
-  (isValidDebugState) ? responseCode = 0 : responseCode = 2;
+  (isValidDebugState) ? responseCode = 0 : responseCode = 3;
   
   printResponseSingle(responseEnabled, apiEnabled, isValidDebugState, responseCode, "DM,1", true, g_debugModeEnabled);
 
-  if(responseEnabled && g_debugModeEnabled){ 
-    g_rawModeEnabled = false;
-    sendDebugData();
-    }
+  if(inpuDebugState==1) { sendDebugConfigData();    }
   
   delay(5); 
 }
@@ -1265,9 +1247,9 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int* inpuDebugState){
 }
 
 //***SEND DEBUG DATA FUNCTION***//
-// Function   : sendDebugData 
+// Function   : sendDebugConfigData 
 // 
-// Description: This function serial prints the debug mode data.
+// Description: This function serial prints the debug mode config data.
 //              Output format: "LOG:1:xHighNeutral,xLowNeutral,yHighNeutral,yLowNeutral"
 //              Output format: "LOG:2:xHighMax,xLowMax,yHighMax,yLowMax"
 // 
@@ -1275,24 +1257,24 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int* inpuDebugState){
 // 
 // Return     : void
 //*********************************//
-void sendDebugData() {
+void sendDebugConfigData() {
   
-  int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
-  int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
+  int neutralValue[]={0,0,0,g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
+  int maxValue[]={0,0,0,g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
   delay(100);
-  printResponseContinuous("LOG",1,4,',',neutralValue);
+  printResponseContinuous("LOG",1,7,',',neutralValue);
   delay(100);
-  printResponseContinuous("LOG",2,4,',',maxValue);
+  printResponseContinuous("LOG",2,7,',',maxValue);
   delay(100);
   
 }
 
-//***SEND RAW DATA FUNCTION***//
-// Function   : sendRawData 
+//***SEND DEBUG RAW DATA FUNCTION***//
+// Function   : sendDebugRawData 
 // 
-// Description: This function serial prints the raw mode data.
-//              Output format: "RAW:1:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
+// Description: This function serial prints the debug mode raw data.
+//              Output format: "LOG:3:xCursor,yCursor,Action:xUp,xDown,yUp,yDown"
 // 
 // Parameters :  x : int : The cursor x movement.
 //               y : int : The cursor y movement.
@@ -1304,114 +1286,12 @@ void sendDebugData() {
 // 
 // Return     : void
 //*********************************//
-void sendRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
+void sendDebugRawData(int x, int y, int action, int xUp, int xDown, int yUp, int yDown) {
 
   int rawDataValue[]={x,y,action,xUp,xDown,yUp,yDown};
-  printResponseContinuous("RAW",1,7,',',rawDataValue);
+  printResponseContinuous("LOG",3,7,',',rawDataValue);
 }
 
-//***GET RAW MODE STATE FUNCTION***//
-// Function   : getRawMode 
-// 
-// Description: This function retrieves the state of raw mode.
-// 
-// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
-//                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
-//                                   Manual response is sent if it's set to false.
-// 
-// Return     : rawState : bool : The current state of raw mode.
-//*********************************//
-bool getRawMode(bool responseEnabled, bool apiEnabled) {
-  bool rawState=RAW_MODE;
-  int rawIntValue;
-  
-  if(API_ENABLED) {
-    EEPROM.get(EEPROM_rawModeEnabled, rawIntValue);
-    delay(5);
-    if(rawIntValue!=0 && rawIntValue!=1) { 
-      delay(5);
-      rawState=RAW_MODE;
-      }   
-  } else {
-    rawState=RAW_MODE;
-    delay(5);   
-  }
-
-  printResponseSingle(responseEnabled, apiEnabled, true, 0, "RM,0", true, rawState);
-  
-  delay(5); 
-  return rawState;
-}
-//***GET RAW MODE STATE API FUNCTION***//
-// Function   : getRawMode 
-// 
-// Description: This function is redefinition of main getRawMode function to match the types of API function arguments.
-// 
-// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
-//                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
-//                                   Manual response is sent if it's set to false.
-//               optionalArray : int* : The array of int which should contain one element with value of zero.
-// 
-// Return     : void
-void getRawMode(bool responseEnabled, bool apiEnabled, int* optionalArray) {
-  if(optionalArray[0]==0){
-    getRawMode(responseEnabled, apiEnabled);
-  }
-}
-
-//***SET RAW MODE STATE FUNCTION***//
-// Function   : setRawMode 
-// 
-// Description: This function sets the state of raw mode.
-// 
-// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
-//                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
-//                                   Manual response is sent if it's set to false.
-//               inputRawState : bool : The new raw mode state ( true = ON , false = OFF )
-// 
-// Return     : void
-//*********************************//
-void setRawMode(bool responseEnabled, bool apiEnabled, bool inputRawState) {
-
-  bool isValidRawState = true;
-  if (inputRawState==0 || inputRawState==1) {
-    g_rawModeEnabled=inputRawState;
-    EEPROM.put(EEPROM_rawModeEnabled, inputRawState);
-    delay(5);    
-    if(!API_ENABLED) { g_rawModeEnabled=RAW_MODE; }
-    isValidRawState = true;
-  } else {
-    isValidRawState = false;
-  }
-  delay(5);
-
-  int responseCode=0;
-  (isValidRawState) ? responseCode = 0 : responseCode = 2;
-  
-  printResponseSingle(responseEnabled, apiEnabled, isValidRawState, responseCode, "RM,1", true, g_rawModeEnabled);
-  
-  if(responseEnabled && g_rawModeEnabled){ g_debugModeEnabled = false; }
-
-  delay(5); 
-}
-//***SET RAW MODE STATE API FUNCTION***//
-// Function   : setRawMode 
-// 
-// Description: This function is redefinition of main setRawMode function to match the types of API function arguments.
-// 
-// Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
-//                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
-//                                   Manual response is sent if it's set to false.
-//               inputRawState : int* : The array of one element which contains the new raw mode state.
-// 
-// Return     : void
-void setRawMode(bool responseEnabled, bool apiEnabled, int* inputRawState){
-  setRawMode(responseEnabled, apiEnabled, inputRawState[0]);
-}
 
 //***GET COMP FACTOR VALUES FUNCTION***///
 /// Function   : getCompFactor 
@@ -1733,7 +1613,7 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled) {
 // 
 // Return     : void
 void setCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalArray) {
-  if(optionalArray[0]==0){
+  if(optionalArray[0]==1){
     setCursorCalibration(responseEnabled, apiEnabled);
   }
 }
@@ -1811,9 +1691,9 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
   }
   delay(5);
   int responseCode=0;
-  (isValidChangeTolerance) ? responseCode = 0 : responseCode = 2;
+  (isValidChangeTolerance) ? responseCode = 0 : responseCode = 3;
   
-  printResponseSingle(responseEnabled,apiEnabled,isValidChangeTolerance,responseCode,"CT,1",true,inputChangeTolerance); 
+  printResponseSingle(responseEnabled,apiEnabled,isValidChangeTolerance,responseCode,"CT,1",true,g_changeTolerance); 
 
 }
 //***SET CHANGE TOLERANCE VALUE CALIBRATION API FUNCTION***//
@@ -1925,8 +1805,8 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
    } 
    delay(5);
   int responseCode=0;
-  (isValidMapping) ? responseCode = 0 : responseCode = 2;
-  printResponseMultiple(responseEnabled,apiEnabled,isValidMapping,responseCode,"MP,1","",6,'\0',inputButtonMapping);
+  (isValidMapping) ? responseCode = 0 : responseCode = 3;
+  printResponseMultiple(responseEnabled,apiEnabled,isValidMapping,responseCode,"MP,1","",6,'\0',g_actionButton);
 
   delay(5); 
 }
@@ -2010,9 +1890,9 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
                                  
     
   int responseCode=0;
-  (isValidRotationAngle) ? responseCode = 0 : responseCode = 2;
+  (isValidRotationAngle) ? responseCode = 0 : responseCode = 3;
   
-  printResponseSingle(responseEnabled,apiEnabled,isValidRotationAngle,responseCode,"RA,1",true,inputRotationAngle); 
+  printResponseSingle(responseEnabled,apiEnabled,isValidRotationAngle,responseCode,"RA,1",true,g_rotationAngle); 
   
   updateRotationAngle(); // Update rotation transform
 
@@ -2139,7 +2019,7 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
   g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel);
   
   int responseCode=0;
-  (isValidFactor) ? responseCode = 0 : responseCode = 2;
+  (isValidFactor) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled,apiEnabled,isValidFactor,responseCode,"SL,1",true,g_cursorScrollLevel);
   delay(5); 
 }
@@ -2186,11 +2066,14 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
       setPressureThreshold(false, true, PRESSURE_THRESHOLD);                      //set default pressure threshold
       delay(10);
       
-      setButtonMapping(false, true, BUTTON_MAPPING);                               //set default action mapping
+      setButtonMapping(false, true, BUTTON_MAPPING);                             //set default action mapping
       delay(10);
     }
     
     setCursorSpeed(false, true, SPEED_COUNTER);                                  // set default cursor speed counter
+    delay(10);
+
+    setScrollLevel(false, true, SCROLL_LEVEL);                                  // set default scroll speed level
     delay(10);
     
     setRotationAngle(false, true, ROTATION_ANGLE);                              //set default rotation angle
@@ -2202,15 +2085,17 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
     setDebugMode(false, true, DEBUG_MODE);                                       //set default debug mode
     delay(10);  
     
-    setRawMode(false, true, RAW_MODE);                                           //set default button mapping
-    delay(10);  
-    
-    //Set the default values
+    //Set the default cursor speed values
     g_cursorSpeedCounter = SPEED_COUNTER; 
     g_cursorMaxSpeed =  cursorParams[g_cursorSpeedCounter];
+    delay(10);
+
+    //Set the default scroll speed values
+    g_cursorScrollLevel = SCROLL_LEVEL;
+    g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel);
+    delay(10);
     
     g_debugModeEnabled = DEBUG_MODE;  
-    g_rawModeEnabled = RAW_MODE;
     
     getCompFactor();                                   
     delay(10);
@@ -2218,7 +2103,7 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
     ledBlink(2, 250, 1);
   } else {
      isValidResetType = false;
-     responseCode = 2;
+     responseCode = 3;
   }
       
   printResponseSingle(responseEnabled,apiEnabled,isValidResetType,responseCode,"FR,1",true,resetType);
