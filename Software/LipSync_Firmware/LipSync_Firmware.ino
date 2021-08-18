@@ -277,7 +277,8 @@ int g_xHighNeutral, g_xLowNeutral, g_yHighNeutral, g_yLowNeutral; //Individual n
 
 int g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax;         //Max FSR values which are set to the values from EEPROM
 
-float g_xHighYHighRadius, g_xHighYLowRadius, g_xLowYLowRadius, g_xLowYHighRadius; // Squared deadband distance from center
+//float g_xHighYHighRadius, g_xHighYLowRadius, g_xLowYLowRadius, g_xLowYHighRadius; 
+const float g_deadband_squared = CURSOR_DEADBAND * CURSOR_DEADBAND; // Squared deadband distance from center
 
 int g_changeTolerance;                                     //The tolerance of changes in FSRs readings 
 
@@ -494,8 +495,9 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
 
-  //Check to see if the joystick has moved outside the deadband
-  if ((xHighYHigh > g_xHighYHighRadius) || (xHighYLow > g_xHighYLowRadius) || (xLowYLow > g_xLowYLowRadius) || (xLowYHigh > g_xLowYHighRadius)) {
+  // Check to see if the joystick has moved outside the deadband
+  if((xHighYHigh > g_deadband_squared) || (xHighYLow > g_deadband_squared) || (xLowYLow > g_deadband_squared) || (xLowYHigh > g_deadband_squared)) 
+  {
 
     //Secondary check to see if joystick has moved by looking for low FSR values 
     // (e.g. joystick unloaded->high resistance-> low voltage)
@@ -1470,10 +1472,7 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled) {
   EEPROM.get(EEPROM_yHighMax, g_yHighMax);
   EEPROM.get(EEPROM_yLowMax,  g_yLowMax);
 
-  g_xHighYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
-  g_xHighYLowRadius  = CURSOR_DEADBAND*CURSOR_DEADBAND;
-  g_xLowYLowRadius   = CURSOR_DEADBAND*CURSOR_DEADBAND;
-  g_xLowYHighRadius  = CURSOR_DEADBAND*CURSOR_DEADBAND;
+  int maxValue[]={ g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax };
 
   int maxValue[]={g_xHighMax,g_xLowMax,g_yHighMax,g_yLowMax};
 
