@@ -135,6 +135,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
+const byte UNUSED_PINS[] = {2,3,9,11,12,13,14,15,16,17};      // Unused pins 
 
 //***LIPSYNC EEPROM MEMORY***// - DO NOT CHANGE
 #define EEPROM_modelNumber 0                      //int:0,1; 255 on fresh Arduino
@@ -393,12 +394,11 @@ void initializePins(void) {
   pinMode(BUTTON_UP_PIN, INPUT_PULLUP);           //Set increase cursor speed button pin as input
   pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         //Set decrease cursor speed button pin as input
 
-  pinMode(2, INPUT_PULLUP);                       //Set unused pins as inputs with pullups
-  pinMode(3, INPUT_PULLUP);
-  pinMode(9, INPUT_PULLUP);
-  pinMode(11, INPUT_PULLUP);
-  pinMode(12, INPUT_PULLUP);
-  pinMode(13, INPUT_PULLUP);
+  //Set unused pins as inputs with pullups
+  for (byte pinIndex = 0; pinIndex < sizeof(UNUSED_PINS); pinIndex++){
+    pinMode(UNUSED_PINS[pinIndex], INPUT_PULLUP);
+}
+
 }
 
 
