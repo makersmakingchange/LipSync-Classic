@@ -2690,11 +2690,6 @@ void ledClear(void)
 //*********************************//
 void ledBlink(int numBlinks, int delayBlinks, int ledNumber) 
 {
-  if(numBlinks < 0) 
-  {
-    numBlinks *= -1; // TODO is this error checking?
-  }
-
   switch (ledNumber) 
   {
     case 1: 
