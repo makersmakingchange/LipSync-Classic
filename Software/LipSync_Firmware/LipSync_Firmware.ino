@@ -76,38 +76,38 @@
 //#define ACTION_SHORT_SIP    OUTPUT_LEFT_CLICK        
 
 //***CUSTOMIZABLE VARIABLES***//
-#define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270}
+#define ROTATION_ANGLE 0                          //CCW Rotation angle between Screen "up" to LipSync "up" {0,90,180,270} [degrees]
 
-#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold
-#define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input in cycle counts
-#define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff in cycle counts
-#define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input in cycle counts
-#define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in cycle counts
+#define PRESSURE_THRESHOLD 10                     //Pressure sip and puff threshold [percentage]
+#define PUFF_COUNT_THRESHOLD_MED 150              //Threshold between short and medium puff input [cycle counts]
+#define PUFF_COUNT_THRESHOLD_LONG 750             //Threshold between medium and long puff [cycle counts]
+#define SIP_COUNT_THRESHOLD_MED 150               //Threshold between short and medium puff input [cycle counts]
+#define SIP_COUNT_THRESHOLD_LONG 750              //Threshold between medium and long puff in [cycle counts]
 
-#define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed     
-#define SPEED_COUNTER 5                           //Default cursor speed level
-#define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels
-#define CURSOR_DELAY 5                            //Current cursor delay
-#define SCROLL_LEVEL 5                            //Default scroll level
-#define SCROLL_BASE_DELAY 50                      //Base or minimum scroll delay
-#define SCROLL_MAX_MOVE 100                       //Scroll Maximum allowed moevment
-#define SCROLL_BASE_MOVE 5                        //Scroll base moevment
+#define CURSOR_DEFAULT_SPEED 30                   //Default USB cursor speed [pixels/update]
+#define SPEED_COUNTER (byte)5                     //Default cursor speed level
+#define CURSOR_DELTA_SPEED 5                      //Delta value that is used to calculate USB cursor speed levels [pixels/update]
+#define CURSOR_DELAY 5                            //Current cursor delay [ms]
+#define SCROLL_LEVEL (byte)5                      //Default scroll level
+#define SCROLL_BASE_DELAY 50                      //Base or minimum scroll delay [ms]
+#define SCROLL_MAX_MOVE 100                       //Scroll Maximum allowed movement
+#define SCROLL_BASE_MOVE 5                        //Scroll base movement
 
-#define ACTION_HOLD_DELAY 175                     //The delay used in drag and scroll functions before existing
-#define DEBUG_MODE_DELAY 150                      //The delay used in debug mode between each reading 
+#define ACTION_HOLD_DELAY 175                     //The delay used in drag and scroll functions before existing [ms]
+#define DEBUG_MODE_DELAY 150                      //The delay used in debug mode between each reading [ms]
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
-#define CURSOR_DEADBAND 30                        //Joystick deadband
-#define CHANGE_DEFAULT_TOLERANCE 3                //The tolerance in changes between current reading and previous reading
+#define CURSOR_DEADBAND 30                        //Joystick deadband {ADC steps]
+#define CHANGE_DEFAULT_TOLERANCE 3                //The tolerance in changes between current reading and previous reading [ADC steps]
 
 //***DON'T CHANGE THESE CONSTANTS***//       
-#define LIPSYNC_MODEL 1                           //LipSync Mouse
-#define LIPSYNC_VERSION 30                        //LipSync Version
-#define PRESSURE_THRESHOLD_MIN 10                 //Minimum Pressure sip and puff threshold
-#define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
+#define LIPSYNC_MODEL (byte)1                     //LipSync Mouse
+#define LIPSYNC_VERSION (byte)30                  //LipSync Version
+#define PRESSURE_THRESHOLD_MIN (byte)10           //Minimum Pressure sip and puff threshold [percentage]
+#define PRESSURE_THRESHOLD_MAX (byte)50           //Maximum Pressure sip and puff threshold [percentage]
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
-#define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
+#define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
 
 int BUTTON_MAPPING[INPUT_ACTION_COUNT] =          
   {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
@@ -164,7 +164,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 //#define EEPROM_compFactor 56                    //int:56,57;
 #define EEPROM_changeTolerance 58                 //int:58,59;
 #define EEPROM_versionNumber 60                   //int:60,61; 
-#define EEPROM_scrollLevel 62                    //int:62,63; 
+#define EEPROM_scrollLevel 62                     //int:62,63; 
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool,bool,int*);        //Type definition for API function pointer
@@ -234,22 +234,22 @@ _functionList apiFunction[23] = {
 
 
 const int cursorParams[11] = {CURSOR_DEFAULT_SPEED - (5 * CURSOR_DELTA_SPEED),
-CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED),
-CURSOR_DEFAULT_SPEED - (1 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED, 
-CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED), 
-CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
+                              CURSOR_DEFAULT_SPEED - (4 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED - (3 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED - (2 * CURSOR_DELTA_SPEED),
+                              CURSOR_DEFAULT_SPEED - (1 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED, 
+                              CURSOR_DEFAULT_SPEED + (CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED + (2 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED + (3 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED + (4 * CURSOR_DELTA_SPEED), 
+                              CURSOR_DEFAULT_SPEED + (5 * CURSOR_DELTA_SPEED)};
 
 
 //***GLOBAL VARIABLE DECLARATION***//
 
-int g_modelNumber;                                  //Declare LipSync model number variable 
-int g_versionNumber;                                //Declare LipSync version number variable 
+byte g_modelNumber;                                  //Declare LipSync model number variable 
+byte g_versionNumber;                                //Declare LipSync version number variable 
 int g_actionButton[INPUT_ACTION_COUNT];             //Sip & Puff action mapping
 
 int   g_rotationAngle = ROTATION_ANGLE;             //Rotation angle variable (degrees)
@@ -258,10 +258,10 @@ float g_rotationAngle12;
 float g_rotationAngle21;
 float g_rotationAngle22;
 
-int g_cursorSpeedCounter;                           // Variable to track current cursor speed level
+byte g_cursorSpeedCounter;                           // Variable to track current cursor speed level
 int g_cursorMaxSpeed;                               // Current cursor max speed (at full joystick deflection)
-float g_cursorFactor;                               // Current cursor factor //TODO not currently used.
-int g_cursorScrollLevel;                            // Variable to track current scroll speed level
+//float g_cursorFactor;                               // Current cursor factor //TODO not currently used.
+byte g_cursorScrollLevel;                            // Variable to track current scroll speed level
 int g_cursorScrollDelay;                            // Current Scroll delay
 
 float g_cursorPressure;                             //Variable to hold pressure readings
@@ -280,7 +280,7 @@ float g_xHighYHighRadius, g_xHighYLowRadius, g_xLowYLowRadius, g_xLowYHighRadius
 
 int g_changeTolerance;                                     //The tolerance of changes in FSRs readings 
 
-float yHighComp = 1.0;
+float yHighComp = 1.0;                                 // FSR compensation to normalize between axes
 float yLowComp = 1.0;
 float xHighComp = 1.0;
 float xLowComp = 1.0;
@@ -302,53 +302,43 @@ bool scrollModeEnabled = false;                        //Declare scroll mode ena
 //*********************************//
 void setup() {
   
-  Serial.begin(115200);                           //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
+  Serial.begin(115200);                                    //Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
   
-  initializePins();                                       //Initialize Arduino input and output pins
+  initializePins();                                        //Initialize Arduino input and output pins
 
-  Mouse.begin();                                          //Initialize the HID mouse functions
+  Mouse.begin();                                           //Initialize the HID mouse functions
   delay(1000);
   
   getModelNumber(false, false);                            //Get LipSync model number; Perform factory reset on initial upload.
-  delay(10);
   
   setCursorInitialization(false, false, 1);                //Set the Home joystick and generate movement threshold boundaries
-  delay(10);                                              //TODO - may want to change to 2 so we trigger reset of comp values 
-                                                          //   based on new neutral position
+                                                           //TODO - may want to change to 2 so we trigger reset of comp values 
+                                                           // based on new neutral position
   
-  getCursorCalibration(false, false);                     //Get FSR Max calibration values 
-  delay(10);
+  getCursorCalibration(false, false);                      //Get FSR Max calibration values 
   
   g_changeTolerance = getChangeTolerance(false, false);    // Get change tolerance using max FSR readings and default tolerance 
-  delay(10);
   
-  getPressureThreshold(false, false);                     //Get the pressure sensor threshold boundaries
-  delay(10);
+  getPressureThreshold(false, false);                      //Get the pressure sensor threshold boundaries
   
   g_debugModeEnabled = getDebugMode(false, false);         //Get the debug mode state
-  delay(10);
   
   getCompFactor();                                         //Get the default values that are stored in EEPROM
-  delay(10);
   
   g_cursorSpeedCounter = getCursorSpeed(false, false);     //Read the saved cursor speed parameter from EEPROM
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
-  delay(10);
 
-  g_cursorScrollLevel = getScrollLevel(false, false);     //Read the saved cursor scroll level parameter from EEPROM
+  g_cursorScrollLevel = getScrollLevel(false, false);      //Read the saved cursor scroll level parameter from EEPROM
   g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel); // Calculate scroll time delay 
-  delay(10);
 
   getButtonMapping(false, false);                         //Get the input buttons to actions mappings 
-  delay(10);
    
   g_rotationAngle = getRotationAngle(false, false);        //Read the saved rotation angle from EEPROM
   updateRotationAngle();
-  delay(10);
+ 
+  ledBlink(4, 250, 3);                                    //End initialization visual feedback
 
-  ledBlink(4, 250, 3);                            //End initialization visual feedback
-
-  forceCursorDisplay();                           //Display cursor on screen by moving it
+  forceCursorDisplay();                                   //Display cursor on screen by moving it
   
 }
 
@@ -366,14 +356,13 @@ void setup() {
 //*********************************//
 void loop() {
   
-  g_settingsEnabled=serialSettings(g_settingsEnabled); //Check to see if setting option is enabled in Lipsync
+  g_settingsEnabled=serialSettings(g_settingsEnabled);  //Check to see if setting option is enabled in Lipsync
 
-  cursorHandler();                                  //Read the joystick values and output mouse cursor movements.
+  cursorHandler();                                      //Read the joystick values and output mouse cursor movements.
 
-  //Perform sip and puff actions raw mode is disabled 
-  sipAndPuffHandler();                           //Pressure sensor sip and puff functions                                                      
-  delay(5);
-  pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN); 
+  sipAndPuffHandler();                                  //Pressure sensor sip and puff functions                                                      
+  
+  pushButtonHandler(BUTTON_UP_PIN,BUTTON_DOWN_PIN);     //Check rear push buttons
 }
 
 //***END OF MAIN LOOP***//
@@ -416,7 +405,7 @@ void initializePins(void) {
 //*** CURSOR HANDLER FUNCTION***//
 // Function   : cursorHandler 
 // 
-// Description: This function handles the cursor movements based on the FSR values/
+// Description: This function handles the cursor movements based on the FSR values
 // 
 // Parameters :  void
 // 
@@ -424,7 +413,6 @@ void initializePins(void) {
 //*********************************//
 void cursorHandler(void) {
 
-  
   // Reset cursor values
   bool outputMouse = false;
   int xCursor = 0;
@@ -450,10 +438,8 @@ void cursorHandler(void) {
   } 
 
   //Debug information 
-  if(g_debugModeEnabled) {
-    
+  if(g_debugModeEnabled) {    
     sendDebugRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-
     delay(DEBUG_MODE_DELAY);
   }
   
@@ -523,9 +509,7 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
     g_pollCounter++;      //Add to the poll counter
     //delay(20); 
     
-    //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-    if(!skipChange && g_pollCounter >= 3) {
-    //if(!skipChange) {
+    if(!skipChange) {
       outputMouse = true;  
        //Quadrant 1 (Upper left)
       if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
@@ -551,7 +535,7 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
                
       }
         
-    } //end check skipchange and poll counter   
+    } //end check skipchange
   } //end check deadband 
   return outputMouse;
 }
@@ -591,7 +575,7 @@ void rotateCursor(int &xCursor, int &yCursor){
 //********************//
 void moveCursor(const int xCursor, const int yCursor, const int wheel){
   
-  // Output transformed mouse movement
+  // Output mouse movement
   Mouse.move(xCursor, yCursor, wheel);                
 
 }
@@ -606,7 +590,7 @@ void moveCursor(const int xCursor, const int yCursor, const int wheel){
 //              maxValue : constint : maximum FSR value.
 //              compValue : float : FSR compensation value.
 // 
-// Return     : cursorOutput : int : The modified cursor value. 
+// Return     : cursorOutput : int : The modified cursor movement in pixels. 
 //****************************************//
 int cursorModifier(const int rawValue, const int neutralValue, const int maxValue, float compValue) {
   int cursorOutput = 0;
@@ -628,7 +612,7 @@ int cursorModifier(const int rawValue, const int neutralValue, const int maxValu
     cursorOutput = constrain(cursorFloat,0, g_cursorMaxSpeed);   
   } //end FSR pressed
   
-  return cursorOutput;
+  return cursorOutput; //return cursor value [pixels]
 }
 
 //***FSR SCROLL MOVEMENT MODIFIER FUNCTION***//
@@ -643,12 +627,12 @@ int cursorModifier(const int rawValue, const int neutralValue, const int maxValu
 // Return     : cursorOutput : int : The modified scroll value. 
 //****************************************//
 int scrollModifier(const int cursorValue, const int cursorMaxValue, const int scrollLevelValue) {
-    int scrollOutput = 0;
-    int scrollMaxSpeed = round(1.0 * pow(SCROLL_MAX_MOVE, scrollLevelValue/10.0)) + SCROLL_BASE_MOVE;   
-    scrollOutput = map(cursorValue, 0, cursorMaxValue, 0, scrollMaxSpeed); 
-    scrollOutput = -1 * constrain(scrollOutput,-1 * scrollMaxSpeed, scrollMaxSpeed);   
+  int scrollOutput = 0;
+  int scrollMaxSpeed = round(1.0 * pow(SCROLL_MAX_MOVE, scrollLevelValue/10.0)) + SCROLL_BASE_MOVE;   
+  scrollOutput = map(cursorValue, 0, cursorMaxValue, 0, scrollMaxSpeed); 
+  scrollOutput = -1 * constrain(scrollOutput,-1 * scrollMaxSpeed, scrollMaxSpeed);   
 
-    return scrollOutput;
+  return scrollOutput;
 }
 
 //***SCROLL TIME DELAY CALCULATOR FUNCTION***//
@@ -661,10 +645,9 @@ int scrollModifier(const int cursorValue, const int cursorMaxValue, const int sc
 // Return     : delayOutput : int : The scroll time delay. 
 //****************************************//
 int calculateScrollDelay(const int scrollLevelValue) {
+  int delayOutput = round(1.0 * pow(2 * SCROLL_BASE_DELAY, (11 - scrollLevelValue)/10.0)) + SCROLL_BASE_DELAY;
   
-    int delayOutput = round(1.0 * pow(2 * SCROLL_BASE_DELAY, (11 - scrollLevelValue)/10.0)) + SCROLL_BASE_DELAY;
-    
-    return delayOutput;
+  return delayOutput;
 }
 
 //***FORCE DISPLAY OF CURSOR***//
@@ -698,23 +681,20 @@ void forceCursorDisplay(void) {
 //*********************************//
 void getModelNumber(bool responseEnabled, bool apiEnabled) {
   
-  EEPROM.get(EEPROM_modelNumber, g_modelNumber);
-  delay(10);
-  EEPROM.get(EEPROM_versionNumber, g_versionNumber);
-  delay(10);
+  EEPROM.get(EEPROM_modelNumber, g_modelNumber);        //Retrieve model number from EEPROM
+  EEPROM.get(EEPROM_versionNumber, g_versionNumber);    //Retrieve version number from EEPROM
 
-  if (g_modelNumber != LIPSYNC_MODEL) {                          //If the previous firmware was different model then factory reset the settings 
+
+  if (g_modelNumber != LIPSYNC_MODEL) {                 //If the previous firmware was different model then factory reset the settings 
     factoryReset(responseEnabled, apiEnabled, 0);
-    delay(10);
-    
-    g_modelNumber = LIPSYNC_MODEL;                               //And store the model number in EEPROM 
+     
+    g_modelNumber = LIPSYNC_MODEL;                      //And store the model number in EEPROM 
     EEPROM.put(EEPROM_modelNumber, g_modelNumber);
     delay(10);
-  } else if (g_versionNumber != LIPSYNC_VERSION) {                   //If the previous firmware was same model but different version then soft reset the settings 
+  } else if (g_versionNumber != LIPSYNC_VERSION) {      //If the previous firmware was same model but different version then soft reset the settings 
     factoryReset(responseEnabled, apiEnabled, 1);
-    delay(10);
     
-    g_versionNumber = LIPSYNC_VERSION;                               //And store the version number in EEPROM 
+    g_versionNumber = LIPSYNC_VERSION;                  //And store the version number in EEPROM 
     EEPROM.put(EEPROM_versionNumber, g_versionNumber);
     delay(10);
   } 
@@ -767,7 +747,7 @@ void getVersionNumber(bool responseEnabled, bool apiEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 // 
@@ -785,7 +765,7 @@ void getVersionNumber(bool responseEnabled, bool apiEnabled, int* optionalArray)
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
@@ -794,11 +774,10 @@ int getCursorSpeed(bool responseEnabled, bool apiEnabled) {
   int speedCounter = SPEED_COUNTER;
   if(API_ENABLED) {
     EEPROM.get(EEPROM_speedCounter, speedCounter);
-    delay(5);
     if(speedCounter < 0 || speedCounter > 10){
       speedCounter = SPEED_COUNTER;
       EEPROM.put(EEPROM_speedCounter, speedCounter);
-      delay(5);
+      delay(10);
     }
   } 
 
@@ -813,7 +792,7 @@ int getCursorSpeed(bool responseEnabled, bool apiEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 // 
@@ -831,7 +810,7 @@ void getCursorSpeed(bool responseEnabled, bool apiEnabled, int* optionalArray) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputSpeedCounter : bool : The new cursor speed level.
 // 
@@ -854,7 +833,6 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
     //Invalid inputSpeedCounter
     ledBlink(6, 50, 3);
     EEPROM.get(EEPROM_speedCounter, g_cursorSpeedCounter);
-    delay(10); 
     isValidSpeed = false;
   }
   delay(5); 
@@ -873,7 +851,7 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputSpeedCounter : int* : The array of one element which contains the new cursor speed level.
 // 
@@ -889,7 +867,7 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int* inputSpeedCounte
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
@@ -908,7 +886,7 @@ void increaseCursorSpeed(bool responseEnabled, bool apiEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
@@ -946,7 +924,7 @@ float readPressure(void){
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 // 
 // Return     : void
@@ -985,7 +963,7 @@ void getPressureThreshold(bool responseEnabled, bool apiEnabled) {
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 // 
@@ -1003,7 +981,7 @@ void getPressureThreshold(bool responseEnabled, bool apiEnabled, int* optionalAr
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputPressureThreshold : bool : The new pressure threshold in percentage.
 // 
@@ -1028,7 +1006,6 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
     isValidThreshold = true;
   } else {
     EEPROM.get(EEPROM_pressureThreshold, pressureThreshold);
-    delay(10); 
     isValidThreshold = false;
   }
   delay(5); 
@@ -1048,13 +1025,13 @@ void setPressureThreshold(bool responseEnabled, bool apiEnabled, int inputPressu
 // 
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputPressureThreshold : int* : The array of one element which contains the new pressure threshold.
 // 
 // Return     : void
 void setPressureThreshold(bool responseEnabled, bool apiEnabled, int* inputPressureThreshold) {
-  setPressureThreshold(responseEnabled,apiEnabled, inputPressureThreshold[0]);
+  setPressureThreshold(responseEnabled, apiEnabled, inputPressureThreshold[0]);
 }
 
 //***GET PRESSURE VALUE FUNCTION***//
@@ -1313,13 +1290,9 @@ void getCompFactor(void) {
   if (compFactorIsSet == 1) {
     //Get the Comp values from Memory 
     EEPROM.get(EEPROM_yHighComp, yHighComp);
-    delay(10);
     EEPROM.get(EEPROM_yLowComp, yLowComp);
-    delay(10);
     EEPROM.get(EEPROM_xHighComp, xHighComp);
-    delay(10);
     EEPROM.get(EEPROM_xLowComp, xLowComp);
-    delay(10);
   } else {
     //Set the Comp values for first time
     EEPROM.put(EEPROM_yHighComp, defaultCompFactor);
@@ -1430,16 +1403,10 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode) {
   ledOn(1); //Turn on Green LED
 
   int xHigh = analogRead(X_DIR_HIGH_PIN);               //Set the initial neutral x-high value of joystick
-  delay(10);
-
-  int xLow = analogRead(X_DIR_LOW_PIN);                 //Set the initial neutral x-low value of joystick
-  delay(10);
-
+  int xLow  = analogRead(X_DIR_LOW_PIN);                 //Set the initial neutral x-low value of joystick
   int yHigh = analogRead(Y_DIR_HIGH_PIN);               //Set the initial neutral y-high value of joystick
-  delay(10);
-
-  int yLow = analogRead(Y_DIR_LOW_PIN);                 //Set the initial Initial neutral y-low value of joystick
-  delay(10);
+  int yLow  = analogRead(Y_DIR_LOW_PIN);                 //Set the initial Initial neutral y-low value of joystick
+  
 
   //Set the neutral values 
   g_xHighPrev = g_xHighNeutral = xHigh;
@@ -1456,13 +1423,9 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode) {
 
   //Get the Comp values from Memory 
   EEPROM.get(EEPROM_yHighComp, yHighComp);
-  delay(10);
   EEPROM.get(EEPROM_yLowComp, yLowComp);
-  delay(10);
   EEPROM.get(EEPROM_xHighComp, xHighComp);
-  delay(10);
   EEPROM.get(EEPROM_xLowComp, xLowComp);
-  delay(10);
 
   int neutralValue[]={g_xHighNeutral,g_xLowNeutral,g_yHighNeutral,g_yLowNeutral};
 
@@ -1503,13 +1466,9 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled) {
   
   //Get the max values from Memory 
   EEPROM.get(EEPROM_xHighMax, g_xHighMax);
-  delay(10);
   EEPROM.get(EEPROM_xLowMax,  g_xLowMax);
-  delay(10);
   EEPROM.get(EEPROM_yHighMax, g_yHighMax);
-  delay(10);
   EEPROM.get(EEPROM_yLowMax,  g_yLowMax);
-  delay(10);
 
   g_xHighYHighRadius = CURSOR_DEADBAND*CURSOR_DEADBAND;
   g_xHighYLowRadius  = CURSOR_DEADBAND*CURSOR_DEADBAND;
@@ -1636,7 +1595,6 @@ int getChangeTolerance(bool responseEnabled, bool apiEnabled) {
   if(API_ENABLED) {
     //Get the change tolerance from memory 
     EEPROM.get(EEPROM_changeTolerance, tempChangeTolerance);
-    delay(10);
   } else {
     tempChangeTolerance = CHANGE_DEFAULT_TOLERANCE;
   }
@@ -1730,7 +1688,6 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled) {
     for (int i = 0; i < INPUT_ACTION_COUNT; i++) {                    //Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(EEPROM_buttonMapping1+i*2, buttonMapping);
-      delay(10);
       if(buttonMapping < 0 || buttonMapping > 8) {
         isValidMapping = false;
         break;
@@ -1829,7 +1786,6 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled) {
    if(API_ENABLED) {
      //Get the rotation angle from memory 
       EEPROM.get(EEPROM_rotationAngle, tempRotationAngle);
-      delay(10);
    } else {
       tempRotationAngle = ROTATION_ANGLE;
    }
@@ -1951,7 +1907,6 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled) {
   int scrollLevel = SCROLL_LEVEL;
   if(API_ENABLED) {
     EEPROM.get(EEPROM_scrollLevel, scrollLevel);
-    delay(5);
     if(scrollLevel < 0 || scrollLevel > 10){
       scrollLevel = SPEED_COUNTER;
       EEPROM.put(EEPROM_scrollLevel, scrollLevel);
@@ -2011,7 +1966,6 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
     //Invalid inputScrollLevel
     ledBlink(6, 50, 3);
     EEPROM.get(EEPROM_scrollLevel, g_cursorScrollLevel);
-    delay(10); 
     isValidFactor = false;
   }
   delay(5); 
@@ -2057,48 +2011,33 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType) {
   bool isValidResetType = true;
   int responseCode = 0;
   
-  if (resetType == 0 || resetType == 1){                                //Reset following settings only if a factory reset is performed
+  if (resetType == 0 || resetType == 1){                                    //reset following settings only if a factory reset is performed
      
     isValidResetType = true;
     responseCode = 0;
 
     if(resetType == 0){
-      setPressureThreshold(false, true, PRESSURE_THRESHOLD);                      //set default pressure threshold
-      delay(10);
-      
-      setButtonMapping(false, true, BUTTON_MAPPING);                             //set default action mapping
-      delay(10);
+      setPressureThreshold(false, true, PRESSURE_THRESHOLD);                //set default pressure threshold     
+      setButtonMapping(false, true, BUTTON_MAPPING);                        //set default action mapping
     }
     
-    setCursorSpeed(false, true, SPEED_COUNTER);                                  // set default cursor speed counter
-    delay(10);
+    setCursorSpeed(false, true, SPEED_COUNTER);                             //set default cursor speed counter
+    setScrollLevel(false, true, SCROLL_LEVEL);                              //set default scroll speed level  
+    setRotationAngle(false, true, ROTATION_ANGLE);                          //set default rotation angle
+    setChangeTolerance(false, true, CHANGE_DEFAULT_TOLERANCE);              //set default change tolerance    
+    setDebugMode(false, true, DEBUG_MODE);                                  //set default debug mode
+    
 
-    setScrollLevel(false, true, SCROLL_LEVEL);                                  // set default scroll speed level
-    delay(10);
-    
-    setRotationAngle(false, true, ROTATION_ANGLE);                              //set default rotation angle
-    delay(10);
-  
-    setChangeTolerance(false, true, CHANGE_DEFAULT_TOLERANCE);                  //set default change tolerance 
-    delay(10);
-    
-    setDebugMode(false, true, DEBUG_MODE);                                       //set default debug mode
-    delay(10);  
-    
-    //Set the default cursor speed values
-    g_cursorSpeedCounter = SPEED_COUNTER; 
-    g_cursorMaxSpeed =  cursorParams[g_cursorSpeedCounter];
-    delay(10);
+    g_cursorSpeedCounter = SPEED_COUNTER;                                   //set the cursor speed values to default 
+    g_cursorMaxSpeed =  cursorParams[g_cursorSpeedCounter];       
 
     //Set the default scroll speed values
     g_cursorScrollLevel = SCROLL_LEVEL;
     g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel);
-    delay(10);
     
     g_debugModeEnabled = DEBUG_MODE;  
     
     getCompFactor();                                   
-    delay(10);
     
     ledBlink(2, 250, 1);
   } else {
@@ -2416,7 +2355,6 @@ void performCommand(String inputString) {
       
       // Outut error message
       printResponseSingle(true,true,false,2,inputString,false,0);
-
       delay(5);
       }
       break;
@@ -2424,8 +2362,8 @@ void performCommand(String inputString) {
     
     //Output error message
     printResponseSingle(true,true,false,1,inputString,false,0);
-
     delay(5);
+    
     break;
     }
   } //end iterate through API functions
