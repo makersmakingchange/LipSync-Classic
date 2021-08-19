@@ -1,14 +1,11 @@
 /*
-//     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
-//      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
-//    `..``-+ssss:                            `---` .----`         `.-::::-` .//-                                                                                                                  ````    
-// `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:                                                                                                                          
-// `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`                                                                         
-//  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`                                                                       
-//   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:s1s :ss:``:ss/.:ss/..-sso                                                                       
-//            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `s9s -ss+--/ss: ssso+++sss                                                                       
-//              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   s8s `+ssooo/-  oss/-.....                                                                       
-//               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   s4s -sso/:::-` .oss+///+:                                                                       
+  //                 `.:/++`             ....``
+  //              `/ossss: `.`         `--------.`
+  //               /ssso. .----..```..-----------                                                                                                                                  ``
+  //               -ss+``-----------------------.                  ssss       -/++/`              /ss-                                     ./++/-      //+//             oss       `oss-
+  //              `os+ `----------------.......--`                 sssss:    `s400s.              +sH-                                     -sBsss`    :ssBCs             sVs        /++`
+  //    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +se-  `---  `-::::.  `-:`.::. .::::-     -su/ss+   `ss:sss  `-::::-`   s5s   .--. ---  .-- -:::-    .::::---.
+  //   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +sn- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -sr:/ss-  +ss`sss  ooo+osss-  sCs  :ss+` oss. ossooosss+ `oso//osso/
   //  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +sn+/ss+` :Dr+-.-+ss.-sss-```sss/-.`     -sn:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+
   // .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +siooss:  +sso+++ooo`-ss+    ./+osso:    -sa: -ss-+so  sss `+ss++oss+  s6s+sss.   oss. oss.   sss``oss++oso.
   // :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +sn:`+ss/`-sso-.`..- -ss+   `.```:sso    -sb:  +soss.  sss /ss+``:sso.`sBs`-sss-  oss. oss.   sss``oso:::.`
@@ -16,6 +13,8 @@
   //    `+sssssss.                              ` .------`        ```   ````   ```   `...` ... ```     ````  `....`   ```    `....``      ```   ```    ```  `...` `..` ```    ``` ```  ```    ``` +ss---:/sso
   //     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
   //      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
+  //    `..``-+ssss:                            `---` .----`         `.-::::-` .//-                                                                                                                  ````
+  // `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:
   // `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`
   //  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`
   //   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:s1s :ss:``:ss/.:ss/..-sso
@@ -35,13 +34,15 @@
   //  oooo         .ooo:    +ooo.`..:ooo+`   `:+oooo+:`     `+ooooo/      ooo: :ooo- .o-o`  oooo
   //  oooo         .ooo:    +ooooooooo+:`       `-:oooo-     `+ooo/       ooo/  .+oo/.o-o`  +ooo.
   //  oooo         .ooo:    +ooo-...``             `oooo      /ooo.       ooo/   `/oo-o-o`  .oooo-
+  //  oooo::::::.  .ooo:    +ooo`           :o//:::+ooo:      /ooo.       ooo/     .o-o-o`   ./oooo/:::/+/
+  //  +ooooooooo:  .ooo:    /ooo`           -/++ooo+/:.       :ooo.       ooo:      `.o.+      `-/+oooo+/-
   //
   //An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
 */
 
 //Firmware : LipSync_Firmware
 //Developed by : MakersMakingChange
-//Copyright Neil Squire Society 2016-2021. 
+//VERSION: 3.0-beta (03 Jun 2021)
 //Copyright Neil Squire Society 2016-2021.
 //LICENSE: This work is licensed under the CC BY SA 4.0 License: http://creativecommons.org/licenses/by-sa/4.0 .
 
@@ -125,7 +126,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define YHIGH_DIRECTION -1                        // Mouthpiece up movements correspond to negative (i.e. up) mouse movement
 #define YLOW_DIRECTION 1                          // Mouthpiece down movements correspond to positive (i.e. down) mouse movement
 
-//*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.  
+//*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.
 #define DEBUG_MODE false                          // Enable debug information to serial output (Default: false)
 #define API_ENABLED true                          // Enable API Serial interface = true , Disable API serial interface = false      
 
@@ -141,7 +142,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
-const byte UNUSED_PINS[] = {2,3,9,11,12,13,14,15,16,17};      // Unused pins 
+const byte UNUSED_PINS[] = {2, 3, 9, 11, 12, 13, 14, 15, 16, 17}; // Unused pins
 
 //***LIPSYNC EEPROM MEMORY***// - DO NOT CHANGE
 #define EEPROM_modelNumber 0                      // int:0,1; 255 on fresh Arduino
@@ -185,10 +186,6 @@ typedef struct                                    // Type definition for API fun
 } _functionList;
 
 // Declare individual API functions with command, parameter, and corresponding function
-_functionList setCursorSpeedFunction =          {"SS,1","",&setCursorSpeed};
-_functionList getPressureThresholdFunction =    {"PT,0","0",&getPressureThreshold};
-_functionList getRotationAngleFunction =        {"RA,0","0",&getRotationAngle};
-_functionList setRotationAngleFunction =        {"RA,1","",&setRotationAngle};
 _functionList getModelNumberFunction =          {"MN,0", "0", &getModelNumber};
 _functionList getVersionNumberFunction =        {"VN,0", "0", &getVersionNumber};
 _functionList getCursorSpeedFunction =          {"SS,0", "0", &getCursorSpeed};
@@ -413,7 +410,7 @@ void initializePins(void)
   pinMode(BUTTON_DOWN_PIN, INPUT_PULLUP);         // Set decrease cursor speed button pin as input
 
   // Set unused pins as inputs with pullups
-  for(byte pinIndex = 0; pinIndex < sizeof(UNUSED_PINS); pinIndex++)
+  for (byte pinIndex = 0; pinIndex < sizeof(UNUSED_PINS); pinIndex++)
   {
     pinMode(UNUSED_PINS[pinIndex], INPUT_PULLUP);
   }
