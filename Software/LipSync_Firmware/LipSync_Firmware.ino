@@ -40,8 +40,8 @@
   //An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
 */
 
-//Firmware : LipSync_Firmware
-//Developed by : MakersMakingChange
+//TITLE: LipSync_Firmware
+//AUTHOR: MakersMakingChange
 //VERSION: 3.0-beta (03 Jun 2021)
 //Copyright Neil Squire Society 2016-2021.
 //LICENSE: This work is licensed under the CC BY SA 4.0 License: http://creativecommons.org/licenses/by-sa/4.0 .
@@ -116,8 +116,8 @@
 #define CURSOR_LIFT_THRESOLD 100                  // Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
 
 int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
-{ ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF,
-  ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_VLONG_SIP
+{ ACTION_SHORT_PUFF, ACTION_SHORT_SIP,  ACTION_LONG_PUFF,
+  ACTION_LONG_SIP,   ACTION_VLONG_PUFF, ACTION_VLONG_SIP
 };
 
 //***DON'T CHANGE THESE CONSTANTS***//
@@ -128,7 +128,11 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 
 //*** DEVELOPER CONSTANTS***// - Only change if you know what you're doing.
 #define DEBUG_MODE false                          // Enable debug information to serial output (Default: false)
-#define API_ENABLED true                          // Enable API Serial interface = true , Disable API serial interface = false      
+#define API_ENABLED true                          // Enable API Serial interface = true , Disable API serial interface = false  
+#define API_OKAY_RESPONSE 0
+#define API_COMMAND_MISSING_RESPONSE 1
+#define API_INCORRECT_FORMAT_RESPONSE 2
+#define API_INCORRECT_PARAMETER_RESPONSE 3    
 
 //***PIN ASSIGNMENTS***// - DO NOT CHANGE
 #define LED_GREEN_PIN 4                           // LipSync LED Color1 : GREEN - digital output pin 5
@@ -142,38 +146,47 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
-const byte UNUSED_PINS[] = {2, 3, 9, 11, 12, 13, 14, 15, 16, 17}; // Unused pins
+const byte UNUSED_PINS[] = {2,                    // Unused pins
+                            3, 
+                            9, 
+                            11, 
+                            12, 
+                            13, 
+                            14, 
+                            15, 
+                            16, 
+                            17}; 
 
 //***LIPSYNC EEPROM MEMORY***// - DO NOT CHANGE
-#define EEPROM_modelNumber 0                      // int:0,1; 255 on fresh Arduino
-#define EEPROM_speedCounter 2                     // int:2,3; 
-#define EEPROM_defaultIsSet 4                     // int:4,5; 
-#define EEPROM_yHighComp 6                        // float:6,7,8,9; 
-#define EEPROM_yLowComp 10                        // float:10,11,12,13; 
-#define EEPROM_xHighComp 14                       // float:14,15,16,17; 
-#define EEPROM_xLowComp 18                        // float:18,19,20,21; 
-#define EEPROM_xHighMax 22                        // int:22,23; 
-#define EEPROM_xLowMax 24                         // int:24,25; 
-#define EEPROM_yHighMax 26                        // int:26,27; 
-#define EEPROM_yLowMax 28                         // int:28,29; 
-#define EEPROM_rotationAngle 30                   // int:30,31; 
-#define EEPROM_puffThreshold 32                   // int:32,33; 
-#define EEPROM_debugModeEnabled 34                // int:34,35; 
-#define EEPROM_rawModeEnabled 36                  // int:36,37;
-#define EEPROM_deadzoneValue 38                   // int:38,39;
-#define EEPROM_buttonMode 40                      // int:40,41;
-#define EEPROM_buttonMapping1 42                  // int:42,43; 
-#define EEPROM_buttonMapping2 44                  // int:44,45; 
-#define EEPROM_buttonMapping3 46                  // int:46,47; 
-#define EEPROM_buttonMapping4 48                  // int:48,49; 
-#define EEPROM_buttonMapping5 50                  // int:50,51; 
-#define EEPROM_buttonMapping6 52                  // int:52,53; 
-#define EEPROM_configNumber 54                    // int:54,55; 3 when Bluetooth configured 
-//#define EEPROM_compFactor 56                    // int:56,57;
-#define EEPROM_changeTolerance 58                 // int:58,59;
-#define EEPROM_versionNumber 60                   // int:60,61; 
-#define EEPROM_scrollLevel 62                     // int:62,63; 
-#define EEPROM_sipThreshold 64                    // int:64,65;
+#define EEPROM_modelNumber         0                  // int:0,1; 255 on fresh Arduino
+#define EEPROM_speedCounter        2                  // int:2,3; 
+#define EEPROM_defaultIsSet        4                  // int:4,5; 
+#define EEPROM_yHighComp           6                  // float:6,7,8,9; 
+#define EEPROM_yLowComp           10                  // float:10,11,12,13; 
+#define EEPROM_xHighComp          14                  // float:14,15,16,17; 
+#define EEPROM_xLowComp           18                  // float:18,19,20,21; 
+#define EEPROM_xHighMax           22                  // int:22,23; 
+#define EEPROM_xLowMax            24                  // int:24,25; 
+#define EEPROM_yHighMax           26                  // int:26,27; 
+#define EEPROM_yLowMax            28                  // int:28,29; 
+#define EEPROM_rotationAngle      30                  // int:30,31; 
+#define EEPROM_puffThreshold      32                  // int:32,33; 
+#define EEPROM_sipThreshold       34                  // int:34,35;
+#define EEPROM_debugModeEnabled   36                  // int:34,35; 
+#define EEPROM_deadzoneValue      38                  // int:38,39;
+#define EEPROM_buttonMode         40                  // int:40,41;
+#define EEPROM_buttonMapping1     42                  // int:42,43; 
+#define EEPROM_buttonMapping2     44                  // int:44,45; 
+#define EEPROM_buttonMapping3     46                  // int:46,47; 
+#define EEPROM_buttonMapping4     48                  // int:48,49; 
+#define EEPROM_buttonMapping5     50                  // int:50,51; 
+#define EEPROM_buttonMapping6     52                  // int:52,53; 
+#define EEPROM_configNumber       54                  // int:54,55; 3 when Bluetooth configured 
+//#define EEPROM_compFactor       56                  // int:56,57;
+#define EEPROM_changeTolerance    58                  // int:58,59;
+#define EEPROM_versionNumber      60                  // int:60,61; 
+#define EEPROM_scrollLevel        62                  // int:62,63; 
+#define EEPROM_rawModeEnabled     64                  // int:64,65;
 
 //***API FUNCTIONS***// - DO NOT CHANGE
 typedef void (*FunctionPointer)(bool, bool, int*); // Type definition for API function pointer
@@ -189,28 +202,28 @@ typedef struct                                    // Type definition for API fun
 _functionList getModelNumberFunction =          {"MN,0", "0", &getModelNumber};
 _functionList getVersionNumberFunction =        {"VN,0", "0", &getVersionNumber};
 _functionList getCursorSpeedFunction =          {"SS,0", "0", &getCursorSpeed};
-_functionList setCursorSpeedFunction =          {"SS,1", "", &setCursorSpeed};
+_functionList setCursorSpeedFunction =          {"SS,1", "",  &setCursorSpeed};
 _functionList getPuffThresholdFunction =        {"PT,0", "0", &getPuffThreshold};
-_functionList setPuffThresholdFunction =        {"PT,1", "", &setPuffThreshold};
+_functionList setPuffThresholdFunction =        {"PT,1", "",  &setPuffThreshold};
 _functionList getSipThresholdFunction =         {"ST,0", "0", &getSipThreshold};
-_functionList setSipThresholdFunction =         {"ST,1", "", &setSipThreshold};
+_functionList setSipThresholdFunction =         {"ST,1", "",  &setSipThreshold};
 _functionList getPressureValueFunction =        {"PV,0", "0", &getPressureValue};
 _functionList getRotationAngleFunction =        {"RA,0", "0", &getRotationAngle};
-_functionList setRotationAngleFunction =        {"RA,1", "", &setRotationAngle};
+_functionList setRotationAngleFunction =        {"RA,1", "",  &setRotationAngle};
 _functionList getJoystickValueFunction =        {"JV,0", "0", &getJoystickValue};
 _functionList getDebugModeFunction =            {"DM,0", "0", &getDebugMode};
-_functionList setDebugModeFunction =            {"DM,1", "", &setDebugMode};
+_functionList setDebugModeFunction =            {"DM,1", "",  &setDebugMode};
 _functionList getCursorInitializationFunction = {"IN,0", "0", &getCursorInitialization};
 _functionList setCursorInitializationFunction = {"IN,1", "1", &setCursorInitialization};
 _functionList getCursorCalibrationFunction =    {"CA,0", "0", &getCursorCalibration};
 _functionList setCursorCalibrationFunction =    {"CA,1", "1", &setCursorCalibration};
 _functionList getChangeToleranceFunction =      {"CT,0", "0", &getChangeTolerance};
-_functionList setChangeToleranceFunction =      {"CT,1", "", &setChangeTolerance};
+_functionList setChangeToleranceFunction =      {"CT,1", "",  &setChangeTolerance};
 _functionList getButtonMappingFunction =        {"MP,0", "0", &getButtonMapping};
 _functionList setButtonMappingFunction =        {"MP,1", "r", &setButtonMapping}; // "r" denotes an array parameter
 _functionList getScrollLevelFunction =          {"SL,0", "0", &getScrollLevel};
-_functionList setScrollLevelFunction =          {"SL,1", "", &setScrollLevel};
-_functionList factoryResetFunction =            {"FR,1", "", &factoryReset};
+_functionList setScrollLevelFunction =          {"SL,1", "",  &setScrollLevel};
+_functionList factoryResetFunction =            {"FR,1", "",  &factoryReset};
 
 // Declare array of API functions
 _functionList apiFunction[25] =
@@ -258,36 +271,46 @@ const int cursorParams[11] =
 };
 
 //***GLOBAL VARIABLE DECLARATION***//
+byte g_modelNumber;                                    // LipSync model number variable
+byte g_versionNumber;                                  // LipSync version number variable
 
-byte  g_modelNumber;                                  // Declare LipSync model number variable
-byte  g_versionNumber;                                // Declare LipSync version number variable
-int   g_actionButton[INPUT_ACTION_COUNT];             // Sip & Puff action mapping
+int g_actionButton[INPUT_ACTION_COUNT];                // Sip & Puff action mapping
 
-int   g_rotationAngle = ROTATION_ANGLE;               // Rotation angle variable (degrees)
-float g_rotationAngle11;                              // Rotation matrix
+int g_rotationAngle = ROTATION_ANGLE;                  // Rotation angle variable (degrees)
+float g_rotationAngle11;                               // Rotation matrix components
 float g_rotationAngle12;
 float g_rotationAngle21;
 float g_rotationAngle22;
 
-byte g_cursorSpeedCounter;                            // Variable to track current cursor speed level
-int g_cursorMaxSpeed;                                 // Current cursor max speed (at full joystick deflection)
-//float g_cursorFactor;                               // Current cursor factor //TODO not currently used.
-byte g_cursorScrollLevel;                             // Variable to track current scroll speed level
-int g_cursorScrollDelay;                              // Current Scroll delay
+byte g_cursorSpeedCounter;                             // Variable to track current cursor speed level
+int g_cursorMaxSpeed;                                  // Current cursor max speed (at full joystick deflection)
+//float g_cursorFactor;                                // Current cursor factor //TODO not currently used.
+byte g_cursorScrollLevel;                              // Variable to track current scroll speed level
+int g_cursorScrollDelay;                               // Current Scroll delay
 
-int g_cursorPressure;                                 // Variable to hold pressure readings
-int g_sipThreshold;                                   // Sip pressure threshold [ADC steps]
-int g_puffThreshold;                                  // Puff pressure threshold [ADC steps]
+int  g_cursorPressure;                                 // Variable to hold pressure readings
+int  g_sipThreshold;                                   // Sip pressure threshold [ADC steps]
+int  g_puffThreshold;                                  // Puff pressure threshold [ADC steps]
+unsigned int g_puffCount;                              // The puff and long sip incremental counter variables
+unsigned int g_sipCount;                 
 
-unsigned int g_puffCount, g_sipCount;                 // The puff and long sip incremental counter variables
-int g_pollCounter = 0;                                // Cursor poll counter
+int g_pollCounter = 0;                                 // Cursor poll counter
 
-int g_xHighPrev, g_yHighPrev, g_xLowPrev, g_yLowPrev;             // Previous FSR reading variables
-int g_xHighNeutral, g_xLowNeutral, g_yHighNeutral, g_yLowNeutral; // Individual neutral starting positions for each FSR
+int g_xHighPrev;                                       // Previous FSR reading variables
+int g_yHighPrev;
+int g_xLowPrev;
+int g_yLowPrev;  
+           
+int g_xHighNeutral;                                    // Individual neutral starting positions for each FSR
+int g_xLowNeutral;
+int g_yHighNeutral;
+int g_yLowNeutral;
 
-int g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax;     // Max FSR values which are set to the values from EEPROM
+int g_xHighMax;                                        // FSR value at max deflection
+int g_xLowMax;                                         // Set during calibration and stored in EEPROM
+int g_yHighMax;
+int g_yLowMax;
 
-//float g_xHighYHighRadius, g_xHighYLowRadius, g_xLowYLowRadius, g_xLowYHighRadius;
 const float g_deadband_squared = CURSOR_DEADBAND * CURSOR_DEADBAND; // Squared deadband distance from center
 
 int g_changeTolerance;                                 // The tolerance of changes in FSRs readings
@@ -314,29 +337,29 @@ bool scrollModeEnabled = false;                        // Declare scroll mode en
 //*********************************//
 void setup()
 {
-  Serial.begin(115200);                                // Setting baud rate for serial communication which is used for diagnostic data returned from Bluetooth and microcontroller
+  Serial.begin(115200);                                    // Initiate serial connection for debug and API control
 
-  initializePins();                                    // Initialize Arduino input and output pins
+  initializePins();                                        // Initialize Arduino input and output pins
 
-  Mouse.begin();                                       // Initialize the HID mouse functions
+  Mouse.begin();                                           // Initialize the HID mouse functions
   delay(1000);
 
-  getModelNumber(false, false);                        // Get LipSync model number; Perform factory reset on initial upload.
+  getModelNumber(false, false);                            // Get LipSync model number; Perform factory reset on initial upload.
 
-  setCursorInitialization(false, false, 1);            // Set the Home joystick and generate movement threshold boundaries
+  setCursorInitialization(false, false, 1);                // Set the Home joystick and generate movement threshold boundaries
   // TODO - may want to change to 2 so we trigger reset of comp values
   //  based on new neutral position
 
-  getCursorCalibration(false, false);                  // Get FSR Max calibration values
+  getCursorCalibration(false, false);                      // Get FSR Max calibration values
 
   g_changeTolerance = getChangeTolerance(false, false);    // Get change tolerance using max FSR readings and default tolerance
 
-  getSipThreshold(false, false);                       // Get the pressure sensor threshold boundaries
-  getPuffThreshold(false, false);                      // Get the pressure sensor threshold boundaries
+  getSipThreshold(false, false);                           // Get the pressure sensor threshold boundaries
+  getPuffThreshold(false, false);                          // Get the pressure sensor threshold boundaries
 
-  g_debugModeEnabled = getDebugMode(false, false);     // Get the debug mode state
+  g_debugModeEnabled = getDebugMode(false, false);         // Get the debug mode state
 
-  getCompFactor();                                     // Get the default values that are stored in EEPROM
+  getCompFactor();                                         // Get the default values that are stored in EEPROM
 
   g_cursorSpeedCounter = getCursorSpeed(false, false);     // Read the saved cursor speed parameter from EEPROM
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
@@ -344,15 +367,15 @@ void setup()
   g_cursorScrollLevel = getScrollLevel(false, false);      // Read the saved cursor scroll level parameter from EEPROM
   g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel); // Calculate scroll time delay
 
-  getButtonMapping(false, false);                         // Get the input buttons to actions mappings
+  getButtonMapping(false, false);                          // Get the input buttons to actions mappings
 
   g_rotationAngle = getRotationAngle(false, false);        // Read the saved rotation angle from EEPROM
 
   updateRotationAngle();
 
-  ledBlink(4, 250, 3);                                    // End initialization visual feedback
+  ledBlink(4, 250, 3);                                     // End initialization visual feedback
 
-  forceCursorDisplay();                                   // Display cursor on screen by moving it
+  forceCursorDisplay();                                    // Display cursor on screen by moving it
 }
 
 
@@ -370,14 +393,13 @@ void setup()
 //*********************************//
 void loop()
 {
-
   g_settingsEnabled = serialSettings(g_settingsEnabled); // Check to see if setting option is enabled in Lipsync
 
-  cursorHandler();                                      // Read the joystick values and output mouse cursor movements.
+  cursorHandler();                                       // Read the joystick values and output mouse cursor movements.
 
-  sipAndPuffHandler();                                  // Pressure sensor sip and puff functions
+  sipAndPuffHandler();                                   // Pressure sensor sip and puff functions
 
-  pushButtonHandler(BUTTON_UP_PIN, BUTTON_DOWN_PIN);    // Check rear push buttons
+  pushButtonHandler();                                   // Check rear push buttons
 }
 
 
@@ -439,20 +461,22 @@ void cursorHandler(void)
 
   // Measure FSR joystick and determine whether to output mouse commands
   outputMouse = readJoystick(xCursor, yCursor, xHigh, xLow, yHigh, yLow);
-  rotateCursor(xCursor, yCursor); // Apply transform for mounting angle
 
-  if (outputMouse && !scrollModeEnabled)
-  {
+  // Apply rotation to cursor movement based on mounting angle.
+  rotateCursor(xCursor, yCursor); 
+
+  if (outputMouse && !scrollModeEnabled) 
+  { // Normal Mouse output
     moveCursor(xCursor, yCursor, 0); // Output mouse command
     delay(CURSOR_DELAY);
-    g_pollCounter = 0;
+    g_pollCounter = 0; // Reset cursor poll counter
   }
-  else if (outputMouse && scrollModeEnabled)
-  {
+  else if (outputMouse && scrollModeEnabled) //Scroll 
+  { // Scroll mode
     int yScroll = scrollModifier(yCursor, g_cursorMaxSpeed, g_cursorScrollLevel);
     moveCursor(0, 0, yScroll);
     delay(g_cursorScrollDelay);
-    g_pollCounter = 0;
+    g_pollCounter = 0; // Reset cursor poll counter
   }
 
   //Debug information
@@ -490,10 +514,10 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   yLow  = analogRead(Y_DIR_LOW_PIN);
 
   // Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
-  bool skipChange = abs(xHigh - g_xHighPrev) < g_changeTolerance
-                    && abs(xLow  - g_xLowPrev)  < g_changeTolerance
-                    && abs(yHigh - g_yHighPrev) < g_changeTolerance
-                    && abs(yLow  - g_yLowPrev)  < g_changeTolerance;
+  bool skipChange =   abs(xHigh - g_xHighPrev) < g_changeTolerance
+                   && abs(xLow  - g_xLowPrev)  < g_changeTolerance
+                   && abs(yHigh - g_yHighPrev) < g_changeTolerance
+                   && abs(yLow  - g_yLowPrev)  < g_changeTolerance;
 
   // Store FSR values for next skip check
   g_xHighPrev = xHigh;
@@ -504,31 +528,35 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   // Calculate the magnitude of the movement for each direction / quadrant
   // These are the squared vector magnitudes of each quadrant 1-4 when the
   // FSR measures a greater force than the neutral force
-  float xHighYHigh = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
-                     + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
-  float xHighYLow  = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
-                     + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
-  float xLowYHigh  = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
-                     + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
-  float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
-                     + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
+  float xHighYHigh =  sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
+                    + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
+  float xHighYLow  =  sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
+                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
+  float xLowYHigh  =  sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
+                    + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
+  float xLowYLow   =  sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
+                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
 
   // Check to see if the joystick has moved outside the deadband
-  if ((xHighYHigh > g_deadband_squared) || (xHighYLow > g_deadband_squared) || (xLowYLow > g_deadband_squared) || (xLowYHigh > g_deadband_squared))
+  if ((xHighYHigh > g_deadband_squared) 
+   || (xHighYLow  > g_deadband_squared) 
+   || (xLowYLow   > g_deadband_squared) 
+   || (xLowYHigh  > g_deadband_squared))
   {
 
     // Secondary check to see if joystick has moved by looking for low FSR values
-    // (e.g. joystick unloaded->high resistance-> low voltage)
-    if ( (xHigh < CURSOR_LIFT_THRESOLD) ||
-         (xLow  < CURSOR_LIFT_THRESOLD) ||
-         (yHigh < CURSOR_LIFT_THRESOLD) ||
-         (yLow  < CURSOR_LIFT_THRESOLD)) {
+    // (e.g. joystick unloaded-> less force -> higher resistance -> lower voltage)
+    if ( (xHigh < CURSOR_LIFT_THRESOLD)
+      || (xLow  < CURSOR_LIFT_THRESOLD)
+      || (yHigh < CURSOR_LIFT_THRESOLD) 
+      || (yLow  < CURSOR_LIFT_THRESOLD)) {
       skipChange = false; // Don't skip if joystick if moved and held
     }
 
     g_pollCounter++;      // Add to the poll counter
     // delay(20);
 
+    // If joystick is moved outside of deadband, calculate and update cursor movement.
     if (!skipChange)
     {
       outputMouse = true;
@@ -735,7 +763,7 @@ void getModelNumber(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -1201,7 +1229,7 @@ void setSipThreshold(bool responseEnabled, bool apiEnabled, int inputSipThreshol
 {
   bool isValidThreshold;
   int sipThreshold = inputSipThreshold;
-  float pressureNominal = readPressure(); // Read neutral pressure transducer analog value [0.0V - 5.0V]
+  int pressureNominal = readPressure(); // Read neutral pressure transducer analog value 
 
   if ( (sipThreshold >= SIP_PRESSURE_THRESHOLD_MIN)
        && sipThreshold <= SIP_PRESSURE_THRESHOLD_MAX)
@@ -1264,7 +1292,7 @@ void setSipThreshold(bool responseEnabled, bool apiEnabled, int* inputSipThresho
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -1283,7 +1311,7 @@ void getPressureValue(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -1300,11 +1328,11 @@ void getPressureValue(bool responseEnabled, bool apiEnabled, int* optionalArray)
 // Function   : getJoystickValue
 //
 // Description: This function returns a set of single FSR measurements.
-//              Output format: "JV,0:xHighTemp,xLowTemp,yHighTemp,yLowTemp"
+//              Output format: "JV,0:xHigh,xLow,yHigh,yLow"
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -1316,15 +1344,15 @@ void getJoystickValue(bool responseEnabled, bool apiEnabled)
   int yHighTemp = analogRead(Y_DIR_HIGH_PIN);             // Read analog values of FSR's : A0
   int yLowTemp  = analogRead(Y_DIR_LOW_PIN);              // Read analog values of FSR's : A10
 
-  int joystickTempValue[] = {xHighTemp, xLowTemp, yHighTemp, yLowTemp};
+  int joystickTempValue[] = { xHighTemp, xLowTemp, yHighTemp, yLowTemp };
   printResponseMultiple(responseEnabled,
                         apiEnabled,
                         true, // TODO Comment magic argument
                         0, // TODO Comment magic argument
-                        "JV,0",
+                        "JV,0", // Command
                         "", // TODO Comment magic argument
-                        4, // TODO Comment magic argument
-                        ',', // TODO Comment magic argument
+                        4, // 4 output variables
+                        ',', // Delimiter between output variables
                         joystickTempValue);
 }
 
@@ -1336,7 +1364,7 @@ void getJoystickValue(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -1424,7 +1452,7 @@ void getDebugMode(bool responseEnabled, bool apiEnabled, int* optionalArray)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inpuDebugState : int : The new debug mode state ( true = ON , false = OFF )
 //
@@ -1475,7 +1503,7 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inpuDebugState : int* : The array of one element which contains the new debug mode state.
 //
@@ -1586,7 +1614,7 @@ void getCompFactor(void)
 //*********************************//
 void setCompFactor(void)
 {
-  //#if MAKES_NO_SENSE
+  // Determine maximum FSR max value
   int xMax = (g_xHighMax > g_xLowMax) ? g_xHighMax : g_xLowMax;
   int yMax = (g_yHighMax > g_yLowMax) ? g_yHighMax : g_yLowMax;
   float finalMax = (xMax > yMax) ? (float)xMax : (float)yMax;
@@ -1615,7 +1643,7 @@ void setCompFactor(void)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -1643,7 +1671,7 @@ void getCursorInitialization(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -1724,7 +1752,7 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               mode : int* : The array of one element which contains the initialization mode.
 //
@@ -1742,7 +1770,7 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int* mode)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -1856,7 +1884,7 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -1877,7 +1905,7 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled, int* optionalAr
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : tempChangeTolerance : int : The current change tolerance.
@@ -1967,7 +1995,7 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputChangeTolerance : int* : The array of one element which contains the new change tolerance value.
 //
@@ -1984,7 +2012,7 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int* inputChangeT
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -2031,7 +2059,7 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -2052,7 +2080,7 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled, int* optionalArray)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputButtonMapping : int array : The input button action mapping requested.
 //
@@ -2094,14 +2122,14 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
 //***GET ROTATION ANGLE FUNCTION***///
 // Function   : getRotationAngle
 //
-// Description: This function gets the current rotation angle (0,90,180,270,360)
+// Description: This function gets the current rotation angle {0,90,180,270}
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
-// Return     : tempRotationAngle : int : The current rotation angle (0,90,180,270,360)
+// Return     : tempRotationAngle : int : The current rotation angle {0,90,180,270}
 //*********************************//
 int getRotationAngle(bool responseEnabled, bool apiEnabled)
 {
@@ -2127,7 +2155,7 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.s
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -2144,20 +2172,23 @@ void getRotationAngle(bool responseEnabled, bool apiEnabled, int* optionalArray)
 //***SET ROTATION ANGLE FUNCTION***///
 // Function   : setRotationAngle
 //
-// Description: This function sets a new rotation angle (0,90,180,270,360)
+// Description: This function sets a new rotation angle {0,90,180,270}
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
 //               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
-//               inputRotationAngle : int : The input rotation angle (0,90,180,270,360) requested.
+//               inputRotationAngle : int : The input rotation angle {0,90,180,270} requested.
 //
 // Return     : void
 //*********************************//
 void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAngle)
 {
   bool isValidRotationAngle = true;
-  if (inputRotationAngle >= 0 && inputRotationAngle <= 360)
+  if ( inputRotationAngle == 0 
+    || inputRotationAngle == 90
+    || inputRotationAngle == 180
+    || inputRotationAngle == 270)
   {
     isValidRotationAngle = true;
     g_rotationAngle = inputRotationAngle;                     // Update value to global variable
@@ -2187,7 +2218,7 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputRotationAngle : int* : The array of one element which contains the new rotation angle.
 //
@@ -2208,15 +2239,59 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int* inputRotationA
 // Return     : void
 //***************************//
 void updateRotationAngle(void)
-{
-  // Convert rotation angle from degrees to radians
-  float rotationAngleRad = g_rotationAngle * M_PI / 180.0;
+{ 
+  // Set rotation angle components based on global rotation angle
+  // Currently limited to 4 cadrinal 
+  switch(g_rotationAngle) 
+  {
+    case 90:
+    {
+      g_rotationAngle11 = 0;
+      g_rotationAngle12 = 1;
+      g_rotationAngle21 = 1;
+      g_rotationAngle22 = 0;
+      break;
+    }
+    case 180:s
+    {
+      g_rotationAngle11 = -1;
+      g_rotationAngle12 = 0;
+      g_rotationAngle21 = 0;
+      g_rotationAngle22 = -1;
+      break;
+    }
+    case 270:
+    {
+      g_rotationAngle11 = 0;
+      g_rotationAngle12 = -1;
+      g_rotationAngle21 = 1;
+      g_rotationAngle22 = 0;
+      break;
+    }
+    case 0:
+    {
+    }
+    default:
+    {
+      // Default rotation angle
+      g_rotationAngle11 = 1;
+      g_rotationAngle12 = 0;
+      g_rotationAngle21 = 0;
+      g_rotationAngle22 = 1;
+      break;  
+    }
+  } // End switch case
+
+ // More advanced angle calculation - removed to save memory
+  //Convert rotation angle from degrees to radians
+  //float rotationAngleRad = g_rotationAngle * M_PI / 180.0;
 
   //calculate transform matrix elements.
-  g_rotationAngle11 = cos(rotationAngleRad);
-  g_rotationAngle12 = sin(rotationAngleRad);
-  g_rotationAngle21 = -g_rotationAngle12; // -sin(rotation_angle_rad)
-  g_rotationAngle22 = g_rotationAngle11; // cos(rotation_angle_rad)
+  //g_rotationAngle11 = cos(rotationAngleRad);
+  //g_rotationAngle12 = sin(rotationAngleRad);
+  //g_rotationAngle21 = -g_rotationAngle12; // -sin(rotation_angle_rad)
+  //g_rotationAngle22 = g_rotationAngle11; // cos(rotation_angle_rad)
+     
 }
 
 //***GET SCROLL LEVEL FUNCTION***//
@@ -2226,7 +2301,7 @@ void updateRotationAngle(void)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //
 // Return     : void
@@ -2257,7 +2332,7 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               optionalArray : int* : The array of int which should contain one element with value of zero.
 //
@@ -2278,7 +2353,7 @@ void getScrollLevel(bool responseEnabled, bool apiEnabled, int* optionalArray)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputScrollCounter : bool : The new the cursor speed level.
 //
@@ -2321,7 +2396,7 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               inputScrollLevel : int* : The array of one element which contains the new scroll speed level.
 //
@@ -2339,7 +2414,7 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int* inputScrollLevel
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               resetType : int : The reset type ( 0 = hard reset, 1 = soft reset)
 //
@@ -2391,7 +2466,7 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType)
 //
 // Parameters :  responseEnabled : bool : The response for serial printing is enabled if it's set to true.
 //                                        The serial printing is ignored if it's set to false.
-//               apiEnabled : bool : The api response is sent if it's set to true.
+//               apiEnabled : bool : The API response is sent if it's set to true.
 //                                   Manual response is sent if it's set to false.
 //               resetType : int* : The array of one element which contains the reset type.
 //
@@ -2851,21 +2926,21 @@ void ledBlink(int numBlinks, int delayBlinks, int ledNumber)
 //***PUSH BUTTON SPEED HANDLER FUNCTION***//
 // Function   : pushButtonHandler
 //
-// Description: This function handles the push button actions.
+// Description: This function handles the push button actions. Pressed individually, these change cursor speed and 
+//              pressed together they initiate the joystick calibration.
 //
-// Parameters :  switchUpPin : int : The state of switch up pin.
-//               switchDownPin : int : The state of switch down pin.
+// Parameters :  void 
 //
 // Return     : void
 //*********************************//
-void pushButtonHandler(int switchUpPin, int switchDownPin)
-{
-  if (digitalRead(switchUpPin) == LOW)
+void pushButtonHandler()
+{ 
+  if (digitalRead(BUTTON_UP_PIN) == LOW)
   { // Up button pushed
     delay(200);
     clearButtonAction();
     delay(50);
-    if (digitalRead(switchDownPin) == LOW)
+    if (digitalRead(BUTTON_DOWN_PIN) == LOW)
     { // Up and down button pushed
       setCursorCalibration(true, false);                      // Call joystick calibration if both push button up and down are pressed
     }
@@ -2875,12 +2950,12 @@ void pushButtonHandler(int switchUpPin, int switchDownPin)
     }
   }
 
-  if (digitalRead(switchDownPin) == LOW)
+  if (digitalRead(BUTTON_DOWN_PIN) == LOW)
   { // Down button pushed
     delay(200);
     clearButtonAction();
     delay(50);
-    if (digitalRead(switchUpPin) == LOW)
+    if (digitalRead(BUTTON_UP_PIN) == LOW)
     { // Down button and up button pushed
       setCursorCalibration(true, false);                      // Call joystick calibration if both push button up and down are pressed
     }
