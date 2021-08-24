@@ -194,36 +194,36 @@ typedef void (*FunctionPointer)(bool, bool, int*); // Type definition for API fu
 typedef struct                                    // Type definition for API function list
 {
   String _command;                                // Unique two character command code
-  String _parameter;                              // Parameter that is passed to function
+  int _parameter;                              // Parameter that is passed to function
   FunctionPointer _function;                      // API function pointer
 } _functionList;
 
 // Declare individual API functions with command, parameter, and corresponding function
-_functionList getModelNumberFunction =          {"MN,0", "0", &getModelNumber};
-_functionList getVersionNumberFunction =        {"VN,0", "0", &getVersionNumber};
-_functionList getCursorSpeedFunction =          {"SS,0", "0", &getCursorSpeed};
-_functionList setCursorSpeedFunction =          {"SS,1", "",  &setCursorSpeed};
-_functionList getPuffThresholdFunction =        {"PT,0", "0", &getPuffThreshold};
-_functionList setPuffThresholdFunction =        {"PT,1", "",  &setPuffThreshold};
-_functionList getSipThresholdFunction =         {"ST,0", "0", &getSipThreshold};
-_functionList setSipThresholdFunction =         {"ST,1", "",  &setSipThreshold};
-_functionList getPressureValueFunction =        {"PV,0", "0", &getPressureValue};
-_functionList getRotationAngleFunction =        {"RA,0", "0", &getRotationAngle};
-_functionList setRotationAngleFunction =        {"RA,1", "",  &setRotationAngle};
-_functionList getJoystickValueFunction =        {"JV,0", "0", &getJoystickValue};
-_functionList getDebugModeFunction =            {"DM,0", "0", &getDebugMode};
-_functionList setDebugModeFunction =            {"DM,1", "",  &setDebugMode};
-_functionList getCursorInitializationFunction = {"IN,0", "0", &getCursorInitialization};
-_functionList setCursorInitializationFunction = {"IN,1", "1", &setCursorInitialization};
-_functionList getCursorCalibrationFunction =    {"CA,0", "0", &getCursorCalibration};
-_functionList setCursorCalibrationFunction =    {"CA,1", "1", &setCursorCalibration};
-_functionList getChangeToleranceFunction =      {"CT,0", "0", &getChangeTolerance};
-_functionList setChangeToleranceFunction =      {"CT,1", "",  &setChangeTolerance};
-_functionList getButtonMappingFunction =        {"MP,0", "0", &getButtonMapping};
-_functionList setButtonMappingFunction =        {"MP,1", "r", &setButtonMapping}; // "r" denotes an array parameter
-_functionList getScrollLevelFunction =          {"SL,0", "0", &getScrollLevel};
-_functionList setScrollLevelFunction =          {"SL,1", "",  &setScrollLevel};
-_functionList factoryResetFunction =            {"FR,1", "",  &factoryReset};
+_functionList getModelNumberFunction =          {"MN,0", 0, &getModelNumber};
+_functionList getVersionNumberFunction =        {"VN,0", 0, &getVersionNumber};
+_functionList getCursorSpeedFunction =          {"SS,0", 0, &getCursorSpeed};
+_functionList setCursorSpeedFunction =          {"SS,1", 1,  &setCursorSpeed};
+_functionList getPuffThresholdFunction =        {"PT,0", 0, &getPuffThreshold};
+_functionList setPuffThresholdFunction =        {"PT,1", 1,  &setPuffThreshold};
+_functionList getSipThresholdFunction =         {"ST,0", 0, &getSipThreshold};
+_functionList setSipThresholdFunction =         {"ST,1", 1,  &setSipThreshold};
+_functionList getPressureValueFunction =        {"PV,0", 0, &getPressureValue};
+_functionList getRotationAngleFunction =        {"RA,0", 0, &getRotationAngle};
+_functionList setRotationAngleFunction =        {"RA,1", 1,  &setRotationAngle};
+_functionList getJoystickValueFunction =        {"JV,0", 0, &getJoystickValue};
+_functionList getDebugModeFunction =            {"DM,0", 0, &getDebugMode};
+_functionList setDebugModeFunction =            {"DM,1", 1,  &setDebugMode};
+_functionList getCursorInitializationFunction = {"IN,0", 0, &getCursorInitialization};
+_functionList setCursorInitializationFunction = {"IN,1", 1, &setCursorInitialization};
+_functionList getCursorCalibrationFunction =    {"CA,0", 0, &getCursorCalibration};
+_functionList setCursorCalibrationFunction =    {"CA,1", 1, &setCursorCalibration};
+_functionList getChangeToleranceFunction =      {"CT,0", 0, &getChangeTolerance};
+_functionList setChangeToleranceFunction =      {"CT,1", 1,  &setChangeTolerance};
+_functionList getButtonMappingFunction =        {"MP,0", 0, &getButtonMapping};
+_functionList setButtonMappingFunction =        {"MP,1", 2, &setButtonMapping}; // 2 denotes an array parameter
+_functionList getScrollLevelFunction =          {"SL,0", 0, &getScrollLevel};
+_functionList setScrollLevelFunction =          {"SL,1", 1,  &setScrollLevel};
+_functionList factoryResetFunction =            {"FR,1", 1,  &factoryReset};
 
 // Declare array of API functions
 _functionList apiFunction[25] =
@@ -482,7 +482,7 @@ void cursorHandler(void)
   //Debug information
   if (g_debugModeEnabled)
   {
-    sendDebugRawData(xCursor, yCursor, sipAndPuffRawHandler(), xHigh, xLow, yHigh, yLow);
+    sendDebugRawData(xCursor, yCursor, sipAndPuffRawValue(), xHigh, xLow, yHigh, yLow);
     delay(DEBUG_MODE_DELAY);
   }
 }
@@ -997,7 +997,7 @@ void decreaseCursorSpeed(bool responseEnabled, bool apiEnabled)
 // Return     : int : The pressure sensor value in ADC steps
 //*********************************//
 // This function returns a single pressure sensor value in volts
-float readPressure(void)
+int readPressure(void)
 {
   // Measure pressure transducer analog value
   return analogRead(PRESSURE_PIN);
@@ -1042,7 +1042,6 @@ void getPuffThreshold(bool responseEnabled, bool apiEnabled)
                         true, // TODO Comment magic argument
                         0, // TODO Comment magic argument
                         "PT,0",
-                        "", // TODO Comment magic argument
                         2, // Number of values in pressureValue
                         ':', // Delimiter
                         pressureValue);
@@ -1118,7 +1117,6 @@ void setPuffThreshold(bool responseEnabled, bool apiEnabled, int inputPuffThresh
                         isValidThreshold,
                         responseCode,
                         "PT,1",
-                        "", // TODO Comment magic argument
                         2, // TODO Comment magic argument
                         ':', // TODO Comment magic argument
                         pressureValue);
@@ -1184,7 +1182,6 @@ void getSipThreshold(bool responseEnabled, bool apiEnabled)
                         true, // TODO Comment magic argument
                         0, // TODO Comment magic argument
                         "ST,0",
-                        "", // TODO Comment magic argument
                         2, // TODO Comment magic argument
                         ':', // TODO Comment magic argument
                         pressureValue);
@@ -1260,7 +1257,6 @@ void setSipThreshold(bool responseEnabled, bool apiEnabled, int inputSipThreshol
                         isValidThreshold,
                         responseCode,
                         "ST,1",
-                        "", // TODO Comment magic argument
                         2, // TODO Comment magic argument
                         ':', // TODO Comment magic argument
                         pressureValue);
@@ -1350,7 +1346,6 @@ void getJoystickValue(bool responseEnabled, bool apiEnabled)
                         true, // TODO Comment magic argument
                         0, // TODO Comment magic argument
                         "JV,0", // Command
-                        "", // TODO Comment magic argument
                         4, // 4 output variables
                         ',', // Delimiter between output variables
                         joystickTempValue);
@@ -1657,7 +1652,6 @@ void getCursorInitialization(bool responseEnabled, bool apiEnabled)
                         true, //TODO Comment magic argument
                         0, //TODO Comment magic argument
                         "IN,0",
-                        "", //TODO Comment magic argument
                         4, //TODO Comment magic argument
                         ',', //TODO Comment magic argument
                         neutralValue);
@@ -1737,7 +1731,6 @@ void setCursorInitialization(bool responseEnabled, bool apiEnabled, int mode)
                         true,//TODO Comment magic argument
                         0, //TODO Comment magic argument
                         "IN,1",
-                        "",//TODO Comment magic argument
                         4,//TODO Comment magic argument
                         ',',//TODO Comment magic argument
                         neutralValue);
@@ -1790,7 +1783,6 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled)
                         true, //TODO Comment magic argument
                         0, 
                         "CA,0", // Command code, get
-                        "",//TODO Comment magic argument
                         4, // Number of output arguments
                         ',', // Delimiter
                         maxValue);
@@ -1873,7 +1865,7 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled)
 
   ledBlink(5, 250, 3);
   int maxValue[] = { g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax };
-  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "CA,1", "5:", 4, ',', maxValue);
+  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "CA,1:5", 4, ',', maxValue);
 }
 
 
@@ -2026,7 +2018,7 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled)
     { // Check if it's a valid mapping
       int buttonMapping;
       EEPROM.get(EEPROM_buttonMapping1 + i * 2, buttonMapping);
-      if (buttonMapping < 0 || buttonMapping > 8)
+      if (buttonMapping < 0 || buttonMapping > 7)
       {
         isValidMapping = false;
         break;
@@ -2047,7 +2039,7 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled)
     }
   }
   printResponseMultiple(responseEnabled, apiEnabled, true,
-                        0, "MP,0", "", 6 , '\0', g_actionButton);
+                        0, "MP,0", 6 , '\0', g_actionButton);
   delay(5);
 }
 
@@ -2091,7 +2083,7 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
   bool isValidMapping = true;
   for (byte i = 0; i < INPUT_ACTION_COUNT; i++)
   { // Check each action for validity
-    if (inputButtonMapping[i] < 0 || inputButtonMapping[i] > 8) // Up to 8 input actions but 6 available
+    if (inputButtonMapping[i] < 0 || inputButtonMapping[i] > 7) // Up to 8 input actions but 6 available
     {
       isValidMapping = false;
       break;
@@ -2115,7 +2107,7 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
   (isValidMapping) ? responseCode = 0 : responseCode = 3;
 
   printResponseMultiple(responseEnabled, apiEnabled, isValidMapping,
-                        responseCode, "MP,1", "", 6, '\0', g_actionButton);
+                        responseCode, "MP,1", 6, '\0', g_actionButton);
 }
 
 
@@ -2252,7 +2244,7 @@ void updateRotationAngle(void)
       g_rotationAngle22 = 0;
       break;
     }
-    case 180:s
+    case 180:
     {
       g_rotationAngle11 = -1;
       g_rotationAngle12 = 0;
@@ -2540,10 +2532,7 @@ bool serialSettings(bool enabled)
 bool isValidCommandFormat(String inputCommandString)
 {
   bool isValidFormat = false;;
-  if ((inputCommandString.length() == (6) || //XX,d:d
-       inputCommandString.length() == (7) || //XX,d:dd
-       inputCommandString.length() == (8) || //XX,d:ddd
-       inputCommandString.length() == (11)) && inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
+  if (inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
   {
     isValidFormat = true;
   }
@@ -2551,26 +2540,6 @@ bool isValidCommandFormat(String inputCommandString)
   return isValidFormat;
 }
 
-//***VALIDATE INPUT COMMAND PARAMETER FUNCTION***//
-// Function   : isValidCommandParameter
-//
-// Description: This function checks if the input string is a valid command parameters.
-//              It returns true if the string includes valid parameters.
-//              It returns false if the string includes invalid parameters.
-//
-// Parameters :  inputParamterString : String : The input string
-//
-// Return     : boolean
-//*************************************************//
-bool isValidCommandParameter(String inputParamterString)
-{
-  if (isStrNumber(inputParamterString))
-  {
-    return true;
-  }
-
-  return false;
-}
 
 //***CHECK IF STRING IS A NUMBER FUNCTION***//
 // Function   : isStrNumber
@@ -2681,7 +2650,7 @@ void printResponseSingle(bool responseEnabled, bool apiEnabled, bool responseSta
 // Return     : void
 //************************************************************************************//
 void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseStatus,
-                           byte responseNumber, String responseCommand, String responsePrefix,
+                           byte responseNumber, String responseCommand, 
                            byte responseParameterSize, char responseParameterDelimiter, int responseParameter[])
 {
   char tempParameterDelimiter[1];
@@ -2703,7 +2672,6 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
     Serial.print(":");
     Serial.print(responseCommand);
     Serial.print(":");
-    Serial.print(responsePrefix);
     for (byte parameterIndex = 0; parameterIndex < responseParameterSize; parameterIndex++)
     {
       Serial.print(responseParameter[parameterIndex]);
@@ -2723,14 +2691,14 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
 // Description: Serial Print output of the continuous responses from APIs
 //
 // Parameters :  responseStatus : String : The response to the API call (RAW,LOG)
-//               responseNumber : int : 0,1,2 (Different meanings depending on the responseStatus)
-//               responseParameterSize : int : The size of the array which holds output response parameters
+//               responseNumber : byte : 0,1,2 (Different meanings depending on the responseStatus)
+//               responseParameterSize : byte : The size of the array which holds output response parameters
 //               responseParameterDelimiter : char array : The delimiter used to separate multiple response parameters
 //               responseParameter : int array : The response parameters printed as output
 //
 // Return     : void
 //************************************************************************************//
-void printResponseContinuous(String responseStatus, int responseNumber, int responseParameterSize,
+void printResponseContinuous(String responseStatus, byte responseNumber, byte responseParameterSize,
                              char responseParameterDelimiter, int responseParameter[])
 {
   char tempParameterDelimiter[1];
@@ -2780,15 +2748,17 @@ void performCommand(String inputString)
 
     // Test if input command string matches API command and input parameter string matches API parameter string
     if ( inputCommandString == apiFunction[apiIndex]._command
-         && (inputParameterString == apiFunction[apiIndex]._parameter
-             || apiFunction[apiIndex]._parameter == "" || apiFunction[apiIndex]._parameter == "r" ))
+         && ((int)inputParameterString.toInt() == apiFunction[apiIndex]._parameter
+         || apiFunction[apiIndex]._parameter == 0
+         || apiFunction[apiIndex]._parameter == 1
+         || apiFunction[apiIndex]._parameter == 2 ))
     {
 
       // Matching Command String found
-      if ( isValidCommandParameter( inputParameterString )) // Check if parameter is valid
+      if ( isStrNumber(inputParameterString)) // Check if parameter is valid
       { // Valid Parameter
         // Handle parameters that are an array as a special case.
-        if (apiFunction[apiIndex]._parameter == "r")  // "r" denotes an array parameter
+        if (apiFunction[apiIndex]._parameter == 2)  // 2 denotes an array parameter
         {
           int inputParameterArray[inputParameterString.length() + 1];
           for (unsigned int arrayIndex = 0; arrayIndex < inputParameterString.length(); arrayIndex++)
@@ -3053,32 +3023,20 @@ void sipAndPuffHandler()
 }
 
 ////***SIP AND PUFF RAW HANDLER FUNCTION***//
-// Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is deteced
-// Function   : sipAndPuffRawHandler
+// Returns the raw pressure value
+// Function   : sipAndPuffRawValue
 //
-// Description: This function handles the sip and puff raw actions.
-//               Returns a 0 if nothing detected, 1 if a puff is detected and a 2 if sip is deteced
+// Description: This function outputs the raw pressure value from ADC
 //
 // Parameters :  void
 //
-// Return     : currentAction : byte : The return raw action value for sip and puff actions ( Neutral = 0, 1 = Puff, 2 = Sip)
+// Return     : currentAction : int : The return raw pressure value 
 //*********************************//
-byte sipAndPuffRawHandler()
+int sipAndPuffRawValue()
 {
-  byte currentAction = 0;
-
   g_cursorPressure = readPressure();  // Measure current pressure
 
-  // Compare pressure value with puff pressure threshold
-  if (g_cursorPressure < g_puffThreshold) {
-    currentAction = 1;
-  }
-
-  // Compare pressure value with sip pressure threshold
-  if (g_cursorPressure > g_sipThreshold) {
-    currentAction = 2;
-  }
-  return currentAction;
+  return g_cursorPressure;
 }
 
 ////***CLEAR BUTTON ACTION FUNCTION***//
@@ -3192,6 +3150,7 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
+      /*
       case OUTPUT_SECONDARY_SCROLL:
         {
           // Scroll: Perform mouse scroll action using mouse middle button
@@ -3200,6 +3159,7 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
+      */
     }// end switch
   }
 }
@@ -3331,6 +3291,7 @@ void cursorScroll(void)
 //
 // Return     : void
 //****************************************//
+/*
 void cursorSecondaryScroll(void)
 {
   if (Mouse.isPressed(MOUSE_MIDDLE))
@@ -3344,3 +3305,4 @@ void cursorSecondaryScroll(void)
     delay(ACTION_HOLD_DELAY);
   }
 }
+*/
