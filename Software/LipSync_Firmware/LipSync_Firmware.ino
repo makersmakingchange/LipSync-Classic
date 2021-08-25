@@ -2530,8 +2530,10 @@ bool serialSettings(bool enabled)
 // Return     : boolean
 //***********************************************//
 bool isValidCommandFormat(String inputCommandString)
-{
-  bool isValidFormat = false;;
+{ 
+  bool isValidFormat = false;
+  //int inputLength = inputCommandString.length();
+  //if ((inputLength >= (6) && inputLength <= (11)) && inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
   if (inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
   {
     isValidFormat = true;
