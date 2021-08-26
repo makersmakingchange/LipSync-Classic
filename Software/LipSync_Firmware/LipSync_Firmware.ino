@@ -2688,7 +2688,7 @@ void printResponseMultiple(bool responseEnabled, bool apiEnabled, bool responseS
     for (byte parameterIndex = 0; parameterIndex < responseParameterSize; parameterIndex++)
     {
       Serial.print(responseParameter[parameterIndex]);
-      if (parameterIndex < (responseParameterSize - 1))
+      if (parameterIndex < (responseParameterSize - 1) && tempParameterDelimiter[0] != '\0')
       {
         Serial.print(tempParameterDelimiter[0]);
       }
