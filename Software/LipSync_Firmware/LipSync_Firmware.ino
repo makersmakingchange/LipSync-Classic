@@ -2482,7 +2482,9 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int* resetType)
 bool serialSettings(bool enabled)
 {
   String commandString = "";
-  bool settingsFlag = enabled;
+  bool settingsFlag = enabled;                    // Settings mode or command mode
+  bool responseSendFlag = false;                  // Send response if true , perform command if false
+  bool responseStatusFlag = false;                // Set status of the response ( SUCCESS = true, FAIL = false )
 
   // Set the input parameter to the flag returned. This will help to detect that the settings actions should be performed.
   if (Serial.available() > 0)
@@ -2493,26 +2495,36 @@ bool serialSettings(bool enabled)
     {
       // SETTING received
       // Set the return flag to true so settings actions can be performed in the next call to the function
-      printResponseSingle(true, true, true, 0, commandString, false, 0);
+      //printResponseSingle(true, true, true, 0, commandString, false, 0);
       settingsFlag = true;
+      responseSendFlag = true;
+      responseStatusFlag = true;
     }
     else if (settingsFlag == true && commandString == "EXIT")
     {
       // EXIT Recieved
       // Set the return flag to false so settings actions can be exited
-      printResponseSingle(true, true, true, 0, commandString, false, 0);
+      //printResponseSingle(true, true, true, 0, commandString, false, 0);
       settingsFlag = false;
+      responseSendFlag = true;
+      responseStatusFlag = true;
     }
     else if (settingsFlag == true && isValidCommandFormat(commandString))
     { // Check if command's format is correct and it's in settings mode
-      performCommand(commandString);                  // Sub function to process valid strings
+      //performCommand(commandString);                  // Sub function to process valid strings
       settingsFlag = false;
+      responseSendFlag = false;
     }
     else
     {
-      printResponseSingle(true, true, false, 0, commandString, false, 0);
+      //printResponseSingle(true, true, false, 0, commandString, false, 0);
       settingsFlag = false;
+      responseSendFlag = true;
+      responseStatusFlag = false;
     }
+    // Perform action based on the previous conditional statements
+    (responseSendFlag) ? printResponseSingle(true, true, responseStatusFlag, 0, commandString, false, 0) : performCommand(commandString);  
+    
     Serial.flush();
   }
   return settingsFlag;
@@ -2532,9 +2544,8 @@ bool serialSettings(bool enabled)
 bool isValidCommandFormat(String inputCommandString)
 { 
   bool isValidFormat = false;
-  //int inputLength = inputCommandString.length();
-  //if ((inputLength >= (6) && inputLength <= (11)) && inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
-  if (inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
+  int inputLength = inputCommandString.length();
+  if ((inputLength >= (6) && inputLength <= (11)) && inputCommandString.charAt(2) == ',' && inputCommandString.charAt(4) == ':')
   {
     isValidFormat = true;
   }
