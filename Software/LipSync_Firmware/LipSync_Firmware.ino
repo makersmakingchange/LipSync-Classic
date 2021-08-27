@@ -322,7 +322,7 @@ float xLowComp = 1.0;
 
 bool g_debugModeEnabled;                               // Declare debug enable variable
 bool g_settingsEnabled = false;                        // Serial input settings command mode enabled or disabled
-bool scrollModeEnabled = false;                        // Declare scroll mode enable variable
+bool g_scrollModeEnabled = false;                      // Declare scroll mode enable variable
 
 //-----------------------------------------------------------------------------------//
 
@@ -465,13 +465,13 @@ void cursorHandler(void)
   // Apply rotation to cursor movement based on mounting angle.
   rotateCursor(xCursor, yCursor); 
 
-  if (outputMouse && !scrollModeEnabled) 
+  if (outputMouse && !g_scrollModeEnabled) 
   { // Normal Mouse output
     moveCursor(xCursor, yCursor, 0); // Output mouse command
     delay(CURSOR_DELAY);
     g_pollCounter = 0; // Reset cursor poll counter
   }
-  else if (outputMouse && scrollModeEnabled) //Scroll 
+  else if (outputMouse && g_scrollModeEnabled) //Scroll 
   { // Scroll mode
     int yScroll = scrollModifier(yCursor, g_cursorMaxSpeed, g_cursorScrollLevel);
     moveCursor(0, 0, yScroll);
@@ -3089,13 +3089,13 @@ void performButtonAction(byte outputAction)
   if (Mouse.isPressed(MOUSE_LEFT)
       || Mouse.isPressed(MOUSE_MIDDLE)
       || Mouse.isPressed(MOUSE_RIGHT)
-      || scrollModeEnabled)
+      || g_scrollModeEnabled)
   {
     ledClear();
     Mouse.release(MOUSE_LEFT);
     Mouse.release(MOUSE_MIDDLE);
     Mouse.release(MOUSE_RIGHT);
-    scrollModeEnabled = false;
+    g_scrollModeEnabled = false;
   }
   else
   {
@@ -3281,15 +3281,15 @@ void cursorDrag(void)
 //****************************************//
 void cursorScroll(void)
 {
-  if (scrollModeEnabled)
+  if (g_scrollModeEnabled)
   {
-    scrollModeEnabled = false;
+    g_scrollModeEnabled = false;
     ledClear();
   }
   else
   {
     //ledOn(1); // Turn on Green LED
-    scrollModeEnabled = true;
+    g_scrollModeEnabled = true;
     delay(ACTION_HOLD_DELAY);
   }
 }
