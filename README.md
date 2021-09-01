@@ -78,49 +78,49 @@ Once a volunteer maker agrees to take on your request, communicate with them to 
   </tr>
     <tr>
     <td>LipSync All</td>
-    <td>2.0</td>
+    <td>3.0-beta</td>
     <td>ZIP</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/archive/refs/heads/v3.0.zip">LipSync-master.zip</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/archive/refs/tags/v3.0-beta.zip">LipSync-v3.0-beta.zip</a></td>
   </tr>
   <tr>
-    <td>LipSync Manual</td>
+    <td>LipSync Assembly Guide</td>
     <td>1.6</td>
     <td>PDF</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_Manual.pdf">LipSync_Manual.pdf</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentatin/LipSync_Assembly_Guide.pdf">LipSync_Assembly_Guide.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
     <td>1.6</td>
     <td>PDF</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentation/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync User Guide</td>
     <td>1.1</td>
     <td>PDF</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentation/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
   </tr>
   <tr>
-     <td>Mounting Document</td>
+     <td>LipSync Mounting Guide</td>
      <td>1.0</td>
      <td>PDF</td>
-     <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_Mounting_Guide.pdf">Mounting_Document.pdf</a></td>
+     <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentation/LipSync_Mounting_Guide.pdf">Mounting_Document.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (XLSX)</td>
-    <td>September 16, 2019</td>
+    <td>September 1, 2021</td>
     <td>XLSX</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentation/LipSync_BOM.xlsx">LipSync_BOM.xlsx</a></td>
   </tr>
   <tr>
     <td>LipSync BOM (CSV)</td>
-    <td>September 16, 2019</td>
+    <td>September 1, 2021</td>
     <td>CSV</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/LipSync_BOM.csv" download target="_blank">LipSync_BOM.csv</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Documentation/LipSync_BOM.csv">LipSync_BOM.csv</a></td>
   </tr>
   <tr>
     <td>LipSync Firmware</td>
-    <td>3.0</td>
+    <td>3.0-beta</td>
     <td>INO</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/v3.0/Software/LipSync_Firmware/LipSync_Firmware.ino">LipSync_Firmware.ino</a></td>
   </tr>
