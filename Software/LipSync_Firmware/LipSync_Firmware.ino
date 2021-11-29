@@ -107,7 +107,7 @@
 #define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
 #define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
-#define CURSOR_LIFT_THRESOLD 100                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
+#define CURSOR_LIFT_THRESOLD 400                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
 
 int BUTTON_MAPPING[INPUT_ACTION_COUNT] =          
   {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
@@ -441,12 +441,10 @@ void cursorHandler(void) {
   if (outputMouse && !scrollModeEnabled){
     moveCursor(xCursor, yCursor, 0); //output mouse command
     delay(CURSOR_DELAY);
-    g_pollCounter = 0;
   } else if (outputMouse && scrollModeEnabled) {
     int yScroll = scrollModifier(yCursor,g_cursorMaxSpeed,g_cursorScrollLevel);
     moveCursor(0, 0, yScroll);
-    delay(g_cursorScrollDelay); 
-    g_pollCounter = 0;
+    delay(g_cursorScrollDelay);     
   } 
 
   //Debug information 
@@ -485,10 +483,10 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   yLow  = analogRead(Y_DIR_LOW_PIN);              
 
   //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
-  bool skipChange = abs(xHigh - g_xHighPrev) < g_changeTolerance 
-                 && abs(xLow  - g_xLowPrev)  < g_changeTolerance 
-                 && abs(yHigh - g_yHighPrev) < g_changeTolerance 
-                 && abs(yLow  - g_yLowPrev)  < g_changeTolerance;
+  bool aboveDelta = abs(xHigh - g_xHighPrev) >= g_changeTolerance 
+                 || abs(xLow  - g_xLowPrev)  >= g_changeTolerance 
+                 || abs(yHigh - g_yHighPrev) >= g_changeTolerance 
+                 || abs(yLow  - g_yLowPrev)  >= g_changeTolerance;
   
   // Store FSR values for next skip check
   g_xHighPrev = xHigh;
@@ -508,25 +506,31 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
 
-  //Check to see if the joystick has moved outside the deadband
-  if ((xHighYHigh > g_xHighYHighRadius) || (xHighYLow > g_xHighYLowRadius) || (xLowYLow > g_xLowYLowRadius) || (xLowYHigh > g_xLowYHighRadius)) {
+// Test if radial position is outside circular deadband
+ bool outsideDeadzone = (xHighYHigh > g_xHighYHighRadius) 
+                     || (xHighYLow  > g_xHighYLowRadius)
+                     || (xLowYLow   > g_xLowYLowRadius)
+                     || (xLowYHigh  > g_xLowYHighRadius);
 
-    //Secondary check to see if joystick has moved by looking for low FSR values 
-    // (e.g. joystick unloaded->high resistance-> low voltage)
-    if ( (xHigh < CURSOR_LIFT_THRESOLD) || 
-         (xLow  < CURSOR_LIFT_THRESOLD) || 
-         (yHigh < CURSOR_LIFT_THRESOLD) || 
-         (yLow  < CURSOR_LIFT_THRESOLD)){
-          skipChange = false; // Don't skip if joystick if moved and held
-         }
-    
+// If joystick is moved, opposite FSR will decrease in force and therefore decrease in voltate
+// (e.g. joystick unloaded->high resistance-> low voltage)
+ bool joystickLifted = (xHigh < CURSOR_LIFT_THRESOLD)
+                    || (xLow  < CURSOR_LIFT_THRESOLD) 
+                    || (yHigh < CURSOR_LIFT_THRESOLD) 
+                    || (yLow  < CURSOR_LIFT_THRESOLD);
+
+  //Check to see if the joystick has moved outside the deadband
+  if ( outsideDeadzone && (aboveDelta || joystickLifted) )
+    {
     g_pollCounter++;      //Add to the poll counter
-    //delay(20); 
+    
+     //delay(20); 
     
     //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
-    if(!skipChange && g_pollCounter >= 3) {
-    //if(!skipChange) {
-      outputMouse = true;  
+    if( g_pollCounter >= 3) {
+      g_pollCounter = 0; // Reset poll counter to zero
+      outputMouse = true; 
+      
        //Quadrant 1 (Upper left)
       if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
         xCursor = XHIGH_DIRECTION * cursorModifier(xHigh, g_xHighNeutral, g_xHighMax, xHighComp);
