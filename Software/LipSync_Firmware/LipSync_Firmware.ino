@@ -59,7 +59,7 @@
 #define OUTPUT_MIDDLE_CLICK       (int)5             // Generates a short middle click
 #define OUTPUT_CURSOR_HOME_RESET  (int)6             // Initiates the cursor home reset routine to reset center position. 
 #define OUTPUT_CURSOR_CALIBRATION (int)7             // Initiates the cursor calibration to calibrate joystick range and reset center position.
-#define OUTPUT_SECONDARY_SCROLL   (int)8             // Initiates secondary scroll mode. This action is performed by press and holding mouse middle button.
+//#define OUTPUT_SECONDARY_SCROLL   (int)8             // Initiates secondary scroll mode. This action is performed by press and holding mouse middle button.
 
 //***OUTPUT MAPPING***// - CUSTOMIZABLE
 //These values can be changed to remap different output actions to different input actions
@@ -146,6 +146,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define X_DIR_LOW_PIN A1                          // X Direction Low (Cartesian negative x : left) - digital output pin A1
 #define Y_DIR_HIGH_PIN A2                         // Y Direction High (Cartesian positive y : up) - analog input pin A2
 #define Y_DIR_LOW_PIN A10                         // Y Direction Low (Cartesian negative y : down) - analog input pin A10
+
 const byte UNUSED_PINS[] = {2,                    // Unused pins
                             3, 
                             9, 
@@ -284,32 +285,20 @@ float g_rotationAngle22;
 
 byte g_cursorSpeedCounter;                             // Variable to track current cursor speed level
 int g_cursorMaxSpeed;                                  // Current cursor max speed (at full joystick deflection)
-//float g_cursorFactor;                                // Current cursor factor //TODO not currently used.
 byte g_cursorScrollLevel;                              // Variable to track current scroll speed level
 int g_cursorScrollDelay;                               // Current Scroll delay
 
 int  g_cursorPressure;                                 // Variable to hold pressure readings
 int  g_sipThreshold;                                   // Sip pressure threshold [ADC steps]
 int  g_puffThreshold;                                  // Puff pressure threshold [ADC steps]
-unsigned int g_puffCount;                              // The puff and long sip incremental counter variables
-unsigned int g_sipCount;                 
 
+unsigned int g_puffCount, g_sipCount;                  // The puff and long sip incremental counter variables
 int g_pollCounter = 0;                                 // Cursor poll counter
 
-int g_xHighPrev;                                       // Previous FSR reading variables
-int g_yHighPrev;
-int g_xLowPrev;
-int g_yLowPrev;  
-           
-int g_xHighNeutral;                                    // Individual neutral starting positions for each FSR
-int g_xLowNeutral;
-int g_yHighNeutral;
-int g_yLowNeutral;
+int g_xHighPrev, g_yHighPrev, g_xLowPrev, g_yLowPrev;             //Previous FSR reading variables                       
+int g_xHighNeutral, g_xLowNeutral, g_yHighNeutral, g_yLowNeutral; //Individual neutral starting positions for each FSR
 
-int g_xHighMax;                                        // FSR value at max deflection
-int g_xLowMax;                                         // Set during calibration and stored in EEPROM
-int g_yHighMax;
-int g_yLowMax;
+int g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax;         //Max FSR values which are set to the values from EEPROM
 
 const float g_deadband_squared = CURSOR_DEADBAND * CURSOR_DEADBAND; // Squared deadband distance from center
 
@@ -347,8 +336,7 @@ void setup()
   getModelNumber(false, false);                            // Get LipSync model number; Perform factory reset on initial upload.
 
   setCursorInitialization(false, false, 1);                // Set the Home joystick and generate movement threshold boundaries
-  // TODO - may want to change to 2 so we trigger reset of comp values
-  //  based on new neutral position
+														   // TODO - may want to change to 2 so we trigger reset of comp values
 
   getCursorCalibration(false, false);                      // Get FSR Max calibration values
 
@@ -398,7 +386,7 @@ void loop()
   cursorHandler();                                       // Read the joystick values and output mouse cursor movements.
 
   sipAndPuffHandler();                                   // Pressure sensor sip and puff functions
-
+  delay(5);
   pushButtonHandler();                                   // Check rear push buttons
 }
 
@@ -469,14 +457,12 @@ void cursorHandler(void)
   { // Normal Mouse output
     moveCursor(xCursor, yCursor, 0); // Output mouse command
     delay(CURSOR_DELAY);
-    g_pollCounter = 0; // Reset cursor poll counter
   }
   else if (outputMouse && g_scrollModeEnabled) //Scroll 
   { // Scroll mode
     int yScroll = scrollModifier(yCursor, g_cursorMaxSpeed, g_cursorScrollLevel);
     moveCursor(0, 0, yScroll);
     delay(g_cursorScrollDelay);
-    g_pollCounter = 0; // Reset cursor poll counter
   }
 
   //Debug information
@@ -513,12 +499,12 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   yHigh = analogRead(Y_DIR_HIGH_PIN);
   yLow  = analogRead(Y_DIR_LOW_PIN);
 
-  // Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
-  bool skipChange =   abs(xHigh - g_xHighPrev) < g_changeTolerance
-                   && abs(xLow  - g_xLowPrev)  < g_changeTolerance
-                   && abs(yHigh - g_yHighPrev) < g_changeTolerance
-                   && abs(yLow  - g_yLowPrev)  < g_changeTolerance;
-
+  //Check the FSR changes from previous reading and set the skip flag to true if the changes are below the change tolerance range
+  bool aboveDelta = abs(xHigh - g_xHighPrev) >= g_changeTolerance 
+                 || abs(xLow  - g_xLowPrev)  >= g_changeTolerance 
+                 || abs(yHigh - g_yHighPrev) >= g_changeTolerance 
+                 || abs(yLow  - g_yLowPrev)  >= g_changeTolerance;
+  
   // Store FSR values for next skip check
   g_xHighPrev = xHigh;
   g_xLowPrev  = xLow;
@@ -526,62 +512,68 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
   g_yLowPrev  = yLow;
 
   // Calculate the magnitude of the movement for each direction / quadrant
-  // These are the squared vector magnitudes of each quadrant 1-4 when the
+  // These are the squared vector magnitudes of each quadrant 1-4 when the 
   // FSR measures a greater force than the neutral force
-  float xHighYHigh =  sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
-                    + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
-  float xHighYLow  =  sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0)
-                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
-  float xLowYHigh  =  sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
-                    + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
-  float xLowYLow   =  sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
-                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);
+  float xHighYHigh = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0) 
+                   + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);    
+  float xHighYLow  = sq(((xHigh - g_xHighNeutral) > 0) ? float((xHigh - g_xHighNeutral)) : 0) 
+                   + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
+  float xLowYHigh  = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0) 
+                   + sq(((yHigh - g_yHighNeutral) > 0) ? float((yHigh - g_yHighNeutral)) : 0);
+  float xLowYLow   = sq(((xLow  - g_xLowNeutral)  > 0) ? float((xLow  - g_xLowNeutral))  : 0)
+                   + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
 
-  // Check to see if the joystick has moved outside the deadband
-  if ((xHighYHigh > g_deadband_squared) 
-   || (xHighYLow  > g_deadband_squared) 
-   || (xLowYLow   > g_deadband_squared) 
-   || (xLowYHigh  > g_deadband_squared))
+// Test if radial position is outside circular deadband
+ bool outsideDeadzone = (xHighYHigh > g_deadband_squared) 
+                     || (xHighYLow  > g_deadband_squared)
+                     || (xLowYLow   > g_deadband_squared)
+                     || (xLowYHigh  > g_deadband_squared);
+
+// If joystick is moved, opposite FSR will decrease in force and therefore decrease in voltate
+// (e.g. joystick unloaded->high resistance-> low voltage)
+ bool joystickLifted = (xHigh < CURSOR_LIFT_THRESOLD)
+                    || (xLow  < CURSOR_LIFT_THRESOLD) 
+                    || (yHigh < CURSOR_LIFT_THRESOLD) 
+                    || (yLow  < CURSOR_LIFT_THRESOLD);
+
+  //Check to see if the joystick has moved outside the deadband
+  if( outsideDeadzone && (aboveDelta || joystickLifted) )
   {
-
-    // Secondary check to see if joystick has moved by looking for low FSR values
-    // (e.g. joystick unloaded-> less force -> higher resistance -> lower voltage)
-    if ( (xHigh < CURSOR_LIFT_THRESOLD)
-      || (xLow  < CURSOR_LIFT_THRESOLD)
-      || (yHigh < CURSOR_LIFT_THRESOLD) 
-      || (yLow  < CURSOR_LIFT_THRESOLD)) {
-      skipChange = false; // Don't skip if joystick if moved and held
-    }
-
-    g_pollCounter++;      // Add to the poll counter
-    // delay(20);
-
-    // If joystick is moved outside of deadband, calculate and update cursor movement.
-    if (!skipChange)
-    {
-      outputMouse = true;
-      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow))
-      { // Quadrant 1 (Upper left)
+    g_pollCounter++;      //Add to the poll counter
+    
+     //delay(20); 
+    
+    //Perform cursor movement actions if joystick has been in active zone for 3 or more poll counts
+    if( g_pollCounter >= 3) {
+      g_pollCounter = 0; // Reset poll counter to zero
+      outputMouse = true; 
+      
+       //Quadrant 1 (Upper left)
+      if ((xHighYHigh >= xHighYLow) && (xHighYHigh >= xLowYHigh) && (xHighYHigh >= xLowYLow)) {    
         xCursor = XHIGH_DIRECTION * cursorModifier(xHigh, g_xHighNeutral, g_xHighMax, xHighComp);
         yCursor = YHIGH_DIRECTION * cursorModifier(yHigh, g_yHighNeutral, g_yHighMax, yHighComp);
-      }
-      else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh))
-      { // Quadrant 4 (Lower Left)
+      } 
+      //Quadrant 4 (Lower Left)
+      else if ((xHighYLow > xHighYHigh) && (xHighYLow > xLowYLow) && (xHighYLow > xLowYHigh)) {   
         xCursor = XHIGH_DIRECTION * cursorModifier(xHigh, g_xHighNeutral, g_xHighMax, xHighComp);
         yCursor = YLOW_DIRECTION *  cursorModifier(yLow,  g_yLowNeutral,  g_yLowMax,  yLowComp);
+                 
       }
-      else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh))
-      { //Quadrant 3 (Lower Right)
+      //Quadrant 3 (Lower Right)
+      else if ((xLowYLow >= xHighYHigh) && (xLowYLow >= xHighYLow) && (xLowYLow >= xLowYHigh)) {  
         xCursor = XLOW_DIRECTION * cursorModifier(xLow, g_xLowNeutral, g_xLowMax, xLowComp);
         yCursor = YLOW_DIRECTION * cursorModifier(yLow, g_yLowNeutral, g_yLowMax, yLowComp);
-      }
-      else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow))
-      { //Quadrant 2 (Upper Right)
+        
+      } 
+      //Quadrant 2 (Upper Right)
+      else if ((xLowYHigh > xHighYHigh) && (xLowYHigh >= xHighYLow) && (xLowYHigh >= xLowYLow)) { 
         xCursor = XLOW_DIRECTION *  cursorModifier( xLow,  g_xLowNeutral,  g_xLowMax,  xLowComp);
         yCursor = YHIGH_DIRECTION * cursorModifier( yHigh, g_yHighNeutral, g_yHighMax, yHighComp);
+               
       }
-    } // End check skipchange
-  } //End check deadband
+        
+    } //end check skipchange and poll counter   
+  } //end check deadband 
   return outputMouse;
 }
 
@@ -897,16 +889,15 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
 {
   bool isValidSpeed = true;
   if (inputSpeedCounter >= 0 && inputSpeedCounter <= 10)  // Check if inputSpeedCounter is valid
-  { // Valid inputSpeedCounter
-    isValidSpeed = true;
+  { 
+	// Valid inputSpeedCounter
     ledBlink(inputSpeedCounter + 1, 100, 1);
     g_cursorSpeedCounter = inputSpeedCounter;
     EEPROM.put(EEPROM_speedCounter, g_cursorSpeedCounter);
     delay(EEPROM_WRITE_DELAY);
-    if (!API_ENABLED)
-    {
-      g_cursorSpeedCounter = SPEED_COUNTER;
-    }
+	
+    if(!API_ENABLED){ g_cursorSpeedCounter = SPEED_COUNTER; }
+    isValidSpeed = true;
   }
   else
   { // Invalid inputSpeedCounter
@@ -916,6 +907,7 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
   }
 
   g_cursorMaxSpeed = cursorParams[g_cursorSpeedCounter];
+  
   byte responseCode = 0;
   (isValidSpeed) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled,
@@ -1411,10 +1403,9 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled)
                       "DM,0",
                       true,// TODO Comment magic argument
                       debugState);
-  if (responseEnabled && debugState == 1)
-  {
-    sendDebugConfigData();
-  }
+					  
+  if(responseEnabled && debugState==1){ sendDebugConfigData();}
+
   return debugState;
 }
 
@@ -1458,14 +1449,16 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState)
   bool isValidDebugState = true; // TODO Should this default to false?
   if (inpuDebugState == 0 || inpuDebugState == 1)
   {
-    isValidDebugState = true;
     g_debugModeEnabled = inpuDebugState;
     EEPROM.put(EEPROM_debugModeEnabled, g_debugModeEnabled);
     delay(EEPROM_WRITE_DELAY);
+	
     if (!API_ENABLED)
     {
       g_debugModeEnabled = DEBUG_MODE;
     }
+	
+	isValidDebugState = true;
   }
   else
   {
@@ -1484,10 +1477,7 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState)
                       true, // TODO Comment magic argument
                       g_debugModeEnabled);
 
-  if (inpuDebugState == 1)
-  {
-    sendDebugConfigData();
-  }
+  if(inpuDebugState==1) { sendDebugConfigData();    }
 }
 
 
@@ -1568,7 +1558,10 @@ void getCompFactor(void)
 {
   // Retrieve flag from EEPROM.
   int compFactorIsSet;
+  float defaultCompFactor = CURSOR_DEFAULT_COMP_FACTOR;
+
   EEPROM.get(EEPROM_defaultIsSet, compFactorIsSet);
+  
   // Check flag. If set, retrieve values from memory, otherswise set default.
   if (compFactorIsSet == 1)
   {
@@ -1581,13 +1574,13 @@ void getCompFactor(void)
   else
   {
     // Set the Comp values for first time
-    EEPROM.put(EEPROM_yHighComp, CURSOR_DEFAULT_COMP_FACTOR);
+    EEPROM.put(EEPROM_yHighComp, defaultCompFactor);
     delay(EEPROM_WRITE_DELAY);
-    EEPROM.put(EEPROM_yLowComp,  CURSOR_DEFAULT_COMP_FACTOR);
+    EEPROM.put(EEPROM_yLowComp,  defaultCompFactor);
     delay(EEPROM_WRITE_DELAY);
-    EEPROM.put(EEPROM_xHighComp, CURSOR_DEFAULT_COMP_FACTOR);
+    EEPROM.put(EEPROM_xHighComp, defaultCompFactor);
     delay(EEPROM_WRITE_DELAY);
-    EEPROM.put(EEPROM_xLowComp,  CURSOR_DEFAULT_COMP_FACTOR);
+    EEPROM.put(EEPROM_xLowComp,  defaultCompFactor);
     delay(EEPROM_WRITE_DELAY);
 
     // Set the flag
@@ -1775,7 +1768,7 @@ void getCursorCalibration(bool responseEnable, bool apiEnabled)
   EEPROM.get(EEPROM_xLowMax,  g_xLowMax);
   EEPROM.get(EEPROM_yHighMax, g_yHighMax);
   EEPROM.get(EEPROM_yLowMax,  g_yLowMax);
-
+  
   int maxValue[] = { g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax };
 
   printResponseMultiple(responseEnable,
@@ -1864,8 +1857,16 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled)
   delay(EEPROM_WRITE_DELAY);
 
   ledBlink(5, 250, 3);
+  
   int maxValue[] = { g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax };
-  printResponseMultiple(responseEnabled, apiEnabled, true, 0, "CA,1:5", 4, ',', maxValue);
+  printResponseMultiple(responseEnabled, 
+						apiEnabled, 
+						true, 
+						0, 
+						"CA,1:5", 
+						4, 
+						',', 
+						maxValue);
 }
 
 
@@ -1963,10 +1964,7 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
     g_changeTolerance = inputChangeTolerance;                           // Update value to global variable
     EEPROM.put(EEPROM_changeTolerance, g_changeTolerance);              // Update value to memory from serial input
     delay(EEPROM_WRITE_DELAY);
-    if (!API_ENABLED)
-    {
-      g_changeTolerance = CHANGE_DEFAULT_TOLERANCE; // Use default change tolerance if bad serial input
-    }
+    if(!API_ENABLED) {g_changeTolerance = CHANGE_DEFAULT_TOLERANCE; }   //Use default change tolerance if bad serial input
     isValidChangeTolerance = true;
   }
   else
@@ -1976,8 +1974,13 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
   delay(5);
   int responseCode = 0; // TODO change to byte?
   (isValidChangeTolerance) ? responseCode = 0 : responseCode = 3;
-  printResponseSingle(responseEnabled, apiEnabled, isValidChangeTolerance, responseCode, "CT,1", true, g_changeTolerance);
-}
+  printResponseSingle(responseEnabled,
+						apiEnabled, 
+						isValidChangeTolerance, 
+						responseCode, 
+						"CT,1", 
+						true, 
+						g_changeTolerance);}
 
 
 //***SET CHANGE TOLERANCE VALUE CALIBRATION API FUNCTION***//
@@ -2038,8 +2041,14 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled)
       }
     }
   }
-  printResponseMultiple(responseEnabled, apiEnabled, true,
-                        0, "MP,0", 6 , '\0', g_actionButton);
+  printResponseMultiple(responseEnabled, 
+						apiEnabled, 
+						true,
+                        0, 
+						"MP,0", 
+						6 , 
+						'\0', 
+						g_actionButton);
   delay(5);
 }
 
@@ -2106,8 +2115,14 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
   int responseCode = 0;
   (isValidMapping) ? responseCode = 0 : responseCode = 3;
 
-  printResponseMultiple(responseEnabled, apiEnabled, isValidMapping,
-                        responseCode, "MP,1", 6, '\0', g_actionButton);
+  printResponseMultiple(responseEnabled, 
+						apiEnabled, 
+						isValidMapping,
+                        responseCode, 
+						"MP,1", 
+						6, 
+						'\0', 
+						g_actionButton);
 }
 
 
@@ -2135,7 +2150,15 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled)
   {
     tempRotationAngle = ROTATION_ANGLE;
   }
-  printResponseSingle(responseEnabled, apiEnabled, true, 0, "RA,0", true, tempRotationAngle);
+  
+  printResponseSingle(responseEnabled, 
+						apiEnabled, 
+						true, 
+						0, 
+						"RA,0", 
+						true, 
+						tempRotationAngle);
+						
   return tempRotationAngle;
 }
 
@@ -2198,7 +2221,14 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
 
   int responseCode = 0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 3;
-  printResponseSingle(responseEnabled, apiEnabled, isValidRotationAngle, responseCode, "RA,1", true, g_rotationAngle);
+  printResponseSingle(responseEnabled, 
+						apiEnabled, 
+						isValidRotationAngle, 
+						responseCode, 
+						"RA,1", 
+						true, 
+						g_rotationAngle);
+						
   updateRotationAngle(); // Update rotation transform
 }
 
@@ -2312,7 +2342,14 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled)
     }
   }
 
-  printResponseSingle(responseEnabled, apiEnabled, true, 0, "SL,0", true, scrollLevel);
+  printResponseSingle(responseEnabled, 
+						apiEnabled, 
+						true, 
+						0, 
+						"SL,0", 
+						true, 
+						scrollLevel);  
+						
   return scrollLevel;
 }
 
@@ -2356,29 +2393,35 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
   bool isValidFactor = true;
   if (inputScrollLevel >= 0 && inputScrollLevel <= 10) // Check if inputScroll is within range
   {
-    isValidFactor = true;
+    // Valid inputScrollLevel
     ledBlink(inputScrollLevel + 1, 100, 1);
     g_cursorScrollLevel = inputScrollLevel;
     EEPROM.put(EEPROM_scrollLevel, g_cursorScrollLevel);
     delay(EEPROM_WRITE_DELAY);
-    if (!API_ENABLED)
-    {
-      g_cursorScrollLevel = SCROLL_LEVEL;
-    }
+
+    if(!API_ENABLED){ g_cursorScrollLevel = SCROLL_LEVEL; }
+    isValidFactor = true;
   }
   else
   {
-    isValidFactor = false;
+    //Invalid inputScrollLevel
+    ledBlink(6, 50, 3);
     EEPROM.get(EEPROM_scrollLevel, g_cursorScrollLevel);
-    ledBlink(6, 50, 3); //TODO Is this an error flash?
+    delay(10); 
+    isValidFactor = false;
   }
 
   g_cursorScrollDelay = calculateScrollDelay(g_cursorScrollLevel);
 
   int responseCode = 0;
   (isValidFactor) ? responseCode = 0 : responseCode = 3;
-  printResponseSingle(responseEnabled, apiEnabled, isValidFactor, responseCode, "SL,1", true, g_cursorScrollLevel);
-}
+  printResponseSingle(responseEnabled, 
+						apiEnabled, 
+						isValidFactor, 
+						responseCode, 
+						"SL,1", 
+						true, 
+						g_cursorScrollLevel);}
 
 
 //***SET SCROLL LEVEL API FUNCTION***//
@@ -2420,6 +2463,7 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType)
   { // Reset following settings only if a factory reset is performed
     isValidResetType = true;
     responseCode = 0;
+	
     if (resetType == 0)
     {
       // HARD RESET
@@ -2447,7 +2491,13 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType)
     responseCode = 3; //TODO Add comment with what this means
   }
 
-  printResponseSingle(responseEnabled, apiEnabled, isValidResetType, responseCode, "FR,1", true, resetType);
+  printResponseSingle(responseEnabled, 
+						apiEnabled, 
+						isValidResetType, 
+						responseCode, 
+						"FR,1", 
+						true, 
+						resetType);
 }
 
 
@@ -3163,8 +3213,7 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
-      /*
-      case OUTPUT_SECONDARY_SCROLL:
+		/*case OUTPUT_SECONDARY_SCROLL:
         {
           // Scroll: Perform mouse scroll action using mouse middle button
           // Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
@@ -3172,7 +3221,8 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
-      */
+		*/
+
     }// end switch
   }
 }
