@@ -42,8 +42,8 @@
 
 //TITLE: LipSync_Firmware
 //AUTHOR: MakersMakingChange
-//VERSION: 3.0-beta (03 Jun 2021)
-//Copyright Neil Squire Society 2016-2021.
+//VERSION: 3 (03 Jun 2022)
+//Copyright Neil Squire Society 2016-2022.
 //LICENSE: This work is licensed under the CC BY SA 4.0 License: http://creativecommons.org/licenses/by-sa/4.0 .
 
 #include <EEPROM.h>
@@ -2545,7 +2545,6 @@ bool serialSettings(bool enabled)
     {
       // SETTING received
       // Set the return flag to true so settings actions can be performed in the next call to the function
-      //printResponseSingle(true, true, true, 0, commandString, false, 0);
       settingsFlag = true;
       responseSendFlag = true;
       responseStatusFlag = true;
@@ -2554,20 +2553,17 @@ bool serialSettings(bool enabled)
     {
       // EXIT Recieved
       // Set the return flag to false so settings actions can be exited
-      //printResponseSingle(true, true, true, 0, commandString, false, 0);
       settingsFlag = false;
       responseSendFlag = true;
       responseStatusFlag = true;
     }
     else if (settingsFlag == true && isValidCommandFormat(commandString))
     { // Check if command's format is correct and it's in settings mode
-      //performCommand(commandString);                  // Sub function to process valid strings
       settingsFlag = false;
       responseSendFlag = false;
     }
     else
     {
-      //printResponseSingle(true, true, false, 0, commandString, false, 0);
       settingsFlag = false;
       responseSendFlag = true;
       responseStatusFlag = false;
