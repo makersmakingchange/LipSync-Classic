@@ -101,26 +101,8 @@
 #define PRESSURE_HANDLER_DELAY (byte)5            // The delay added between pressure read cycles [ms] 
 
 //*** DRIFT REDUCTIONS ***// CHANGE WITH CAUTION
-<<<<<<< HEAD
-#define CURSOR_DEADBAND 30                        //Joystick deadband
-#define CHANGE_DEFAULT_TOLERANCE 3                //The tolerance in changes between current reading and previous reading
-
-//***DON'T CHANGE THESE CONSTANTS***//       
-#define LIPSYNC_MODEL 1                           //LipSync Mouse
-#define LIPSYNC_VERSION 30                        //LipSync Version
-#define PRESSURE_THRESHOLD_MIN 10                 //Minimum Pressure sip and puff threshold
-#define PRESSURE_THRESHOLD_MAX 50                 //Maximum Pressure sip and puff threshold
-#define CURSOR_DEFAULT_COMP_FACTOR 1.0            //Default comp factor
-#define INPUT_ACTION_COUNT 6                      //Number of available sip and puff input types  
-#define CURSOR_LIFT_THRESOLD 400                  //Opposite FSR value nearing liftoff during purposeful movement (ADC steps)
-
-int BUTTON_MAPPING[INPUT_ACTION_COUNT] =          
-  {ACTION_SHORT_PUFF, ACTION_SHORT_SIP, ACTION_LONG_PUFF, 
-   ACTION_LONG_SIP, ACTION_VLONG_PUFF, ACTION_VLONG_SIP};                      
-=======
 #define CURSOR_DEADBAND 30                        // Joystick deadband {ADC steps]
 #define CHANGE_DEFAULT_TOLERANCE 3                // The tolerance in changes between current reading and previous reading [ADC steps]
->>>>>>> develop
 
 //***DON'T CHANGE THESE CONSTANTS***//
 #define LIPSYNC_MODEL (byte)1                     // LipSync Mouse
@@ -131,7 +113,7 @@ int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 #define PUFF_PRESSURE_THRESHOLD_MAX (byte)50      // Maximum Pressure sip and puff threshold [percentage]
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            // Default comp factor
 #define INPUT_ACTION_COUNT 6                      // Number of available sip and puff input types  
-#define CURSOR_LIFT_THRESOLD 100                  // Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
+#define CURSOR_LIFT_THRESOLD 400                  // Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
 
 int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 { ACTION_SHORT_PUFF, ACTION_SHORT_SIP,  ACTION_LONG_PUFF,
@@ -354,7 +336,7 @@ void setup()
   getModelNumber(false, false);                            // Get LipSync model number; Perform factory reset on initial upload.
 
   setCursorInitialization(false, false, 1);                // Set the Home joystick and generate movement threshold boundaries
-														   // TODO - may want to change to 2 so we trigger reset of comp values
+                               // TODO - may want to change to 2 so we trigger reset of comp values
 
   getCursorCalibration(false, false);                      // Get FSR Max calibration values
 
@@ -475,18 +457,6 @@ void cursorHandler(void)
   { // Normal Mouse output
     moveCursor(xCursor, yCursor, 0); // Output mouse command
     delay(CURSOR_DELAY);
-<<<<<<< HEAD
-  } else if (outputMouse && scrollModeEnabled) {
-    int yScroll = scrollModifier(yCursor,g_cursorMaxSpeed,g_cursorScrollLevel);
-    moveCursor(0, 0, yScroll);
-    delay(g_cursorScrollDelay);     
-  } 
-
-  //Debug information 
-  if(g_debugModeEnabled) {
-    
-    sendDebugRawData(xCursor,yCursor,sipAndPuffRawHandler(),xHigh,xLow,yHigh,yLow);
-=======
   }
   else if (outputMouse && g_scrollModeEnabled) //Scroll 
   { // Scroll mode
@@ -494,7 +464,6 @@ void cursorHandler(void)
     moveCursor(0, 0, yScroll);
     delay(g_cursorScrollDelay);
   }
->>>>>>> develop
 
   //Debug information
   if (g_debugModeEnabled)
@@ -555,17 +524,10 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
                    + sq(((yLow  - g_yLowNeutral)  > 0) ? float((yLow  - g_yLowNeutral))  : 0);    
 
 // Test if radial position is outside circular deadband
-<<<<<<< HEAD
- bool outsideDeadzone = (xHighYHigh > g_xHighYHighRadius) 
-                     || (xHighYLow  > g_xHighYLowRadius)
-                     || (xLowYLow   > g_xLowYLowRadius)
-                     || (xLowYHigh  > g_xLowYHighRadius);
-=======
  bool outsideDeadzone = (xHighYHigh > g_deadband_squared) 
                      || (xHighYLow  > g_deadband_squared)
                      || (xLowYLow   > g_deadband_squared)
                      || (xLowYHigh  > g_deadband_squared);
->>>>>>> develop
 
 // If joystick is moved, opposite FSR will decrease in force and therefore decrease in voltate
 // (e.g. joystick unloaded->high resistance-> low voltage)
@@ -575,13 +537,8 @@ bool readJoystick(int &xCursor, int &yCursor, int &xHigh, int &xLow, int &yHigh,
                     || (yLow  < CURSOR_LIFT_THRESOLD);
 
   //Check to see if the joystick has moved outside the deadband
-<<<<<<< HEAD
-  if ( outsideDeadzone && (aboveDelta || joystickLifted) )
-    {
-=======
   if( outsideDeadzone && (aboveDelta || joystickLifted) )
   {
->>>>>>> develop
     g_pollCounter++;      //Add to the poll counter
     
      //delay(20); 
@@ -933,12 +890,12 @@ void setCursorSpeed(bool responseEnabled, bool apiEnabled, int inputSpeedCounter
   bool isValidSpeed = true;
   if (inputSpeedCounter >= 0 && inputSpeedCounter <= 10)  // Check if inputSpeedCounter is valid
   { 
-	// Valid inputSpeedCounter
+  // Valid inputSpeedCounter
     ledBlink(inputSpeedCounter + 1, 100, 1);
     g_cursorSpeedCounter = inputSpeedCounter;
     EEPROM.put(EEPROM_speedCounter, g_cursorSpeedCounter);
     delay(EEPROM_WRITE_DELAY);
-	
+  
     if(!API_ENABLED){ g_cursorSpeedCounter = SPEED_COUNTER; }
     isValidSpeed = true;
   }
@@ -1446,7 +1403,7 @@ bool getDebugMode(bool responseEnabled, bool apiEnabled)
                       "DM,0",
                       true,// TODO Comment magic argument
                       debugState);
-					  
+            
   if(responseEnabled && debugState==1){ sendDebugConfigData();}
 
   return debugState;
@@ -1495,13 +1452,13 @@ void setDebugMode(bool responseEnabled, bool apiEnabled, int inpuDebugState)
     g_debugModeEnabled = inpuDebugState;
     EEPROM.put(EEPROM_debugModeEnabled, g_debugModeEnabled);
     delay(EEPROM_WRITE_DELAY);
-	
+  
     if (!API_ENABLED)
     {
       g_debugModeEnabled = DEBUG_MODE;
     }
-	
-	isValidDebugState = true;
+  
+  isValidDebugState = true;
   }
   else
   {
@@ -1903,13 +1860,13 @@ void setCursorCalibration(bool responseEnabled, bool apiEnabled)
   
   int maxValue[] = { g_xHighMax, g_xLowMax, g_yHighMax, g_yLowMax };
   printResponseMultiple(responseEnabled, 
-						apiEnabled, 
-						true, 
-						0, 
-						"CA,1:5", 
-						4, 
-						',', 
-						maxValue);
+            apiEnabled, 
+            true, 
+            0, 
+            "CA,1:5", 
+            4, 
+            ',', 
+            maxValue);
 }
 
 
@@ -2018,12 +1975,12 @@ void setChangeTolerance(bool responseEnabled, bool apiEnabled, int inputChangeTo
   int responseCode = 0; // TODO change to byte?
   (isValidChangeTolerance) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled,
-						apiEnabled, 
-						isValidChangeTolerance, 
-						responseCode, 
-						"CT,1", 
-						true, 
-						g_changeTolerance);}
+            apiEnabled, 
+            isValidChangeTolerance, 
+            responseCode, 
+            "CT,1", 
+            true, 
+            g_changeTolerance);}
 
 
 //***SET CHANGE TOLERANCE VALUE CALIBRATION API FUNCTION***//
@@ -2085,13 +2042,13 @@ void getButtonMapping(bool responseEnabled, bool apiEnabled)
     }
   }
   printResponseMultiple(responseEnabled, 
-						apiEnabled, 
-						true,
+            apiEnabled, 
+            true,
                         0, 
-						"MP,0", 
-						6 , 
-						'\0', 
-						g_actionButton);
+            "MP,0", 
+            6 , 
+            '\0', 
+            g_actionButton);
   delay(5);
 }
 
@@ -2159,13 +2116,13 @@ void setButtonMapping(bool responseEnabled, bool apiEnabled, int inputButtonMapp
   (isValidMapping) ? responseCode = 0 : responseCode = 3;
 
   printResponseMultiple(responseEnabled, 
-						apiEnabled, 
-						isValidMapping,
+            apiEnabled, 
+            isValidMapping,
                         responseCode, 
-						"MP,1", 
-						6, 
-						'\0', 
-						g_actionButton);
+            "MP,1", 
+            6, 
+            '\0', 
+            g_actionButton);
 }
 
 
@@ -2195,13 +2152,13 @@ int getRotationAngle(bool responseEnabled, bool apiEnabled)
   }
   
   printResponseSingle(responseEnabled, 
-						apiEnabled, 
-						true, 
-						0, 
-						"RA,0", 
-						true, 
-						tempRotationAngle);
-						
+            apiEnabled, 
+            true, 
+            0, 
+            "RA,0", 
+            true, 
+            tempRotationAngle);
+            
   return tempRotationAngle;
 }
 
@@ -2265,13 +2222,13 @@ void setRotationAngle(bool responseEnabled, bool apiEnabled, int inputRotationAn
   int responseCode = 0;
   (isValidRotationAngle) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled, 
-						apiEnabled, 
-						isValidRotationAngle, 
-						responseCode, 
-						"RA,1", 
-						true, 
-						g_rotationAngle);
-						
+            apiEnabled, 
+            isValidRotationAngle, 
+            responseCode, 
+            "RA,1", 
+            true, 
+            g_rotationAngle);
+            
   updateRotationAngle(); // Update rotation transform
 }
 
@@ -2386,13 +2343,13 @@ int getScrollLevel(bool responseEnabled, bool apiEnabled)
   }
 
   printResponseSingle(responseEnabled, 
-						apiEnabled, 
-						true, 
-						0, 
-						"SL,0", 
-						true, 
-						scrollLevel);  
-						
+            apiEnabled, 
+            true, 
+            0, 
+            "SL,0", 
+            true, 
+            scrollLevel);  
+            
   return scrollLevel;
 }
 
@@ -2459,12 +2416,12 @@ void setScrollLevel(bool responseEnabled, bool apiEnabled, int inputScrollLevel)
   int responseCode = 0;
   (isValidFactor) ? responseCode = 0 : responseCode = 3;
   printResponseSingle(responseEnabled, 
-						apiEnabled, 
-						isValidFactor, 
-						responseCode, 
-						"SL,1", 
-						true, 
-						g_cursorScrollLevel);}
+            apiEnabled, 
+            isValidFactor, 
+            responseCode, 
+            "SL,1", 
+            true, 
+            g_cursorScrollLevel);}
 
 
 //***SET SCROLL LEVEL API FUNCTION***//
@@ -2506,7 +2463,7 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType)
   { // Reset following settings only if a factory reset is performed
     isValidResetType = true;
     responseCode = 0;
-	
+  
     if (resetType == 0)
     {
       // HARD RESET
@@ -2535,12 +2492,12 @@ void factoryReset(bool responseEnabled, bool apiEnabled, int resetType)
   }
 
   printResponseSingle(responseEnabled, 
-						apiEnabled, 
-						isValidResetType, 
-						responseCode, 
-						"FR,1", 
-						true, 
-						resetType);
+            apiEnabled, 
+            isValidResetType, 
+            responseCode, 
+            "FR,1", 
+            true, 
+            resetType);
 }
 
 
@@ -3252,7 +3209,7 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
-		/*case OUTPUT_SECONDARY_SCROLL:
+    /*case OUTPUT_SECONDARY_SCROLL:
         {
           // Scroll: Perform mouse scroll action using mouse middle button
           // Default: if sip counter value is under 750 and more than SIP_COUNT_THRESHOLD_MED ( 3 Second Long Sip )
@@ -3260,7 +3217,7 @@ void performButtonAction(byte outputAction)
           delay(5);
           break;
         }
-		*/
+    */
 
     }// end switch
   }
