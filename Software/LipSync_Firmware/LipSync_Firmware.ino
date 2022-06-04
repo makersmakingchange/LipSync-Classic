@@ -113,7 +113,7 @@
 #define PUFF_PRESSURE_THRESHOLD_MAX (byte)50      // Maximum Pressure sip and puff threshold [percentage]
 #define CURSOR_DEFAULT_COMP_FACTOR 1.0            // Default comp factor
 #define INPUT_ACTION_COUNT 6                      // Number of available sip and puff input types  
-#define CURSOR_LIFT_THRESOLD 100                  // Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
+#define CURSOR_LIFT_THRESOLD 400                  // Opposite FSR value nearing liftoff during purposeful movement [ADC steps]
 
 int BUTTON_MAPPING[INPUT_ACTION_COUNT] =
 { ACTION_SHORT_PUFF, ACTION_SHORT_SIP,  ACTION_LONG_PUFF,
