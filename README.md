@@ -86,7 +86,7 @@ Once a volunteer maker agrees to take on your request, communicate with them to 
     <td>LipSync Assembly Guide</td>
     <td>1.6</td>
     <td>PDF</td>
-    <td><a href="https://github.com/makersmakingchange/LipSync/blob/develop/Documentatin/LipSync_Assembly_Guide.pdf">LipSync_Assembly_Guide.pdf</a></td>
+    <td><a href="https://github.com/makersmakingchange/LipSync/blob/develop/Documentation/LipSync_Assembly_Guide.pdf">LipSync_Assembly_Guide.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
