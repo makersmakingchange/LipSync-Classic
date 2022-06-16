@@ -11,7 +11,7 @@ This GitHub repository will serve as a database for all files and documentation 
 ## More info at
 
 - [Makers Making Change Project Page](https://www.makersmakingchange.com/project/lipsync/)
-- [Makers Making Change Forum Thread](https://forum.makersmakingchange.com/t/lipsync-by-makers-making-change/94](https://makersmakingchange.com/forum/topic/lipsync-by-makers-making-change/)
+- [Makers Making Change Forum Thread](https://makersmakingchange.com/forum/topic/lipsync-by-makers-making-change/)
 
 ## Compatibility 
 
