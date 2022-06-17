@@ -2808,7 +2808,6 @@ void performCommand(String inputString)
     // Test if input command string matches API command and input parameter string matches API parameter string
     if ( inputCommandString == apiFunction[apiIndex]._command
          && ((int)inputParameterString.toInt() == apiFunction[apiIndex]._parameter
-         || apiFunction[apiIndex]._parameter == 0
          || apiFunction[apiIndex]._parameter == 1
          || apiFunction[apiIndex]._parameter == 2 ))
     {
