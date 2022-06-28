@@ -1,4 +1,4 @@
-﻿Qty,Component ,"Component name (July 10, 2020)",Line Item,Manufacturer,COO,MPN,SKU,SKU,SKU,SKU,SKU,SKU,SKU,SKU,URL ( Canada ),URL ( United States ),,
+﻿Qty,Component ,"Component name (September 1, 2021)",Line Item,Manufacturer,COO,MPN,SKU,SKU,SKU,SKU,SKU,SKU,SKU,SKU,URL ( Canada ),URL ( United States ),,
 ,,,,,,,Digi-Key,Mouser,Qosina,Cole-Parmer,Lee Spring,U.S. Plastic Corp.,B&H Photo,Amazon,,,,
 1,Required,Arduino Micro,A000053,Arduino,Italy,A000053,1050-1066-ND ,782-A000053 ,,,,,,,https://www.digikey.ca/product-detail/en/arduino/A000053/1050-1066-ND,https://www.digikey.com/product-detail/en/arduino/A000053/1050-1066-ND,,
 2,Required,Right Angle Push Button ,"""431256058736""",Würth Elektronik ,China,"""431256058736""",431256058736-ND,,,,,,,,http://www.digikey.ca/product-detail/en/wurth-electronics-inc/431256058736/431256058736-ND,https://www.digikey.com/product-detail/en/wurth-electronics-inc/431256058736/431256058736-ND,,
