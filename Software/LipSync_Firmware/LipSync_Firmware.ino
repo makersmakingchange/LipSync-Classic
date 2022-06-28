@@ -1,50 +1,71 @@
 /*
-  //                 `.:/++`             ....``
-  //              `/ossss: `.`         `--------.`
-  //               /ssso. .----..```..-----------                                                                                                                                  ``
-  //               -ss+``-----------------------.                  ssss       -/++/`              /ss-                                     ./++/-      //+//             oss       `oss-
-  //              `os+ `----------------.......--`                 sssss:    `s400s.              +sH-                                     -sBsss`    :ssBCs             sVs        /++`
-  //    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +se-  `---  `-::::.  `-:`.::. .::::-     -su/ss+   `ss:sss  `-::::-`   s5s   .--. ---  .-- -:::-    .::::---.
-  //   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +sn- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -sr:/ss-  +ss`sss  ooo+osss-  sCs  :ss+` oss. ossooosss+ `oso//osso/
-  //  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +sn+/ss+` :Dr+-.-+ss.-sss-```sss/-.`     -sn:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+
-  // .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +siooss:  +sso+++ooo`-ss+    ./+osso:    -sa: -ss-+so  sss `+ss++oss+  s6s+sss.   oss. oss.   sss``oss++oso.
-  // :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +sn:`+ss/`-sso-.`..- -ss+   `.```:sso    -sb:  +soss.  sss /ss+``:sso.`sBs`-sss-  oss. oss.   sss``oso:::.`
-  //   `-+ssssssss.                               .--------`       ss+   +sso`  /ss.  +3999++sss: /sg- `/ss+.-+sssooo+ .ss+   .osoosso-    -sy:  `sss/   oso .ossoo+osso.s9s  .+ss/ oss` +ss.   oss`.sssoooo+:`
-  //    `+sssssss.                              ` .------`        ```   ````   ```   `...` ... ```     ````  `....`   ```    `....``      ```   ```    ```  `...` `..` ```    ``` ```  ```    ``` +ss---:/sso
-  //     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
-  //      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
-  //    `..``-+ssss:                            `---` .----`         `.-::::-` .//-                                                                                                                  ````
-  // `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:
-  // `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`
-  //  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`
-  //   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:s1s :ss:``:ss/.:ss/..-sso
-  //            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `s9s -ss+--/ss: ssso+++sss
-  //              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   s8s `+ssooo/-  oss/-.....
-  //               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   s4s -sso/:::-` .oss+///+:
-  //               .----..``````......-----------                    .://+//:` .::.   .::` .://:.-//:`-::`   ::: :ss+++ooss: `-:////-`
-  //               .`````....`        ``--------.`                                                              `sso````.sso
-  //                  ``..-.            `-...``                                                                  /ossoooss+.
-  //                                                                                                             `..--..`
-  //
-  //
-  //  +++         .+++:    /++++++++/:.     .:/+++++/: .+++/`     .+++/  ++++.      ++++.     `-/++++++/:
-  //  oooo         .ooo:    +ooo:--:+ooo/   :ooo/:::/+/  -ooo+`   .ooo+`  ooooo:     .o-o`   `/ooo+//://+:
-  //  oooo         .ooo:    +ooo`    :ooo-  oooo`     `   .ooo+` .ooo+`   oooooo/`   .o-o`  .oooo-`
-  //  oooo         .ooo:    +ooo`    -ooo-  -ooo+:.`       .ooo+.ooo/`    ooo:/oo+.  .o-o`  +ooo.
-  //  oooo         .ooo:    +ooo.`..:ooo+`   `:+oooo+:`     `+ooooo/      ooo: :ooo- .o-o`  oooo
-  //  oooo         .ooo:    +ooooooooo+:`       `-:oooo-     `+ooo/       ooo/  .+oo/.o-o`  +ooo.
-  //  oooo         .ooo:    +ooo-...``             `oooo      /ooo.       ooo/   `/oo-o-o`  .oooo-
-  //  oooo::::::.  .ooo:    +ooo`           :o//:::+ooo:      /ooo.       ooo/     .o-o-o`   ./oooo/:::/+/
-  //  +ooooooooo:  .ooo:    /ooo`           -/++ooo+/:.       :ooo.       ooo:      `.o.+      `-/+oooo+/-
-  //
-  //An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
+  *                 `.:/++`             ....``
+  *              `/ossss: `.`         `--------.`
+  *               /ssso. .----..```..-----------                                                                                                                                  ``
+  *               -ss+``-----------------------.                  ssss       -/++/`              /ss-                                     ./++/-      //+//             oss       `oss-
+  *              `os+ `----------------.......--`                 sssss:    `s400s.              +sH-                                     -sBsss`    :ssBCs             sVs        /++`
+  *    ``      .:ss+ `-------..```````````````````                sso+ss`   +so/ss.   -:::::.    +se-  `---  `-::::.  `-:`.::. .::::-     -su/ss+   `ss:sss  `-::::-`   s5s   .--. ---  .-- -:::-    .::::---.
+  *   .oso+++oossso``---..``          ``..----------.....--.      sso.ss/  -ss-/ss.  :so++sss+   +sn- .oso- /ss+/+ss/ -ss+sss++ss+/+o-    -sr:/ss-  +ss`sss  ooo+osss-  sCs  :ss+` oss. ossooosss+ `oso//osso/
+  *  -ssssssssssss.`--.`                  `.----------------.     sso /ss. os+ /ss.  `.----sss`  +sn+/ss+` :Dr+-.-+ss.-sss-```sss/-.`     -sn:`oso .ss: sss  `.---/ss+  sss:+ss:   oss. oss:```sss`:ss:  .ss+
+  * .ssssssssssss+ ..                        `.--------------.    sso `os+-ss. /ss.  /sso++sss`  +siooss:  +sso+++ooo`-ss+    ./+osso:    -sa: -ss-+so  sss `+ss++oss+  s6s+sss.   oss. oss.   sss``oss++oso.
+  * :+ossssssssss: `                           `------------..`   sso  -ssos/  /ss. .sss.`.sss-` +sn:`+ss/`-sso-.`..- -ss+   `.```:sso    -sb:  +soss.  sss /ss+``:sso.`sBs`-sss-  oss. oss.   sss``oso:::.`
+  *   `-+ssssssss.                               .--------`       ss+   +sso`  /ss.  +3999++sss: /sg- `/ss+.-+sssooo+ .ss+   .osoosso-    -sy:  `sss/   oso .ossoo+osso.s9s  .+ss/ oss` +ss.   oss`.sssoooo+:`
+  *    `+sssssss.                              ` .------`        ```   ````   ```   `...` ... ```     ````  `....`   ```    `....``      ```   ```    ```  `...` `..` ```    ``` ```  ```    ``` +ss---:/sso
+  *     -sssssss:                              .. `----.                                                                                                                                       `sss:-.-:ss+
+  *      `:ossssso                              .-. .----                                                                                                                                        ./+oooo++-`
+  *    `..``-+ssss:                            `---` .----`         `.-::::-` .//-                                                                                                                  ````
+  * `..-----.`.:+ss:                          `----- `------..`   `:osssoooo/ /ss:
+  * `----------.`.-/:`                       .------` .------.   `+ss+-`````. /ss:``..`    ``...`    ``` `...`    ``..````    `...`
+  *  `------------....`                    `.-------. `-----.    /sso         /ss/ossso/  /osssso+.  +o+/ossso- `/oooooooo/ -+ooooo+`
+  *   `--.....---------...```       ```` `.---------. `...-.     oss/         /sso-.-sss- :----+ss+  oss+-.:s1s :ss:``:ss/.:ss/..-sso
+  *            `.------------------..```.--------.`       `      +ss+         /ss:   +ss- -+o++osso  oss.  `s9s -ss+--/ss: ssso+++sss
+  *              `.--------------.```.----------`                .sss/.`   `` /ss:   +ss-:ss+..:sso  oss.   s8s `+ssooo/-  oss/-.....
+  *               `---------..````.------------.                  .ossso+++o+ /ss:   +ss--sso//+sss+-oss.   s4s -sso/:::-` .oss+///+:
+  *               .----..``````......-----------                    .://+//:` .::.   .::` .://:.-//:`-::`   ::: :ss+++ooss: `-:////-`
+  *               .`````....`        ``--------.`                                                              `sso````.sso
+  *                  ``..-.            `-...``                                                                  /ossoooss+.
+  *                                                                                                             `..--..`
+  *
+  *
+  *  +++         .+++:    /++++++++/:.     .:/+++++/: .+++/`     .+++/  ++++.      ++++.     `-/++++++/:
+  *  oooo         .ooo:    +ooo:--:+ooo/   :ooo/:::/+/  -ooo+`   .ooo+`  ooooo:     .o-o`   `/ooo+//://+:
+  *  oooo         .ooo:    +ooo`    :ooo-  oooo`     `   .ooo+` .ooo+`   oooooo/`   .o-o`  .oooo-`
+  *  oooo         .ooo:    +ooo`    -ooo-  -ooo+:.`       .ooo+.ooo/`    ooo:/oo+.  .o-o`  +ooo.
+  *  oooo         .ooo:    +ooo.`..:ooo+`   `:+oooo+:`     `+ooooo/      ooo: :ooo- .o-o`  oooo
+  *  oooo         .ooo:    +ooooooooo+:`       `-:oooo-     `+ooo/       ooo/  .+oo/.o-o`  +ooo.
+  *  oooo         .ooo:    +ooo-...``             `oooo      /ooo.       ooo/   `/oo-o-o`  .oooo-
+  *  oooo::::::.  .ooo:    +ooo`           :o//:::+ooo:      /ooo.       ooo/     .o-o-o`   ./oooo/:::/+/
+  *  +ooooooooo:  .ooo:    /ooo`           -/++ooo+/:.       :ooo.       ooo:      `.o.+      `-/+oooo+/-
+  *
+  *  An open-source mouth operated sip and puff joystick that enables people with limited hand function to emulate a mouse on their computer and/or smartphone.
 */
+
+/* 
+ * Copyright (c) Neil Squire Society <info@makersmakingchange.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 //TITLE: LipSync_Firmware
 //AUTHOR: MakersMakingChange
-//VERSION: 3 (03 Jun 2022)
+//VERSION: 3.0 (27 Jun 2022)
 //Copyright Neil Squire Society 2016-2022.
-//LICENSE: This work is licensed under the CC BY SA 4.0 License: http://creativecommons.org/licenses/by-sa/4.0 .
 
 #include <EEPROM.h>
 #include <Mouse.h>
