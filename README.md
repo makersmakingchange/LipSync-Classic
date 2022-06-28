@@ -60,10 +60,9 @@ You can submit a build request through the Makers Making Change Website. A volun
 
 First, you'll need to [sign up](https://www.makersmakingchange.com/sign-up/) to create an account. Once your account is activated, you can log in.
 
-Second, [submit a build request](https://www.makersmakingchange.com/request-a-build?project_id=1657) for a LipSync.
+Second, [submit a build request](https://makersmakingchange.com/request-a-build?project_id=1657) for a LipSync.
 
 Once a volunteer maker agrees to take on your request, communicate with them to discuss details and reimbursement.
-
 
 
 
@@ -90,13 +89,13 @@ Once a volunteer maker agrees to take on your request, communicate with them to 
   </tr>
   <tr>
     <td>LipSync Startup Guide</td>
-    <td>1.6</td>
+    <td>1.8</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Documentation/LipSync_Startup_Guide.pdf">LipSync_Startup_Guide.pdf</a></td>
   </tr>
   <tr>
     <td>LipSync User Guide</td>
-    <td>1.1</td>
+    <td>1.3</td>
     <td>PDF</td>
     <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Documentation/LipSync_User_Guide.pdf">LipSync_User_Guide.pdf</a></td>
   </tr>
@@ -188,6 +187,7 @@ Once a volunteer maker agrees to take on your request, communicate with them to 
   <td><a href="https://github.com/makersmakingchange/LipSync/blob/master/Hardware/Housing_design/3D_Print_Settings.txt">3D_Print_Settings.txt</a></td>
 </tr>
 </table> 
+
 
 ## Resources
 
