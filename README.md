@@ -1,3 +1,7 @@
+## This device is archived due to diffulty sourcing parts.
+See [LipSync 4.0 repository](https://github.com/makersmakingchange/LipSync) for the most up to date and buildable version of this device.
+
+
 ## LipSync
 
 <p align="center">
