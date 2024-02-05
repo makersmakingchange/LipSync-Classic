@@ -1,21 +1,10 @@
-## This device is archived due to diffulty sourcing parts.
-See [LipSync 4.0 repository](https://github.com/makersmakingchange/LipSync) for the most up to date and buildable version of this device.
+## LipSync Classic
 
 
-## LipSync
+**As of 2024-Feb-08, this version of the LipSync is now obsolete and has been replaced by the [LipSync 4](https://github.com/makersmakingchange/LipSync).** 
 
-<p align="center">
-<img align="center" src="https://raw.githubusercontent.com/makersmakingchange/blog/gh-pages/_resources/images/LipSync_Logo.jpg" width="50%" height="50%" alt="LipSync Logo"/>
-</p>
+The LipSync Classic is an assistive technology device that allows quadriplegics and other people with limited hand function to use touchscreen mobile devices, tablets, and computers by manipulation of a mouth-operated joystick with integrated sip and puff controls. This is an Open-Source Hardware project, so the Lipsync can be made at the community level for less than $300.
 
-The LipSync is an assistive technology device that allows quadriplegics and other people with limited hand function to use touchscreen mobile devices, tablets, and computers by manipulation of a mouth-operated joystick with integrated sip and puff controls. This is an Open-Source Hardware project, so the Lipsync can be made at the community level for less than $300.
-
-This GitHub repository will serve as a database for all files and documentation associated with the LipSync project.
-
-## More info at
-
-- [Makers Making Change Project Page](https://www.makersmakingchange.com/project/lipsync/)
-- [Makers Making Change Forum Thread](https://makersmakingchange.com/forum/topic/lipsync-by-makers-making-change/)
 
 ## Compatibility 
 
@@ -50,25 +39,6 @@ This GitHub repository will serve as a database for all files and documentation 
     <td>Compatible with Mac OS X 10.0 and newer versions</td>
   </tr>
   </table> 
-
-## Getting Started
-There are several options for obtaining a LipSync device.
-1. Build it yourself
-2. Request a volunteer maker to build one for you.
-
-### 1. Build it Yourself
-All the information you need to build a LipSync is avaiable in this repository. You'll need to order a number of off-the-shelf components, order a set of custom printed circuit boards and 3D print a number of components.
-
-### 2. Volunteer Build
-You can submit a build request through the Makers Making Change Website. A volunteer maker will build a LipSync and the requestor is responsible for the cost of materials and any shipping.
-
-First, you'll need to [sign up](https://www.makersmakingchange.com/sign-up/) to create an account. Once your account is activated, you can log in.
-
-Second, [submit a build request](https://makersmakingchange.com/request-a-build?project_id=1657) for a LipSync.
-
-Once a volunteer maker agrees to take on your request, communicate with them to discuss details and reimbursement.
-
-
 
 ## Download
 
@@ -214,32 +184,48 @@ Once a volunteer maker agrees to take on your request, communicate with them to 
 </table> 
 
 ## License
-<br>
-<p align="center">
-<a href="https://www.oshwa.org">
-	<img align="center" src="http://www.oshwa.org/wp-content/uploads/2014/03/oshw-logo-200-px.png" alt="Open Source Hardware Logo"/></a>
-</p>
+Copyright (c) 2016-2024 Neil Squire / Makers Making Change.
 
-<p align="center">
-This is an open source hardware project and adheres to the Open Source Hardware (OSHW) Statement of Principle 1.0 and Open Source Hardware (OSHW) Definition 1.0 found at <a href="http://www.oshwa.org">www.oshwa.org</a>
-</p>
+This repository describes Open Hardware:
+ - Everything needed or used to design, make, test, or prepare the LipSync Classic is licensed under the [CERN 2.0 Weakly Reciprocal license (CERN-OHL-W v2) or later](https://cern.ch/cern-ohl ) .
+ - All software is under the [GNU General Public License v3.0 (GPL-3.0)](https://www.gnu.org/licenses/gpl.html).
+ - Accompanying material such as instruction manuals, videos, and other copyrightable works that are useful but not necessary to design, make, test, or prepare the LipSync are published under a [Creative Commons Attribution-ShareAlike 4.0 license (CC BY-SA 4.0)](https://creativecommons.org/licenses/by-sa/4.0/) .
+
+You may redistribute and modify this documentation and make products using it under the terms of the [CERN-OHL-W v2](https://cern.ch/cern-ohl).
+This documentation is distributed WITHOUT ANY EXPRESS OR IMPLIED WARRANTY, INCLUDING OF MERCHANTABILITY, SATISFACTORY QUALITY AND FITNESS FOR A PARTICULAR PURPOSE.
+Please see the CERN-OHL-W v2 for applicable conditions.
+
+Source Location: https://github.com/makersmakingchange/LipSync-Wireless
+
+## Attribution
+
+The LipSync was designed by Neil Squire Society / Makers Making Change. The initial development of a 3D printable LipSync was supported by the Google Impact Challenge: Disabilities grant from Google.org. Further development was supported through the Government of Canada's Innovation Science and Economic Development Assistive Technology Program. These and other funders have also enabled Neil Squire / Makers Making Change to deploy numerous LipSyncs to users at reduced cost.
+
+The LipSync firmware utilizes the Arduino development platform, an open-source electronics platform based on easy-to-use hardware and software. Arduino is developed and maintained by the Arduino community, and the project wouldn't be possible without their contributions.
+Arduino is a registered trademark of Arduino AG. For more information about Arduino and to contribute to the community, visit the official Arduino website at www.arduino.cc.
+
+
+### Contributors
+ - Milad Hajihassan, Neil Squire Society / Makers Making Change.
+ - Jake McIvor, Neil Squire Society / Makers Making Change.
+ - Kristina Mok, Neil Squire Society / Makers Making Change.
+
 
 ## About Makers Making Change
-<img src="https://www.makersmakingchange.com/wp-content/uploads/logo/mmc_logo.svg" width="500" alt="Makers Making Change Logo">
+[<img src="https://raw.githubusercontent.com/makersmakingchange/makersmakingchange/main/img/mmc_logo.svg" width="500" alt="Makers Making Change Logo">](https://www.makersmakingchange.com/)
 
-Makers Making Change is an initiative of [Neil Squire](https://www.neilsquire.ca/), a Canadian non-profit that helps people with disabilities.
+Makers Making Change is a program of [Neil Squire](https://www.neilsquire.ca/), a Canadian non-profit that uses technology, knowledge, and passion to empower people with disabilities.
 
-We are committed to creating a network of volunteer makers who support people with disabilities in their communities through building cost-effective assistive devices. Check out our library of free, open-source assistive technologies with parts and build instructions.
+Makers Making Change leverages the capacity of community based Makers, Disability Professionals and Volunteers to develop and deliver affordable Open Source Assistive Technologies.
 
- - [www.MakersMakingChange.com](https://www.makersmakingchange.com/)
- - [GitHub](https://github.com/makersmakingchange)
- - [Thingiverse](https://www.thingiverse.com/makersmakingchange/about)
+ - Website: [www.MakersMakingChange.com](https://www.makersmakingchange.com/)
+ - GitHub: [makersmakingchange](https://github.com/makersmakingchange)
  - Twitter: [@makermakechange](https://twitter.com/makermakechange)
  - Instagram: [@makersmakingchange](https://www.instagram.com/makersmakingchange)
+ - Facebook: [makersmakechange](https://www.facebook.com/makersmakechange)
+ - LinkedIn: [Neil Squire Society](https://www.linkedin.com/company/neil-squire-society/)
+ - Thingiverse: [makersmakingchange](https://www.thingiverse.com/makersmakingchange/about)
+ - Printables: [MakersMakingChange](https://www.printables.com/@MakersMakingChange)
 
 ### Contact Us
-
-For technical questions, to get involved, or share your experience we encourage you to visit the [MMC Device Page](https://makersmakingchange.com/assistive-devices/), [MMC Forum](https://makersmakingchange.com/forum/), or contact info@makersmakingchange.com
-
-<hr>
-
+For technical questions, to get involved, or to share your experience we encourage you to [visit our website](https://www.makersmakingchange.com/) or [contact us](https://www.makersmakingchange.com/s/contact).
