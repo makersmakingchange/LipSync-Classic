@@ -1,0 +1,58 @@
+name: Update About MMC Section
+# This GitHub Action will update the About Makers Making Change section of the Readme.md
+# from the Makers-Making-Change repository readme.
+
+# It replace everything in the Readme.md file between the tags <!-- ABOUT MMC START --> and
+# <!-- ABOUT MMC END -->
+
+# It is triggered manually through the GitHub Actions in the repository.
+# Last updated: 2025-Apr-08
+on:
+  workflow_dispatch:  # Enables manual trigger via the Actions tab
+
+jobs:
+  update-about:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout this repo
+        uses: actions/checkout@v3
+
+      - name: Fetch shared About MMC section
+        run: |
+          curl -s https://raw.githubusercontent.com/makersmakingchange/Makers-Making-Change/refs/heads/main/ABOUT_MMC.md -o about.md
+
+      - name: Replace About MMC section in README
+        run: |
+          if [ ! -f README.md ]; then
+            echo "README.md not found!"
+            exit 1
+          fi
+
+          awk '
+            BEGIN { inside=0 }
+            /<!-- ABOUT MMC START -->/ {
+              print
+              system("cat about.md")
+              inside=1
+              next
+            }
+            /<!-- ABOUT MMC END -->/ {
+              inside=0
+              print
+              next
+            }
+            inside == 0 {
+              print
+            }
+          ' README.md > temp.md
+
+          mv temp.md README.md
+
+      - name: Commit and push changes
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+
+          git add README.md
+          git diff --cached --quiet || (git commit -m "Update About MMC Section" && git push)
