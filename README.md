@@ -221,7 +221,7 @@ Makers Making Change leverages the capacity of community based Makers, Disabilit
 
  - Website: [www.MakersMakingChange.com](https://www.makersmakingchange.com/)
  - GitHub: [makersmakingchange](https://github.com/makersmakingchange)
- - Twitter: [@makermakechange](https://twitter.com/makermakechange)
+ - Bluesky: [@makersmakingchange.bsky.social](https://bsky.app/profile/makersmakingchange.bsky.social)
  - Instagram: [@makersmakingchange](https://www.instagram.com/makersmakingchange)
  - Facebook: [makersmakechange](https://www.facebook.com/makersmakechange)
  - LinkedIn: [Neil Squire Society](https://www.linkedin.com/company/neil-squire-society/)
