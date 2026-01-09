@@ -1,5 +1,6 @@
 # LipSync Classic
 
+> [!IMPORTANT]
 **As of 2024-Feb-08, this version of the LipSync is now obsolete and has been replaced by the [LipSync 4](https://github.com/makersmakingchange/LipSync).** 
 
 The LipSync Classic is an assistive technology device that allows quadriplegics and other people with limited hand function to use touchscreen mobile devices, tablets, and computers by manipulation of a mouth-operated joystick with integrated sip and puff controls. This is an Open-Source Hardware project, so the Lipsync can be made at the community level for less than $300.
